@@ -177,10 +177,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POL-05 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 41 total
-- Mapped to phases: 41
+- v1 requirements: 42 total
+- Mapped to phases: 42
 - Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-19*
-*Last updated: 2026-05-19 after initial definition*
+*Last updated: 2026-05-19 — roadmap creation corrected total count from 41 to 42 (8 reqs added during requirements pass: DATA-04, REEL-06, REEL-07, NAV-02, NAV-03, WATCH-05, CONT-03, POL-05 without recounting at the time)*
