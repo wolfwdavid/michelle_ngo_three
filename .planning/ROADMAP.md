@@ -31,10 +31,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Pushing to `main` triggers GitHub Actions and the site is reachable at `https://wolfwdavid.github.io/michelle_ngo_three/` over HTTPS within minutes of build completion (with `BASE_PATH=/michelle_ngo_three/` correctly applied to all asset and route URLs).
   3. The high-contrast focus token, `mnp_three_*` localStorage namespace, and `PUBLIC_SITE_URL` env are defined in the codebase before any feature code lands (verifiable by grep — `mnp_three_` does not appear in any feature commits because the convention is already in place).
   4. Tooling additions specific to `_three` (`runed`, `@sveltejs/enhanced-img`, `@tailwindcss/typography`, `@playwright/test`, `@axe-core/playwright`, `@testing-library/svelte`) are installed and a smoke test of each (one unit test + one e2e test + one axe assertion + one IO hook usage) passes on CI.
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: TBD
+- [ ] 01-01-PLAN.md — Mirror _four scaffold (package.json + configs + 5 cinematic-layer dep additions + clean pnpm build)
+- [ ] 01-02-PLAN.md — _three-specific conventions day-one (@theme tokens + self-hosted fonts + global :focus-visible + $lib/storage.ts + .env.example + D-01 splash)
+- [ ] 01-03-PLAN.md — GH Actions deploy + D-17 grep gate + four smoke-test gates (unit + e2e + axe + runed IO hook) + human-verify checkpoint
 
 ### Phase 2: Data Layer
 **Goal**: `src/lib/data/videos.json` is byte-identical to `_four`'s and stays that way under CI; the `$lib/data` loader surface, Zod schema, and Vite build-fail plugin are drop-in compatible with `_four`; an oEmbed health-check catches videos whose embeds have been disabled before they ship as runtime black boxes.
