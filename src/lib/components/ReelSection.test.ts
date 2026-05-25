@@ -89,14 +89,20 @@ describe('ReelSection (REEL-04 D-08 gate + REEL-05 overlay)', () => {
     expect(style).toContain('var(--color-cat-pbs)');
   });
 
-  test('renders PreviewLoop placeholder when shouldMount = true (mounted + allowed)', () => {
+  test('renders PreviewLoop iframe when shouldMount = true (mounted + allowed)', () => {
+    // Plan 03-02 replaced the PreviewLoop stub with the real 4-state iframe
+    // lifecycle. ReelSection's `shouldMount` branch now renders a real
+    // <iframe data-lifecycle-state="mounted-loading"> instead of a
+    // [data-stub="preview-loop"] placeholder. PosterImage is still a stub
+    // (Plan 03-03 wires enhanced-img + responsive sources).
     const video = makeVideo({ id: 'mounted-1' });
     const { container } = render(Harness, {
       props: { video, index: 0, total: 1, mountedIdsArr: [video.id] },
     });
-    const preview = container.querySelector('[data-stub="preview-loop"]');
+    const iframe = container.querySelector('iframe[data-lifecycle-state]');
     const poster = container.querySelector('[data-stub="poster-image"]');
-    expect(preview).not.toBeNull();
+    expect(iframe).not.toBeNull();
+    expect(iframe?.getAttribute('data-lifecycle-state')).toBe('mounted-loading');
     expect(poster).toBeNull();
   });
 
@@ -105,9 +111,9 @@ describe('ReelSection (REEL-04 D-08 gate + REEL-05 overlay)', () => {
     const { container } = render(Harness, {
       props: { video, index: 0, total: 1, mountedIdsArr: [] },
     });
-    const preview = container.querySelector('[data-stub="preview-loop"]');
+    const iframe = container.querySelector('iframe[data-lifecycle-state]');
     const poster = container.querySelector('[data-stub="poster-image"]');
-    expect(preview).toBeNull();
+    expect(iframe).toBeNull();
     expect(poster).not.toBeNull();
   });
 
