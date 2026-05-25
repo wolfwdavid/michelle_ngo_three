@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 2 context gathered (24 decisions across 4 areas; ready for plan-phase)
-last_updated: "2026-05-25T18:11:19.671Z"
+stopped_at: Completed 02-01-PLAN.md (data layer mirror + validateVideosPlugin + sidecar)
+last_updated: "2026-05-25T18:57:04.153Z"
 progress:
   total_phases: 7
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 4
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** A hiring producer can scroll through Michelle's filmography like a cinema reel — each video taking the full screen with silent motion — and feel the work the way they would in a screening room, not a portfolio grid.
-**Current focus:** Phase 01 — foundation
+**Current focus:** Phase 02 — data-layer
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
+Phase: 02 (data-layer) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Plan: Not started
 | Phase 01-foundation P01 | 8 min | 3 tasks | 22 files |
 | Phase 01-foundation P02 | 7 | 3 tasks | 11 files |
 | Phase 01-foundation P03 | 18 min | 4 tasks | 10 files |
+| Phase 02-data-layer P01 | 6 min | 3 tasks tasks | 11 files files |
 
 ## Accumulated Context
 
@@ -82,6 +83,10 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Playwright preview port shifted 4173 -> 4183 to avoid sibling _four collision during local A/B work; CI uses fresh containers and is unaffected
 - [Phase 01-foundation]: Single CI workflow (deploy.yml) covers PR-time + deploy gates; rejected separate PR workflow as duplication (4 smoke gates + branch protection on main is sufficient)
 - [Phase 01-foundation]: Svelte 5.55+ rune-scoping rules require .svelte.ts file extension for any TS using runes outside .svelte components; companion test files end .svelte.test.ts and wrap rune-using class instantiation in $effect.root(() => { ... })
+- [Phase 02-data-layer]: Mirrored _four data layer byte-for-byte (9 files: 5 source + 4 test); 11-name public surface preserved; validateVideosPlugin wired top-level + both Vitest projects
+- [Phase 02-data-layer]: ui Vitest project include widened to src/lib/**/*.{test,spec}.{js,ts} to catch Phase 1 tests (storage, intersectionVisibility, smoke-page); exclude src/lib/data/** keeps data tests in node-env data project
+- [Phase 02-data-layer]: Pinned _four@07667658ee2fd16a3d56b66bbe832d08fc3badd5 in .videos-source-sha (D-05 current main HEAD at sync time); sha256=fd15e0568425ef8a8472b8bae856bc43a5a85810e4fb1a8f9d0cff771d8ef91c
+- [Phase 02-data-layer]: DATA-02 smoke-test verified: corrupting [0].source='tiktok' aborts pnpm build with exit 1 + 'Invalid discriminator value. Expected youtube | vimeo' at [0].source via [plugin validate-videos]
 
 ### Pending Todos
 
@@ -100,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T18:11:19.667Z
-Stopped at: Phase 2 context gathered (24 decisions across 4 areas; ready for plan-phase)
-Resume file: .planning/phases/02-data-layer/02-CONTEXT.md
+Last session: 2026-05-25T18:57:04.149Z
+Stopped at: Completed 02-01-PLAN.md (data layer mirror + validateVideosPlugin + sidecar)
+Resume file: None

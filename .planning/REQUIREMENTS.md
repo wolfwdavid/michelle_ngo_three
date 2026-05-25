@@ -15,9 +15,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Data Layer
 
-- [ ] **DATA-01**: `src/lib/data/videos.json` is byte-identical to `../michelle_ngo_four/src/lib/data/videos.json` (source-of-truth reuse — not re-authored)
-- [ ] **DATA-02**: The same Zod schema + Vite build-fail plugin from `_four` validates `videos.json` at build time; intentionally breaking a record fails the build
-- [ ] **DATA-03**: The same `$lib/data` typed loader surface as `_four` (`videos`, `producerReelId`, `getById`, `getByCategory`, category helpers) is drop-in compatible
+- [x] **DATA-01**: `src/lib/data/videos.json` is byte-identical to `../michelle_ngo_four/src/lib/data/videos.json` (source-of-truth reuse — not re-authored)
+- [x] **DATA-02**: The same Zod schema + Vite build-fail plugin from `_four` validates `videos.json` at build time; intentionally breaking a record fails the build
+- [x] **DATA-03**: The same `$lib/data` typed loader surface as `_four` (`videos`, `producerReelId`, `getById`, `getByCategory`, category helpers) is drop-in compatible
 - [ ] **DATA-04**: Cross-repo byte-diff CI check fails the build if `_three`'s `videos.json` drifts from `_four`'s (A/B integrity — Trap A mitigation)
 
 ### Immersive Reel (Killer Feature)
@@ -136,9 +136,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FOUND-01 | Phase 1 | Complete |
 | FOUND-02 | Phase 1 | Complete |
 | FOUND-03 | Phase 7 | Pending |
-| DATA-01 | Phase 2 | Pending |
-| DATA-02 | Phase 2 | Pending |
-| DATA-03 | Phase 2 | Pending |
+| DATA-01 | Phase 2 | Complete |
+| DATA-02 | Phase 2 | Complete |
+| DATA-03 | Phase 2 | Complete |
 | DATA-04 | Phase 2 | Pending |
 | REEL-01 | Phase 3 | Pending |
 | REEL-02 | Phase 3 | Pending |
