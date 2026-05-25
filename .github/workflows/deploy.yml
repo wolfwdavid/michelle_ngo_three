@@ -1,0 +1,104 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.9
+          standalone: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # D-17 grep gate (Phase 1 SC #3 "verifiable by grep")
+      # Fails the build if any file under src/ — OTHER than the helper itself —
+      # references `window.localStorage` or raw `localStorage.<method>`. The
+      # helper $lib/storage.ts is the ONLY allowed point of contact with
+      # window.localStorage; this gate makes drift mechanically impossible
+      # (CONTEXT D-17 + specifics §helper-first storage rationale).
+      - name: D-17 grep gate — no raw localStorage outside $lib/storage.ts
+        run: |
+          set -e
+          # Search for raw localStorage usage in src/, excluding the helper file and its tests.
+          # Patterns matched: `window.localStorage`, `localStorage.` (method call), `localStorage[`.
+          matches=$(grep -rnE 'window\.localStorage|localStorage\.|localStorage\[' src/ \
+            --include='*.ts' --include='*.svelte' --include='*.svelte.ts' \
+            --exclude='storage.ts' --exclude='storage.test.ts' || true)
+          if [ -n "$matches" ]; then
+            echo "::error::D-17 grep gate failed — raw localStorage usage detected outside src/lib/storage.ts."
+            echo "::error::All localStorage access must go through the typed \$lib/storage helper to enforce the mnp_three_ namespace (Trap D mitigation)."
+            echo "::error::Offending lines:"
+            echo "$matches"
+            exit 1
+          fi
+          echo "D-17 grep gate passed — no raw localStorage usage outside the helper."
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type-check
+        run: pnpm check
+
+      - name: Unit tests (storage + intersectionVisibility + smoke-page)
+        run: pnpm test
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      # E2E runs against an UNPREFIXED build so page.goto('/') resolves at root.
+      # The deploy step below sets BASE_PATH for the actual GH Pages artifact;
+      # keeping it OUT of this step is deliberate — see playwright.config.ts's
+      # webServer comment for the matching rationale.
+      - name: E2E + axe smoke tests
+        run: pnpm test:e2e
+
+      - name: Build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+          # Phase 7 (POL-01) will use this for sitemap + OG tags; for Phase 1 it's
+          # defined for completeness so SvelteKit's import.meta.env reads it without
+          # a runtime undefined error. Production cutover (FOUND-03) will override
+          # in .github/workflows/deploy-production.yml (Phase 7).
+          PUBLIC_SITE_URL: https://wolfwdavid.github.io/michelle_ngo_three
+        run: pnpm build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
