@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-01-PLAN.md (data layer mirror + validateVideosPlugin + sidecar)
-last_updated: "2026-05-25T18:57:04.153Z"
+stopped_at: Completed 02-02-PLAN.md (drift-check CI job + pull_request trigger)
+last_updated: "2026-05-25T19:06:33.451Z"
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 02 (data-layer) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Plan: 2 of 3
 | Phase 01-foundation P02 | 7 | 3 tasks | 11 files |
 | Phase 01-foundation P03 | 18 min | 4 tasks | 10 files |
 | Phase 02-data-layer P01 | 6 min | 3 tasks tasks | 11 files files |
+| Phase 02-data-layer P02 | 2 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,7 @@ Recent decisions affecting current work:
 - [Phase 02-data-layer]: ui Vitest project include widened to src/lib/**/*.{test,spec}.{js,ts} to catch Phase 1 tests (storage, intersectionVisibility, smoke-page); exclude src/lib/data/** keeps data tests in node-env data project
 - [Phase 02-data-layer]: Pinned _four@07667658ee2fd16a3d56b66bbe832d08fc3badd5 in .videos-source-sha (D-05 current main HEAD at sync time); sha256=fd15e0568425ef8a8472b8bae856bc43a5a85810e4fb1a8f9d0cff771d8ef91c
 - [Phase 02-data-layer]: DATA-02 smoke-test verified: corrupting [0].source='tiktok' aborts pnpm build with exit 1 + 'Invalid discriminator value. Expected youtube | vimeo' at [0].source via [plugin validate-videos]
+- [Phase 02-data-layer]: Wired drift-check CI job into deploy.yml with __four/ subdir checkout, D-12/D-07/sidecar-mismatch error annotations, and pull_request trigger expansion — DATA-04/Trap A precondition closed
 
 ### Pending Todos
 
@@ -105,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T18:57:04.149Z
-Stopped at: Completed 02-01-PLAN.md (data layer mirror + validateVideosPlugin + sidecar)
+Last session: 2026-05-25T19:06:33.448Z
+Stopped at: Completed 02-02-PLAN.md (drift-check CI job + pull_request trigger)
 Resume file: None

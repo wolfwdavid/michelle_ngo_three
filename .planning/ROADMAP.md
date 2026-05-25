@@ -52,7 +52,7 @@ Plans:
 
 Plans:
 - [x] 02-01-PLAN.md — Mirror _four data layer (videos.json + 4 loader files + 4 test files verbatim) + wire validateVideosPlugin + .videos-source-sha sidecar
-- [ ] 02-02-PLAN.md — Cross-repo drift CI (DATA-04 / Trap A): drift-check job in deploy.yml clones _four at pinned SHA and byte-compares videos.json
+- [x] 02-02-PLAN.md — Cross-repo drift CI (DATA-04 / Trap A): drift-check job in deploy.yml clones _four at pinned SHA and byte-compares videos.json
 - [ ] 02-03-PLAN.md — oEmbed health-check (Pitfall 6): scripts/check-embeds.ts + pnpm check:embeds + nightly Action with auto-Issue tracking
 
 ### Phase 3: Reel System Core (LOAD-BEARING RISK)
