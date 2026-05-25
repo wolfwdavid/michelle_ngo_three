@@ -7,7 +7,20 @@
 -->
 <script lang="ts">
   import '../app.css';
+  import { onMount } from 'svelte';
+  import { initMotionState } from '$lib/state/motion.svelte';
+  import { initNetworkState } from '$lib/state/network.svelte';
+
   let { children } = $props();
+
+  // Hydrate the module-scope state runes (REEL-04 triggers 1 + 2; D-08).
+  // SSR/prerender does NOT call these — both helpers are __isBrowser-guarded
+  // and the call site is onMount (browser-only). Idempotent so HMR re-mounts
+  // can't double-bind the matchMedia / navigator.connection change listeners.
+  onMount(() => {
+    initMotionState();
+    initNetworkState();
+  });
 </script>
 
 <svelte:head>
