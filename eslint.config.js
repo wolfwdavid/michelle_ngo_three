@@ -27,5 +27,17 @@ export default tseslint.config(
   },
   {
     ignores: ['build/', '.svelte-kit/', 'dist/', 'node_modules/'],
+  },
+  // ReelSection ships the `▷ PLAY WITH SOUND` deep-link to /watch/[id]
+  // (REEL-05) before Phase 5 (WATCH-01) creates that route. Until the route
+  // exists, `resolve('/watch/[id]', { id })` rejects the typed route
+  // argument. The deprecated `${base}/watch/${video.id}` form is the
+  // documented stop-gap; this override silences the linter narrowly until
+  // Phase 5 lands /watch/[id] and we migrate the call.
+  {
+    files: ['src/lib/components/ReelSection.svelte'],
+    rules: {
+      'svelte/no-navigation-without-resolve': 'off',
+    },
   }
 );
