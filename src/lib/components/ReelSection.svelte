@@ -3,11 +3,17 @@
   reel:stage context + module-scope state runes.
 
   Locked decisions:
-    REEL-04 (D-08) — pre-mount gate: allowIframe = !cellular && !reduced-motion.
-                     Cellular-on-Chromium + reduced-motion never attach iframes
-                     (saves the 800ms timeout cycle in Plan 03-02). The other 3
-                     fallback triggers (LPM, autoplay-block, embed-disabled) are
-                     caught by Plan 03-02's PreviewLoop 800ms timeout (D-07).
+    REEL-04 (D-08 + Plan 03-03 Task 2) — UNIFIED fallback codepath: a single
+                     `shouldShowPoster` $derived collapses 5 fallback triggers
+                     into ONE switch:
+                       1. motion.prefersReducedMotion
+                       2. network.isCellularLike  (cellular-on-Chromium)
+                       3. autoplayFailedFromPreviewLoop  (LPM via D-07 timeout,
+                          autoplay-blocked, embed-disabled, EU autoplay restrict)
+                     Triggers 1+2 are pre-mount (iframe never attaches).
+                     Triggers 3-5 collapse through PreviewLoop's onautoplayfailed
+                     callback prop (Plan 03-02 wired this; Plan 03-03 Task 2
+                     wires the consumer here).
     REEL-05      — title (bottom-left, font-display) + CategoryTag (top-right) +
                      PLAY WITH SOUND deep-link to /watch/[id]
     POL-03 / Pitfall 2 — aspect-video container → zero-CLS poster→iframe swap.
@@ -38,9 +44,32 @@
   }
   const stage = getContext<ReelStageContext>('reel:stage');
 
-  // D-08 pre-mount gate (REEL-04 triggers 1 + 2).
-  const allowIframe = $derived(!network.isCellularLike && !motion.prefersReducedMotion);
-  const shouldMount = $derived(allowIframe && stage.mountedIds.has(video.id));
+  // Plan 03-03 Task 2: PreviewLoop fires this when its 800ms HANDSHAKE_TIMEOUT_MS
+  // elapses OR on iframe onError (Plan 03-02 PreviewLoop onautoplayfailed prop).
+  // Local $state — per-section isolation (one section's failure does NOT cascade
+  // to siblings). Once true, this section permanently shows PosterImage for the
+  // remainder of its mount lifecycle (we never retry the iframe — Pitfall 5
+  // thermal posture). If/when Phase 4 navigates to a fresh /work/[category]
+  // route, ReelSection re-mounts with fresh state.
+  let autoplayFailedFromPreviewLoop = $state(false);
+  function handleAutoplayFailed(): void {
+    autoplayFailedFromPreviewLoop = true;
+  }
+
+  // REEL-04 unified codepath: ONE $derived collapses 5 fallback triggers.
+  //   1. motion.prefersReducedMotion        (pre-mount)
+  //   2. network.isCellularLike             (pre-mount)
+  //   3. autoplayFailedFromPreviewLoop      (post-handshake-timeout / onError;
+  //                                          covers LPM, autoplay-blocked,
+  //                                          embed-disabled, EU autoplay-restrict)
+  const shouldShowPoster = $derived(
+    motion.prefersReducedMotion || network.isCellularLike || autoplayFailedFromPreviewLoop
+  );
+
+  // Iframe attaches when the section is in the ±1 window AND no fallback fired.
+  // `shouldMount` is the inverse of shouldShowPoster intersected with the
+  // viewport-windowed mountedIds set (REEL-03 ±1 budget).
+  const shouldMount = $derived(!shouldShowPoster && stage.mountedIds.has(video.id));
   const isCurrent = $derived(stage.activeIdx === index);
 
   // CategoryTag inline placeholder — consumes --color-cat-* tokens directly.
@@ -69,9 +98,17 @@
   <div class="absolute inset-0 flex items-center justify-center">
     <div class="aspect-video w-full">
       {#if shouldMount}
-        <PreviewLoop {video} />
+        <!-- Plan 03-03 Task 2: onautoplayfailed is the REEL-04 trigger 3-5 signal.
+             PreviewLoop fires it on the 800ms HANDSHAKE_TIMEOUT_MS or on onError;
+             handleAutoplayFailed flips autoplayFailedFromPreviewLoop $state true;
+             shouldShowPoster $derived re-evaluates; the {#if} branch swaps to
+             PosterImage on the next render (per-section, never cascades). -->
+        <PreviewLoop {video} onautoplayfailed={handleAutoplayFailed} />
       {:else}
-        <PosterImage {video} showPlayCta={!allowIframe || !stage.mountedIds.has(video.id)} />
+        <!-- Plan 03-03 PosterImage ALWAYS renders the PLAY-WITH-SOUND anchor
+             (REEL-05 + Pitfall 3 LPM gate require it on every fallback render);
+             the legacy showPlayCta prop is accepted-and-ignored. -->
+        <PosterImage {video} {index} {total} />
       {/if}
     </div>
   </div>
