@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Mirror _four scaffold (package.json + configs + 5 cinematic-layer dep additions + clean pnpm build)
+- [x] 01-01-PLAN.md — Mirror _four scaffold (package.json + configs + 5 cinematic-layer dep additions + clean pnpm build)
 - [ ] 01-02-PLAN.md — _three-specific conventions day-one (@theme tokens + self-hosted fonts + global :focus-visible + $lib/storage.ts + .env.example + D-01 splash)
 - [ ] 01-03-PLAN.md — GH Actions deploy + D-17 grep gate + four smoke-test gates (unit + e2e + axe + runed IO hook) + human-verify checkpoint
 
