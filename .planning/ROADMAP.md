@@ -48,10 +48,12 @@ Plans:
   3. The `$lib/data` typed exports (`videos`, `producerReelId`, `getById`, `getByCategory`, category helpers) match `_four`'s public surface, so a component written against `_four`'s import shape compiles unchanged against `_three`.
   4. CI cross-repo diff check runs on every PR and fails the build with a clear message if `_three`'s `videos.json` drifts from `_four`'s (Trap A mitigation — A/B integrity precondition).
   5. The Vite build-fail plugin hits the Vimeo/YouTube oEmbed endpoint for every video at build time and fails with a clear message if any video is no longer embeddable (Pitfall 6 mitigation — runtime black boxes caught at build time).
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: TBD
+- [ ] 02-01-PLAN.md — Mirror _four data layer (videos.json + 4 loader files + 4 test files verbatim) + wire validateVideosPlugin + .videos-source-sha sidecar
+- [ ] 02-02-PLAN.md — Cross-repo drift CI (DATA-04 / Trap A): drift-check job in deploy.yml clones _four at pinned SHA and byte-compares videos.json
+- [ ] 02-03-PLAN.md — oEmbed health-check (Pitfall 6): scripts/check-embeds.ts + pnpm check:embeds + nightly Action with auto-Issue tracking
 
 ### Phase 3: Reel System Core (LOAD-BEARING RISK)
 **Goal**: The killer feature works on real producer hardware — iOS Safari 16, 17.0, 17.1, 17.2+, Chrome Android, Firefox desktop, Safari macOS. Scroll-snap is fluid, iframe lifecycle is leak-free, and the unified poster-fallback codepath cleanly degrades under all five "edge-case" triggers (`prefers-reduced-motion`, cellular, iOS Low Power Mode `play()` rejection, embed-disabled-by-owner, EU default-to-poster). 14 of 20 documented pitfalls cluster here; this phase MUST NOT be subdivided so its risk surface stays atomic.
