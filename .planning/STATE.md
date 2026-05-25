@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed 03-01-PLAN.md (Reel foundations: ReelStage + ReelSection + state runes + /work route; 92 tests / 0 svelte-check warnings / pnpm build clean)"
-last_updated: "2026-05-25T22:39:57.344Z"
+stopped_at: "Completed 03-02-PLAN.md (Iframe lifecycle: url builder + Vimeo/YouTube adapters + PreviewLoop 4-state machine; 154 tests / 0 svelte-check warnings / pnpm build clean)"
+last_updated: "2026-05-25T23:11:52.633Z"
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 03 (reel-system-core-load-bearing-risk) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Plan: 2 of 3
 | Phase 02-data-layer P02 | 2 | 1 tasks | 1 files |
 | Phase 02-data-layer P03 | 12 min | 4 tasks | 4 files |
 | Phase 03-reel-system-core-load-bearing-risk P01 | 41 min | 7 tasks tasks | 20 files files |
+| Phase 03-reel-system-core-load-bearing-risk P02 | 21min | 5 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,11 @@ Recent decisions affecting current work:
 - [Phase 03-reel-system-core-load-bearing-risk]: REEL-05 deep-link uses deprecated base+literal until Phase 5 ships /watch/[id] route — eslint per-file override silences svelte/no-navigation-without-resolve
 - [Phase 03-reel-system-core-load-bearing-risk]: prerender.handleHttpError allow-list for /posters/* + /watch/* during Plan 03-01 → Plan 03-03 / Phase 5 rollout window
 - [Phase 03-reel-system-core-load-bearing-risk]: lint-staged moved to .lintstagedrc.cjs invoking node <abs-path-to-cli.js> directly — fixes Windows-spawn ENOENT under husky environment
+- [Phase 03-reel-system-core-load-bearing-risk]: Lifecycle $state variable named 'lifecycle' (NOT 'state') — svelte-check/tsc tripped on let state = $state<T>(...) with 'Block-scoped variable $state used before its declaration'; identifier collides with the rune in lexical scope
+- [Phase 03-reel-system-core-load-bearing-risk]: PreviewLoop onautoplayfailed callback is the unified REEL-04 fallback signal — fires on 800ms HANDSHAKE_TIMEOUT_MS elapsing OR onError handler invocation; Plan 03-03 ReelSection wires the consumer ( autoplayFailed flag + new shouldMount gate clause)
+- [Phase 03-reel-system-core-load-bearing-risk]: PreviewLoop wasHidden guard ((false)) prevents spurious postMessage 'play' on initial render when documentHidden defaults to false; only the hidden→visible TRANSITION sends resume — every other dispatch path is gated on wasHidden===true
+- [Phase 03-reel-system-core-load-bearing-risk]: HANDSHAKE_TIMEOUT_MS=800 exported as named const from $lib/iframe/url.ts; Plan 03-03 BrowserStack matrix is the real-device gate — if iOS Safari 16/17.0/17.1 shows premature fallback on cellular, bump to 1200ms (NOT abandon the mechanism)
+- [Phase 03-reel-system-core-load-bearing-risk]: YouTube adapter dispose does NOT send a defensive postMessage (no clean unsubscribe protocol); relies on Layer 1 (Svelte iframe DOM teardown); Plan 03-03 Playwright leak-defense pillar verifies sufficiency on Chromium+WebKit+Firefox
 
 ### Pending Todos
 
@@ -116,6 +122,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T22:39:57.339Z
-Stopped at: Completed 03-01-PLAN.md (Reel foundations: ReelStage + ReelSection + state runes + /work route; 92 tests / 0 svelte-check warnings / pnpm build clean)
+Last session: 2026-05-25T23:11:52.630Z
+Stopped at: Completed 03-02-PLAN.md (Iframe lifecycle: url builder + Vimeo/YouTube adapters + PreviewLoop 4-state machine; 154 tests / 0 svelte-check warnings / pnpm build clean)
 Resume file: None

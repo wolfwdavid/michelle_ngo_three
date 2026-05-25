@@ -23,12 +23,12 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Immersive Reel (Killer Feature)
 
 - [x] **REEL-01**: `/work` renders the 56 videos as fullscreen scroll-snapped sections (one video per `100svh` viewport, `scroll-snap-type: y proximity`)
-- [ ] **REEL-02**: Each visible section autoplays a silent muted preview loop via the native Vimeo/YouTube embed (`?autoplay=1&mute=1&loop=1&playsinline=1`)
+- [x] **REEL-02**: Each visible section autoplays a silent muted preview loop via the native Vimeo/YouTube embed (`?autoplay=1&mute=1&loop=1&playsinline=1`)
 - [x] **REEL-03**: Viewport-windowed mounting — only the current section + 1 above + 1 below are mounted as iframes; off-window sections fall back to `<PosterImage />` (perf gate; one IntersectionObserver per `ReelStage`)
 - [x] **REEL-04**: Poster fallback codepath triggers on ANY of: `prefers-reduced-motion: reduce`, cellular connection (`effectiveType` ∈ {`2g`, `3g`, `slow-2g`} where API is available — Chromium only), iOS Low Power Mode (`play()` rejection caught), embed-disabled-by-owner (oEmbed health check), EU default-to-poster-until-interaction posture (inherit `_four`'s no-CMP "interaction-as-consent" pattern)
 - [x] **REEL-05**: Each section renders title (bottom-left), category tag (top-right), and `▷ PLAY WITH SOUND` action deep-linking to `/watch/[id]`
-- [ ] **REEL-06**: Iframe lifecycle implements 4-state machine (unmounted → mounted-loading → mounted-playing → unmounting) with 5-layer leak defense (Svelte teardown + adapter `dispose()` + observer `disconnect()` + named listener refs + `MessageEvent.origin` filtering); validated by memory-leak test in Phase 3
-- [ ] **REEL-07**: Page Visibility API pauses preview loops when the tab is backgrounded; resumes when foregrounded (battery/thermal mitigation)
+- [x] **REEL-06**: Iframe lifecycle implements 4-state machine (unmounted → mounted-loading → mounted-playing → unmounting) with 5-layer leak defense (Svelte teardown + adapter `dispose()` + observer `disconnect()` + named listener refs + `MessageEvent.origin` filtering); validated by memory-leak test in Phase 3
+- [x] **REEL-07**: Page Visibility API pauses preview loops when the tab is backgrounded; resumes when foregrounded (battery/thermal mitigation)
 
 ### Wayfinding
 
@@ -141,12 +141,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DATA-03 | Phase 2 | Complete |
 | DATA-04 | Phase 2 | Complete |
 | REEL-01 | Phase 3 | Complete |
-| REEL-02 | Phase 3 | Pending |
+| REEL-02 | Phase 3 | Complete |
 | REEL-03 | Phase 3 | Complete |
 | REEL-04 | Phase 3 | Complete |
 | REEL-05 | Phase 3 | Complete |
-| REEL-06 | Phase 3 | Pending |
-| REEL-07 | Phase 3 | Pending |
+| REEL-06 | Phase 3 | Complete |
+| REEL-07 | Phase 3 | Complete |
 | FILT-01 | Phase 4 | Pending |
 | FILT-02 | Phase 4 | Pending |
 | FILT-03 | Phase 4 | Pending |
