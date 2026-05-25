@@ -69,7 +69,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 03-01: TBD
+- [x] 03-01: TBD
 
 ### Phase 4: Wayfinding
 **Goal**: A hiring producer can navigate the 56-section reel as fast as they navigate any other portfolio — pill-bar category filters above the reel, cinematic chrome-fade `<TopNav />` that surfaces on hover/focus/tap, keyboard navigation that respects scroll-snap, and screen-reader landmarks that don't explode into a 56-page tree.
