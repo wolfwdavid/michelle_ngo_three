@@ -10,9 +10,12 @@
  * - Defensive deterministic-fallback render does not crash
  * - Inline category tag (no extracted CategoryTag.svelte component)
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/svelte';
-import '@testing-library/jest-dom/vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, cleanup } from '@testing-library/svelte';
+// NOTE: do NOT `import '@testing-library/jest-dom/vitest'` here. The runtime
+// matcher wiring is done globally in vitest-setup-ui.ts; src/vitest-globals.d.ts
+// provides the type augmentation. Re-importing here causes svelte-check to
+// double-augment AsymmetricMatchersContaining and trip a type-identity error.
 import PosterImage from './PosterImage.svelte';
 import type { Video } from '$lib/data/schema';
 
@@ -50,23 +53,43 @@ describe('PosterImage (REEL-04 unified fallback codepath)', () => {
     vi.clearAllMocks();
   });
 
+  // The vitest UI project sets globals=false (vite.config.ts), so testing-library
+  // does NOT auto-cleanup between tests. Each test re-renders into a fresh
+  // container, but the document body accumulates DOM across tests — making
+  // global `screen.*` queries see multi-render matches. Use container-scoped
+  // queries and explicit cleanup() to keep tests independent.
+  afterEach(() => {
+    cleanup();
+  });
+
   it('renders the wrapping anchor with deep-link to /watch/[id]', () => {
-    render(PosterImage, { props: { video: makeVideo(), index: 1, total: 56 } });
-    // aria-label uses STRAIGHT ASCII double-quotes around the title (matches component output).
-    const anchor = screen.getByRole('link', { name: /Play "Sample Video Title" with sound/i });
-    expect(anchor).toHaveAttribute('href', '/watch/264677021');
+    const { container } = render(PosterImage, {
+      props: { video: makeVideo(), index: 1, total: 56 },
+    });
+    const anchor = container.querySelector<HTMLAnchorElement>('a.play-with-sound');
+    expect(anchor).not.toBeNull();
+    // aria-label uses STRAIGHT ASCII double-quotes around the title.
+    expect(anchor?.getAttribute('aria-label')).toBe('Play "Sample Video Title" with sound');
+    expect(anchor?.getAttribute('href')).toBe('/watch/264677021');
   });
 
   it('renders the title with the .title class (--font-display token via component style)', () => {
-    render(PosterImage, { props: { video: makeVideo(), index: 1, total: 56 } });
-    const title = screen.getByText('Sample Video Title');
-    expect(title).toBeInTheDocument();
-    expect(title.className).toContain('title');
+    const { container } = render(PosterImage, {
+      props: { video: makeVideo(), index: 1, total: 56 },
+    });
+    const title = container.querySelector('.title');
+    expect(title).not.toBeNull();
+    expect(title?.textContent?.trim()).toBe('Sample Video Title');
+    expect(title?.className).toContain('title');
   });
 
   it('renders the PLAY WITH SOUND CTA caption', () => {
-    render(PosterImage, { props: { video: makeVideo(), index: 1, total: 56 } });
-    expect(screen.getByText(/PLAY WITH SOUND/i)).toBeInTheDocument();
+    const { container } = render(PosterImage, {
+      props: { video: makeVideo(), index: 1, total: 56 },
+    });
+    const cta = container.querySelector('.play-cta');
+    expect(cta).not.toBeNull();
+    expect(cta?.textContent ?? '').toMatch(/PLAY WITH SOUND/i);
   });
 
   it('renders the aspect-ratio container (POL-03 forward-ship)', () => {
@@ -74,7 +97,7 @@ describe('PosterImage (REEL-04 unified fallback codepath)', () => {
       props: { video: makeVideo(), index: 1, total: 56 },
     });
     const poster = container.querySelector('.poster-container');
-    expect(poster).toBeInTheDocument();
+    expect(poster).not.toBeNull();
     // jsdom doesn't compute aspect-ratio, but the class is the contract marker
     expect(poster?.className).toContain('poster-container');
   });
@@ -88,12 +111,13 @@ describe('PosterImage (REEL-04 unified fallback codepath)', () => {
       props: { video: unknownVideo, index: 2, total: 56 },
     });
     const img = container.querySelector('.poster-img');
-    expect(img).toBeInTheDocument();
+    expect(img).not.toBeNull();
     expect(img?.getAttribute('alt')).toBe('Sample Video Title');
+    expect(img?.getAttribute('src')).toContain('/posters/vimeo-unknown-id-9999.jpg');
     // The PLAY-WITH-SOUND link still renders so the section is never dead
-    expect(
-      screen.getByRole('link', { name: /Play "Sample Video Title" with sound/i })
-    ).toBeInTheDocument();
+    const anchor = container.querySelector<HTMLAnchorElement>('a.play-with-sound');
+    expect(anchor).not.toBeNull();
+    expect(anchor?.getAttribute('href')).toBe('/watch/unknown-id-9999');
   });
 
   it('renders inline category tag (no external CategoryTag.svelte import)', () => {
@@ -101,7 +125,9 @@ describe('PosterImage (REEL-04 unified fallback codepath)', () => {
       props: { video: makeVideo(), index: 1, total: 56 },
     });
     const tag = container.querySelector('.category-tag');
-    expect(tag).toBeInTheDocument();
+    expect(tag).not.toBeNull();
     expect(tag?.textContent?.trim()).toBe('Reel');
+    // CSS custom property points at the matching --color-cat-* token (Reel -> reel).
+    expect(tag?.getAttribute('style') ?? '').toContain('var(--color-cat-reel)');
   });
 });

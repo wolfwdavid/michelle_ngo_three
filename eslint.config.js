@@ -28,14 +28,17 @@ export default tseslint.config(
   {
     ignores: ['build/', '.svelte-kit/', 'dist/', 'node_modules/'],
   },
-  // ReelSection ships the `▷ PLAY WITH SOUND` deep-link to /watch/[id]
-  // (REEL-05) before Phase 5 (WATCH-01) creates that route. Until the route
-  // exists, `resolve('/watch/[id]', { id })` rejects the typed route
+  // ReelSection + PosterImage both ship the `▷ PLAY WITH SOUND` deep-link to
+  // /watch/[id] (REEL-05) before Phase 5 (WATCH-01) creates that route. Until
+  // the route exists, `resolve('/watch/[id]', { id })` rejects the typed route
   // argument. The deprecated `${base}/watch/${video.id}` form is the
   // documented stop-gap; this override silences the linter narrowly until
-  // Phase 5 lands /watch/[id] and we migrate the call.
+  // Phase 5 lands /watch/[id] and we migrate the call. Plan 03-03 wires the
+  // unified PosterImage codepath: PosterImage now ALWAYS renders the anchor
+  // (the same deep-link target) so it joins ReelSection under the same
+  // documented override.
   {
-    files: ['src/lib/components/ReelSection.svelte'],
+    files: ['src/lib/components/ReelSection.svelte', 'src/lib/components/PosterImage.svelte'],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
     },
