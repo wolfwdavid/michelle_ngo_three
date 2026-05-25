@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/*
+ * Plan 01-02 will populate this file with:
+ *   - @theme { --font-display, --font-mono, --font-sans, --ring-focus, --ring-focus-offset, neutrals, 8 OKLCH category accents } (D-02, D-09..D-13)
+ *   - Global :focus-visible rule (D-05..D-08)
+ *   - @font-face declarations for self-hosted woff2 fonts (D-13)
+ * Phase 1 plan 01 ships ONLY the import so `pnpm build` resolves Tailwind utilities.
+ */
