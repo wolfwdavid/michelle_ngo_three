@@ -1,9 +1,131 @@
 @import "tailwindcss";
 
 /*
- * Plan 01-02 will populate this file with:
- *   - @theme { --font-display, --font-mono, --font-sans, --ring-focus, --ring-focus-offset, neutrals, 8 OKLCH category accents } (D-02, D-09..D-13)
- *   - Global :focus-visible rule (D-05..D-08)
- *   - @font-face declarations for self-hosted woff2 fonts (D-13)
- * Phase 1 plan 01 ships ONLY the import so `pnpm build` resolves Tailwind utilities.
+ * `_three` design system — Phase 1 day-one tokens.
+ *
+ * Locked decisions:
+ *   D-02  bg canvas: --color-neutral-950 = oklch(0.16 0 0)
+ *   D-05  Keyboard focus: double-ring (outer cream + inner dark) — defensive
+ *         against arbitrary dark video bgs AND bright posterized frames
+ *   D-06  Primary ring color: cream/warm-white ~oklch(0.98 0.02 80)
+ *   D-07  Ring weight: 2px + 2px outline-offset
+ *   D-08  Single global :focus-visible rule — components inherit
+ *   D-09  Display serif: Source Serif 4 → --font-display (400/600/700)
+ *   D-10  Mono: JetBrains Mono → --font-mono (400)
+ *   D-11  Neutral sans: Inter → --font-sans (400/500/600)
+ *   D-12  8 OKLCH category accents (verbatim from _four/src/app.css)
+ *   D-13  Self-hosted woff2 in /fonts/, font-display: swap, zero cross-origin
+ *
+ * Future phases (DO NOT add here):
+ *   Phase 3: <CategoryTag> consumes --color-cat-* accents
+ *   Phase 5: <HeroAmbient> uses --font-display
+ *   Phase 6: /about + /press use --font-display + @tailwindcss/typography
  */
+
+/* D-13: self-hosted woff2, font-display: swap. Paths use Vite's static asset
+ * resolution — /fonts/* at runtime resolves to /michelle_ngo_three/fonts/*
+ * under BASE_PATH. */
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/source-serif-4-latin-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-latin-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-latin-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-latin-600.woff2') format('woff2');
+}
+
+@theme {
+  /* Typography (D-09, D-10, D-11) — Tailwind v4 reads --font-* vars to
+   * synthesize utility classes: font-display, font-mono, font-sans. */
+  --font-display: 'Source Serif 4', ui-serif, Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Focus tokens (D-06, D-07) — consumed by the global :focus-visible rule
+   * outside this @theme block. */
+  --ring-focus: oklch(0.98 0.02 80);   /* outer cream/warm-white */
+  --ring-focus-inner: oklch(0.16 0 0); /* inner dark, matches neutral-950 */
+  --ring-focus-offset: 2px;
+
+  /* Neutrals ramp (Claude's-Discretion — sensible dark-mode OKLCH) */
+  --color-neutral-50:  oklch(0.98 0 0);
+  --color-neutral-100: oklch(0.94 0 0);
+  --color-neutral-300: oklch(0.82 0 0);
+  --color-neutral-500: oklch(0.62 0 0);
+  --color-neutral-700: oklch(0.40 0 0);
+  --color-neutral-800: oklch(0.30 0 0);
+  --color-neutral-900: oklch(0.22 0 0);
+  --color-neutral-950: oklch(0.16 0 0); /* D-02 canonical dark canvas */
+
+  /* D-12 — 8 OKLCH category accents (verbatim from _four/src/app.css) */
+  --color-cat-pbs:      oklch(0.72 0.21 25);
+  --color-cat-promos:   oklch(0.78 0.18 60);
+  --color-cat-branded:  oklch(0.72 0.18 180);
+  --color-cat-docshort: oklch(0.78 0.18 130);
+  --color-cat-reel:     oklch(0.78 0.18 280);
+  --color-cat-personal: oklch(0.78 0.18 330);
+  --color-cat-edunon:   oklch(0.78 0.18 90);
+  --color-cat-other:    oklch(0.78 0.05 250);
+}
+
+/* D-05, D-08: single global :focus-visible rule. Double ring via
+ * outline (outer cream) + box-shadow (inner dark). Components opt in
+ * automatically — a forgetful component cannot become invisible to
+ * keyboard users (CONTEXT specifics §double-ring rationale).
+ *
+ * Why outline+box-shadow (not Tailwind's ring utilities): the ring
+ * needs to live above ANY child content's z-stack on EVERY focusable
+ * element without per-component opt-in. CSS outline does this natively.
+ */
+:focus-visible {
+  outline: 2px solid var(--ring-focus);
+  outline-offset: var(--ring-focus-offset);
+  box-shadow: 0 0 0 calc(2px + var(--ring-focus-offset)) var(--ring-focus-inner);
+}
+
+/* Hide the keyboard focus ring on mouse-only interaction. */
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
