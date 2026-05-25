@@ -230,15 +230,49 @@ function makeHostQueue(limit: number) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Fallback: scrape the og:image meta tag from the Vimeo video page HTML.
+ *
+ * Used when oEmbed returns a domain-restricted response that omits
+ * `thumbnail_url` (some videos have stricter embed allow-lists). The og:image
+ * URL points at i.vimeocdn.com — Vimeo's OFFICIAL CDN (NOT vumbnail.com,
+ * which is the unofficial third-party shortener that Pitfall 16 / anti-pattern
+ * grep gates ban). Both are reachable unauthenticated; we use the official one.
+ *
+ * Returns the i.vimeocdn.com URL or null if scrape failed.
+ */
+async function scrapeVimeoOgImage(videoId: string): Promise<string | null> {
+  const res = await fetchOnce(`https://vimeo.com/${videoId}`, {
+    userAgent: POSTER_USER_AGENT,
+    accept: 'text/html,application/xhtml+xml',
+    timeoutMs: POSTER_FETCH_TIMEOUT_MS,
+  });
+  if (!res || !res.ok) return null;
+  const html = await res.text();
+  // og:image meta tag — Vimeo HTML uses the property attribute.
+  const m = html.match(/<meta\s+property="og:image"\s+content="([^"]+)"/);
+  if (m && m[1]) {
+    // Decode HTML entities just in case (the URL has ?f=webp&region=us; raw
+    // `&amp;` won't fetch correctly).
+    return m[1].replace(/&amp;/g, '&');
+  }
+  return null;
+}
+
+/**
  * Fetch a Vimeo thumbnail. Reuses the oEmbed response cached in `oembedCache`
  * when available; otherwise hits oEmbed to get the thumbnail_url. Then GETs
  * the thumbnail bytes and writes them to static/posters/vimeo-{id}.jpg.
+ *
+ * Fallback path: if oEmbed returns a "domain-restricted" response that omits
+ * thumbnail_url, scrape og:image from the public video page HTML. Both routes
+ * ultimately point at i.vimeocdn.com (Vimeo's official CDN).
  */
 async function fetchVimeoPoster(
   v: VideoRecord,
   oembedCache: Map<string, string>
-): Promise<{ path: string; bytes: number }> {
+): Promise<{ path: string; bytes: number; via: 'oembed' | 'og-scrape' }> {
   let thumbnailUrl = oembedCache.get(v.id);
+  let via: 'oembed' | 'og-scrape' = 'oembed';
   if (!thumbnailUrl) {
     // Posters-only run path: oEmbed cache empty; fetch oEmbed fresh.
     const res = await fetchOnce(oembedUrl(v), { userAgent: POSTER_USER_AGENT });
@@ -250,16 +284,25 @@ async function fetchVimeoPoster(
       );
     }
     const j = (await res.json()) as { thumbnail_url?: string };
-    if (!j.thumbnail_url) {
-      throw new Error(`Vimeo oEmbed response for vimeo:${v.id} missing thumbnail_url`);
+    if (j.thumbnail_url) {
+      thumbnailUrl = j.thumbnail_url;
+      oembedCache.set(v.id, thumbnailUrl);
+    } else {
+      // Domain-restricted response — fall back to og:image scrape.
+      const scraped = await scrapeVimeoOgImage(v.id);
+      if (!scraped) {
+        throw new Error(
+          `Vimeo poster fetch failed for vimeo:${v.id}: oEmbed missing thumbnail_url AND og:image scrape returned no match`
+        );
+      }
+      thumbnailUrl = scraped;
+      via = 'og-scrape';
     }
-    thumbnailUrl = j.thumbnail_url;
-    oembedCache.set(v.id, thumbnailUrl);
   }
 
   const imgRes = await fetchOnce(thumbnailUrl, {
     userAgent: POSTER_USER_AGENT,
-    accept: 'image/jpeg,image/*',
+    accept: 'image/jpeg,image/webp,image/*',
     timeoutMs: POSTER_FETCH_TIMEOUT_MS,
   });
   if (!imgRes || !imgRes.ok) {
@@ -272,7 +315,7 @@ async function fetchVimeoPoster(
   const buf = Buffer.from(await imgRes.arrayBuffer());
   const outPath = resolve(POSTERS_DIR, `vimeo-${v.id}.jpg`);
   await writeFile(outPath, buf);
-  return { path: `/posters/vimeo-${v.id}.jpg`, bytes: buf.length };
+  return { path: `/posters/vimeo-${v.id}.jpg`, bytes: buf.length, via };
 }
 
 /**
@@ -374,11 +417,18 @@ async function runPosterFetch(
       const lane = v.source === 'vimeo' ? vimeoLane : youtubeLane;
       return lane(async () => {
         try {
-          const { path, bytes } = await (v.source === 'vimeo'
-            ? fetchVimeoPoster(v, vimeoOembedCache)
-            : fetchYoutubePoster(v));
-          sidecar[`${v.source}-${v.id}`] = path;
-          console.log(`  ✓ ${v.source}-${v.id} → ${path} (${(bytes / 1024).toFixed(1)} KB)`);
+          if (v.source === 'vimeo') {
+            const { path, bytes, via } = await fetchVimeoPoster(v, vimeoOembedCache);
+            sidecar[`${v.source}-${v.id}`] = path;
+            const tag = via === 'og-scrape' ? ' (og-scrape fallback)' : '';
+            console.log(
+              `  ✓ ${v.source}-${v.id} → ${path} (${(bytes / 1024).toFixed(1)} KB)${tag}`
+            );
+          } else {
+            const { path, bytes } = await fetchYoutubePoster(v);
+            sidecar[`${v.source}-${v.id}`] = path;
+            console.log(`  ✓ ${v.source}-${v.id} → ${path} (${(bytes / 1024).toFixed(1)} KB)`);
+          }
         } catch (e) {
           const msg = (e as Error).message;
           console.error(`  ✗ ${v.source}-${v.id}: ${msg}`);

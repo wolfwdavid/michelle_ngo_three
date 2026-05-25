@@ -1,0 +1,10 @@
+# Plan 03-03 D-04: this directory holds 56 committed poster JPEGs (one per
+# video in src/lib/data/videos.json). Posters are CHECKED IN to git, NOT
+# gitignored — refreshing requires running `pnpm check:embeds --posters-only`
+# locally and committing the diff. The build-time validatePostersPlugin in
+# vite.config.ts (Plan 03-03 Task 5) verifies every video has a corresponding
+# JPEG here.
+#
+# This .gitkeep ensures the directory survives in git even on hypothetical
+# fresh clones where all *.jpg files are absent (e.g., during a future
+# re-fetch via the script).
