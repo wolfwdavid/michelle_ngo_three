@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-01-PLAN.md (scaffold)
-last_updated: "2026-05-25T14:45:20.329Z"
+stopped_at: Completed 01-02-PLAN.md (tokens + storage + splash)
+last_updated: "2026-05-25T14:59:25.349Z"
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: 2 of 3
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 8 min | 3 tasks | 22 files |
+| Phase 01-foundation P02 | 7 | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,10 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Pinned @axe-core/playwright to 4.11.3 (4.11.4 does not exist on npm)
 - [Phase 01-foundation]: Copied sibling favicon.png as Phase 1 placeholder to unblock adapter-static strict prerender (POL-01 replaces in Phase 7)
 - [Phase 01-foundation]: pnpm-workspace.yaml allowBuilds opts in sharp + esbuild build scripts (sharp required by @sveltejs/enhanced-img)
+- [Phase 01-foundation]: Cream focus ring landed at oklch(0.98 0.02 80); inner ring at oklch(0.16 0 0) matching neutral-950 for visual rhyme
+- [Phase 01-foundation]: PUBLIC_SITE_URL strategy: committed .env.example (staging value active, production cutover line commented); GH Actions workflow in Plan 01-03 will set the real value in env: block
+- [Phase 01-foundation]: Storage SSR-safety pattern uses exported __isBrowser predicate + vi.stubGlobal — explicitly rejected the unstable ?ssr-test import-query trick
+- [Phase 01-foundation]: Neutrals ramp landed as 8 zero-chroma OKLCH stops 50/100/300/500/700/800/900/950 (0.98/0.94/0.82/0.62/0.40/0.30/0.22/0.16)
 
 ### Pending Todos
 
@@ -89,6 +94,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T14:45:20.326Z
-Stopped at: Completed 01-01-PLAN.md (scaffold)
+Last session: 2026-05-25T14:59:25.346Z
+Stopped at: Completed 01-02-PLAN.md (tokens + storage + splash)
 Resume file: None
