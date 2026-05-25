@@ -12,14 +12,13 @@ A hiring producer can scroll through Michelle's filmography like a cinema reel �
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] **FOUND-01** — Validated in Phase 1: Foundation (clean `pnpm build` with TS strict + Svelte 5 runes + Tailwind v4)
+- [x] **FOUND-02** — Validated in Phase 1: Foundation (GH Actions auto-deploy to `wolfwdavid.github.io/michelle_ngo_three/` confirmed live by user)
 
 ### Active
 
 #### Foundation
 
-- [ ] **FOUND-01**: SvelteKit 2 + Svelte 5 + TS strict + Tailwind v4 scaffold builds clean on `pnpm build`
-- [ ] **FOUND-02**: Pushing to `main` auto-deploys to a staging GitHub Pages URL (`wolfwdavid.github.io/michelle_ngo_three/`)
 - [ ] **FOUND-03**: Production deploy reachable on `michellengo.net` apex with HTTPS (cutover-gated; only triggers if `_three` wins A/B)
 
 #### Data Layer
@@ -153,5 +152,10 @@ This document evolves at phase transitions and milestone boundaries.
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
+## Current State
+
+- **Phase 1: Foundation — Complete (2026-05-25).** Buildable, deploying SvelteKit scaffold live at `wolfwdavid.github.io/michelle_ngo_three/`. All day-one conventions locked: `mnp_three_` storage namespace, double-ring focus token, dark OKLCH palette, 7 self-hosted woff2 fonts, `PUBLIC_SITE_URL` env. CI pipeline runs 4 smoke gates + D-17 grep gate before every deploy.
+- **Next:** Phase 2 (Data Layer) — pull `_four`'s videos.json verbatim with Zod + Vite build-fail plugin + cross-repo drift CI.
+
 ---
-*Last updated: 2026-05-19 after initialization*
+*Last updated: 2026-05-25 after Phase 1 completion*
