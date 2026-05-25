@@ -64,6 +64,21 @@ export function __resetNetworkStateForTests(): void {
   _downlink = null;
 }
 
+/**
+ * Test-only: force isCellularLike via the underlying effectiveType. Plan 03-03
+ * Task 2 ReelSection tests use this to assert the REEL-04 trigger-2 swap to
+ * PosterImage without spinning up a navigator.connection mock. Always reset
+ * via `__resetNetworkStateForTests` in afterEach.
+ */
+export function __setEffectiveTypeForTests(et: EffectiveType): void {
+  _effectiveType = et;
+}
+
+/** Test-only: force saveData flag (REEL-04 trigger 2 via the saveData branch). */
+export function __setSaveDataForTests(v: boolean): void {
+  _saveData = v;
+}
+
 export function initNetworkState(): void {
   if (!__isBrowser() || initialized) return;
   initialized = true;

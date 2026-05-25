@@ -34,6 +34,16 @@ export function __resetMotionStateForTests(): void {
   _prefersReducedMotion = false;
 }
 
+/**
+ * Test-only: set prefersReducedMotion directly (bypass matchMedia). Used by
+ * Plan 03-03 Task 2 ReelSection tests to assert the REEL-04 trigger-1 swap to
+ * PosterImage without spinning up a matchMedia mock. Always reset via
+ * `__resetMotionStateForTests` in afterEach.
+ */
+export function __setPrefersReducedMotionForTests(v: boolean): void {
+  _prefersReducedMotion = v;
+}
+
 export function initMotionState(): void {
   if (!__isBrowser() || initialized) return;
   initialized = true;
