@@ -10,7 +10,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Foundation
 
 - [x] **FOUND-01**: `pnpm build` produces a clean static build with TypeScript strict mode (+ `noUncheckedIndexedAccess` + `noImplicitOverride`), Svelte 5 runes, and Tailwind v4 utilities rendering correctly
-- [ ] **FOUND-02**: Pushing to `main` triggers a GitHub Actions deploy and the site is reachable at `wolfwdavid.github.io/michelle_ngo_three/` over HTTPS within minutes of build completion (`BASE_PATH=/michelle_ngo_three/`)
+- [x] **FOUND-02**: Pushing to `main` triggers a GitHub Actions deploy and the site is reachable at `wolfwdavid.github.io/michelle_ngo_three/` over HTTPS within minutes of build completion (`BASE_PATH=/michelle_ngo_three/`)
 - [ ] **FOUND-03**: Production cutover infrastructure is ready (`static/CNAME` + `deploy-production.yml` + 9-step Launch Runbook); production deploy reachable on `michellengo.net` apex with HTTPS only fires if `_three` wins the A/B vs `_four`
 
 ### Data Layer
@@ -134,7 +134,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | FOUND-01 | Phase 1 | Complete |
-| FOUND-02 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Complete |
 | FOUND-03 | Phase 7 | Pending |
 | DATA-01 | Phase 2 | Pending |
 | DATA-02 | Phase 2 | Pending |

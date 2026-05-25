@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 01-02-PLAN.md (tokens + storage + splash)
-last_updated: "2026-05-25T14:59:25.349Z"
+stopped_at: Completed 01-03-PLAN.md (Phase 01 Foundation complete; ready for Phase 02 Data Layer planning)
+last_updated: "2026-05-25T15:37:06.388Z"
 progress:
   total_phases: 7
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -54,6 +54,7 @@ Plan: 3 of 3
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 8 min | 3 tasks | 22 files |
 | Phase 01-foundation P02 | 7 | 3 tasks | 11 files |
+| Phase 01-foundation P03 | 18 min | 4 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,11 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: PUBLIC_SITE_URL strategy: committed .env.example (staging value active, production cutover line commented); GH Actions workflow in Plan 01-03 will set the real value in env: block
 - [Phase 01-foundation]: Storage SSR-safety pattern uses exported __isBrowser predicate + vi.stubGlobal — explicitly rejected the unstable ?ssr-test import-query trick
 - [Phase 01-foundation]: Neutrals ramp landed as 8 zero-chroma OKLCH stops 50/100/300/500/700/800/900/950 (0.98/0.94/0.82/0.62/0.40/0.30/0.22/0.16)
+- [Phase 01-foundation]: D-17 CI grep gate live: scans src/ for raw localStorage outside $lib/storage.ts and fails with ::error:: annotations; mechanical drift guard template for future Trap-N gates
+- [Phase 01-foundation]: BASE_PATH isolation: e2e step omits BASE_PATH (preview at root); artifact-build step sets BASE_PATH=/${{ github.event.repository.name }} for GH Pages subpath. Two builds, two postures, cross-referenced in deploy.yml + playwright.config.ts
+- [Phase 01-foundation]: Playwright preview port shifted 4173 -> 4183 to avoid sibling _four collision during local A/B work; CI uses fresh containers and is unaffected
+- [Phase 01-foundation]: Single CI workflow (deploy.yml) covers PR-time + deploy gates; rejected separate PR workflow as duplication (4 smoke gates + branch protection on main is sufficient)
+- [Phase 01-foundation]: Svelte 5.55+ rune-scoping rules require .svelte.ts file extension for any TS using runes outside .svelte components; companion test files end .svelte.test.ts and wrap rune-using class instantiation in $effect.root(() => { ... })
 
 ### Pending Todos
 
@@ -94,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T14:59:25.346Z
-Stopped at: Completed 01-02-PLAN.md (tokens + storage + splash)
+Last session: 2026-05-25T15:37:06.383Z
+Stopped at: Completed 01-03-PLAN.md (Phase 01 Foundation complete; ready for Phase 02 Data Layer planning)
 Resume file: None

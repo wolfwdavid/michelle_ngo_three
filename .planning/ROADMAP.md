@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — Mirror _four scaffold (package.json + configs + 5 cinematic-layer dep additions + clean pnpm build)
 - [x] 01-02-PLAN.md — _three-specific conventions day-one (@theme tokens + self-hosted fonts + global :focus-visible + $lib/storage.ts + .env.example + D-01 splash)
-- [ ] 01-03-PLAN.md — GH Actions deploy + D-17 grep gate + four smoke-test gates (unit + e2e + axe + runed IO hook) + human-verify checkpoint
+- [x] 01-03-PLAN.md — GH Actions deploy + D-17 grep gate + four smoke-test gates (unit + e2e + axe + runed IO hook) + human-verify checkpoint
 
 ### Phase 2: Data Layer
 **Goal**: `src/lib/data/videos.json` is byte-identical to `_four`'s and stays that way under CI; the `$lib/data` loader surface, Zod schema, and Vite build-fail plugin are drop-in compatible with `_four`; an oEmbed health-check catches videos whose embeds have been disabled before they ship as runtime black boxes.
