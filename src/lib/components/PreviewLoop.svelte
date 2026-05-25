@@ -43,7 +43,10 @@
   let { video, onautoplayfailed }: { video: Video; onautoplayfailed?: () => void } = $props();
 
   type LifecycleState = 'unmounted' | 'mounted-loading' | 'mounted-playing' | 'unmounting';
-  let state = $state<LifecycleState>('mounted-loading');
+  // Named `lifecycle` (NOT `state`) to avoid shadowing the `$state` rune name
+  // — svelte-check / tsc trips on `let state = $state<T>(...)` because the
+  // identifier collides with the rune itself.
+  let lifecycle = $state<LifecycleState>('mounted-loading');
   let iframeEl = $state<HTMLIFrameElement | null>(null);
   let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
 
@@ -71,7 +74,7 @@
       },
       onPlay: () => {
         clearTimeout(timeoutHandle);
-        state = 'mounted-playing';
+        lifecycle = 'mounted-playing';
       },
       onPause: () => {
         // No state transition — paused-while-mounted is normal during Page Visibility hide.
@@ -80,7 +83,7 @@
         // Unified codepath: error AND timeout both → 'unmounting' → ReelSection
         // swaps to PosterImage. Plan 03-03's PosterImage shows PLAY-WITH-SOUND CTA.
         clearTimeout(timeoutHandle);
-        state = 'unmounting';
+        lifecycle = 'unmounting';
         onautoplayfailed?.();
       },
     };
@@ -92,8 +95,8 @@
     // D-07: 800ms handshake timeout — the load-bearing detection mechanism for
     // LPM / autoplay-blocked / embed-disabled / EU autoplay restrictions.
     timeoutHandle = setTimeout(() => {
-      if (state === 'mounted-loading') {
-        state = 'unmounting';
+      if (lifecycle === 'mounted-loading') {
+        lifecycle = 'unmounting';
         // Signal ReelSection to swap to PosterImage. Same unified-codepath signal
         // as onError above — REEL-04 fallback triggers 3, 4, 5 (LPM, embed-disabled,
         // EU autoplay restrictions) all funnel through here.
@@ -118,7 +121,7 @@
   // documentHidden flip OR they finish playing first iteration silently.
   $effect(() => {
     if (!iframeEl) return;
-    if (state !== 'mounted-playing') return;
+    if (lifecycle !== 'mounted-playing') return;
 
     const isHidden = visibility.documentHidden;
 
@@ -152,7 +155,7 @@
   onDestroy(() => clearTimeout(timeoutHandle));
 </script>
 
-{#if state === 'mounted-loading' || state === 'mounted-playing'}
+{#if lifecycle === 'mounted-loading' || lifecycle === 'mounted-playing'}
   <iframe
     bind:this={iframeEl}
     src={buildEmbedUrl(video, 'preview')}
@@ -162,7 +165,7 @@
     loading="lazy"
     class="absolute inset-0 h-full w-full"
     aria-hidden="true"
-    data-lifecycle-state={state}
+    data-lifecycle-state={lifecycle}
   ></iframe>
 {/if}
 <!--
