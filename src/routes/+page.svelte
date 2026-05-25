@@ -1,9 +1,24 @@
 <!--
-  Plan 01-02 will replace this with the D-01 wordmark splash
-  (Source Serif 4 "MICHELLE NGO" + "Filmmaker. Site coming soon." tagline).
-  This stub exists ONLY so `pnpm build` has a valid + prerenderable index
-  route to emit.
+  D-01 splash placeholder. Matches _four D-09/D-10 verbatim posture for
+  A/B-parity-neutral build-window UX. Phase 5 (HERO-01/02/03) replaces
+  this with the full <HeroAmbient /> always-mounted producer reel.
+
+  Locked decisions inlined here:
+    D-01  wordmark + tagline placeholder, centered, dark bg
+    D-02  bg-neutral-950 = oklch(0.16 0 0) (Tailwind v4 reads --color-neutral-950 from @theme)
+    D-03  wordmark uses --font-display (Source Serif 4)
+    D-04  tagline literal: "Filmmaker. Site coming soon."
 -->
-<main class="flex min-h-screen items-center justify-center bg-black text-white">
-  <p class="text-sm uppercase tracking-widest">michelle ngo — site coming soon</p>
+<svelte:head>
+  <title>Michelle Ngo — Filmmaker</title>
+  <meta name="description" content="Michelle Ngo — Filmmaker. Site coming soon." />
+</svelte:head>
+
+<main class="flex min-h-svh flex-col items-center justify-center bg-neutral-950 text-neutral-100">
+  <h1 class="font-display text-5xl font-semibold tracking-[0.2em] md:text-7xl">
+    MICHELLE NGO
+  </h1>
+  <p class="mt-6 font-sans text-sm tracking-wide text-neutral-300 md:text-base">
+    Filmmaker. Site coming soon.
+  </p>
 </main>
