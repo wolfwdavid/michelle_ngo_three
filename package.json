@@ -25,7 +25,7 @@
     "*.{css,json,md,yaml,yml}": ["prettier --write"]
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.11.4",
+    "@axe-core/playwright": "4.11.3",
     "@eslint/js": "9.39.4",
     "@playwright/test": "1.60.0",
     "@sveltejs/adapter-static": "3.0.10",
