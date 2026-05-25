@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -102,3 +104,77 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  drift-check:
+    # DATA-04 / Trap A mitigation. Fails the workflow if src/lib/data/videos.json
+    # has drifted from the _four commit pinned in src/lib/data/.videos-source-sha.
+    # Runs on every PR and every push to main (D-10). Lives in this single workflow
+    # file per D-11 (no separate drift-check.yml).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout _three
+        uses: actions/checkout@v4
+
+      - name: Read pinned _four SHA from sidecar
+        id: pin
+        run: |
+          set -e
+          SIDECAR=src/lib/data/.videos-source-sha
+          if [ ! -f "$SIDECAR" ]; then
+            echo "::error::Missing $SIDECAR — Plan 02-01 must create it before drift-check can run."
+            exit 1
+          fi
+          FOUR_SHA=$(grep '^four_commit_sha=' "$SIDECAR" | cut -d= -f2)
+          if [ -z "$FOUR_SHA" ] || [ ${#FOUR_SHA} -ne 40 ]; then
+            echo "::error::Invalid four_commit_sha in $SIDECAR (expected 40-char hex, got: '$FOUR_SHA')"
+            exit 1
+          fi
+          echo "four_sha=$FOUR_SHA" >> "$GITHUB_OUTPUT"
+          echo "Pinned _four SHA: $FOUR_SHA"
+
+      - name: Checkout _four at pinned SHA
+        id: checkout_four
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: wolfwdavid/michelle_ngo_four
+          ref: ${{ steps.pin.outputs.four_sha }}
+          path: __four
+          # Public repo — no token needed. fetch-depth: 1 is the default.
+
+      - name: Handle unreachable _four SHA (D-07 force-push case)
+        if: steps.checkout_four.outcome == 'failure'
+        run: |
+          echo "::error::_four@${{ steps.pin.outputs.four_sha }} no longer reachable. Re-sync from _four's current main and update src/lib/data/.videos-source-sha (refresh four_commit_sha, videos_json_sha256, synced_at)."
+          exit 1
+
+      - name: Byte-compare videos.json against pinned _four
+        run: |
+          set -e
+          FOUR_FILE=__four/src/lib/data/videos.json
+          THREE_FILE=src/lib/data/videos.json
+          if [ ! -f "$FOUR_FILE" ]; then
+            echo "::error::Expected $FOUR_FILE after checkout but it is missing. _four's repo structure may have changed."
+            exit 1
+          fi
+          if cmp -s "$FOUR_FILE" "$THREE_FILE"; then
+            echo "videos.json byte-identical to _four@${{ steps.pin.outputs.four_sha }} ✓"
+            exit 0
+          fi
+          # D-12 failure message — EXACT wording (names file, names SHA, gives literal cp command):
+          echo "::error::videos.json drift: src/lib/data/videos.json does not match _four@${{ steps.pin.outputs.four_sha }}. Re-sync: cp ../michelle_ngo_four/src/lib/data/videos.json src/lib/data/videos.json && update src/lib/data/.videos-source-sha (refresh four_commit_sha, videos_json_sha256, synced_at). Then commit and push."
+          # Surface a short diff snippet for the PR reviewer (first 20 differing lines):
+          diff -u "$FOUR_FILE" "$THREE_FILE" | head -40 || true
+          exit 1
+
+      - name: Verify sidecar sha256 matches the local file (catches accidental local edits)
+        run: |
+          set -e
+          SIDECAR=src/lib/data/.videos-source-sha
+          RECORDED=$(grep '^videos_json_sha256=' "$SIDECAR" | cut -d= -f2)
+          ACTUAL=$(sha256sum src/lib/data/videos.json | awk '{print $1}')
+          if [ "$RECORDED" != "$ACTUAL" ]; then
+            echo "::error::Sidecar sha256 mismatch: $SIDECAR records videos_json_sha256=$RECORDED but the actual file's sha256 is $ACTUAL. Update the sidecar after editing videos.json (refresh videos_json_sha256 and synced_at)."
+            exit 1
+          fi
+          echo "Sidecar sha256 consistent ✓"
