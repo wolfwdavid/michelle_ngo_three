@@ -14,18 +14,16 @@ A hiring producer can scroll through Michelle's filmography like a cinema reel �
 
 - [x] **FOUND-01** — Validated in Phase 1: Foundation (clean `pnpm build` with TS strict + Svelte 5 runes + Tailwind v4)
 - [x] **FOUND-02** — Validated in Phase 1: Foundation (GH Actions auto-deploy to `wolfwdavid.github.io/michelle_ngo_three/` confirmed live by user)
+- [x] **DATA-01** — Validated in Phase 2: Data Layer (`videos.json` byte-identical to `_four` via `cmp -s` + sha256 match `fd15e056…`; sidecar pins `_four@07667658`)
+- [x] **DATA-02** — Validated in Phase 2: Data Layer (`validateVideosPlugin()` wired in `vite.config.ts` between Tailwind and SvelteKit; smoke-test confirms `this.error()` aborts build on schema mismatch)
+- [x] **DATA-03** — Validated in Phase 2: Data Layer (11-name `$lib/data` public surface live; `pnpm check` clean; data + ui Vitest projects both green — 49 tests / 7 files)
+- [x] **DATA-04** — Validated in Phase 2: Data Layer (drift-check job appended to `deploy.yml`; runs on every PR + push to main; Trap A "silent `_four` divergence" now caught at CI boundary)
 
 ### Active
 
 #### Foundation
 
 - [ ] **FOUND-03**: Production deploy reachable on `michellengo.net` apex with HTTPS (cutover-gated; only triggers if `_three` wins A/B)
-
-#### Data Layer
-
-- [ ] **DATA-01**: `src/lib/data/videos.json` is byte-for-byte the same source-of-truth used in `_four` (copied in, not re-authored)
-- [ ] **DATA-02**: Same Zod schema + Vite build-fail plugin from `_four` validates videos.json at build time
-- [ ] **DATA-03**: Same `$lib/data` typed loader surface as `_four` (drop-in compatible)
 
 #### Immersive Reel (the killer feature)
 
@@ -155,7 +153,8 @@ This document evolves at phase transitions and milestone boundaries.
 ## Current State
 
 - **Phase 1: Foundation — Complete (2026-05-25).** Buildable, deploying SvelteKit scaffold live at `wolfwdavid.github.io/michelle_ngo_three/`. All day-one conventions locked: `mnp_three_` storage namespace, double-ring focus token, dark OKLCH palette, 7 self-hosted woff2 fonts, `PUBLIC_SITE_URL` env. CI pipeline runs 4 smoke gates + D-17 grep gate before every deploy.
-- **Next:** Phase 2 (Data Layer) — pull `_four`'s videos.json verbatim with Zod + Vite build-fail plugin + cross-repo drift CI.
+- **Phase 2: Data Layer — Complete (2026-05-25).** `videos.json` + 4 loader files + 4 test files mirrored byte-identical from `_four` (sha256 `fd15e056…`, pinned via `.videos-source-sha`). `validateVideosPlugin()` wired into Vite — schema violations abort `pnpm build`. `drift-check` CI job catches silent `_four` divergence on every PR/main. oEmbed health-check infra shipped (`scripts/check-embeds.ts` + nightly Action) — link rot will auto-file an issue before users see it. `pnpm check` 0 errors / `pnpm test` 49 tests green.
+- **Next:** Phase 3 (Reel System Core — load-bearing risk) — fullscreen scroll-snap reel with viewport-windowed iframe mounting (the killer feature; cellular fallback gated here).
 
 ---
-*Last updated: 2026-05-25 after Phase 1 completion*
+*Last updated: 2026-05-25 after Phase 2 completion*
