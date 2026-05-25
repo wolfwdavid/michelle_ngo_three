@@ -53,7 +53,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Mirror _four data layer (videos.json + 4 loader files + 4 test files verbatim) + wire validateVideosPlugin + .videos-source-sha sidecar
 - [x] 02-02-PLAN.md — Cross-repo drift CI (DATA-04 / Trap A): drift-check job in deploy.yml clones _four at pinned SHA and byte-compares videos.json
-- [ ] 02-03-PLAN.md — oEmbed health-check (Pitfall 6): scripts/check-embeds.ts + pnpm check:embeds + nightly Action with auto-Issue tracking
+- [x] 02-03-PLAN.md — oEmbed health-check (Pitfall 6): scripts/check-embeds.ts + pnpm check:embeds + nightly Action with auto-Issue tracking
 
 ### Phase 3: Reel System Core (LOAD-BEARING RISK)
 **Goal**: The killer feature works on real producer hardware — iOS Safari 16, 17.0, 17.1, 17.2+, Chrome Android, Firefox desktop, Safari macOS. Scroll-snap is fluid, iframe lifecycle is leak-free, and the unified poster-fallback codepath cleanly degrades under all five "edge-case" triggers (`prefers-reduced-motion`, cellular, iOS Low Power Mode `play()` rejection, embed-disabled-by-owner, EU default-to-poster). 14 of 20 documented pitfalls cluster here; this phase MUST NOT be subdivided so its risk surface stays atomic.

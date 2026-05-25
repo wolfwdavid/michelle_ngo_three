@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 02-02-PLAN.md (drift-check CI job + pull_request trigger)
-last_updated: "2026-05-25T19:06:33.451Z"
+stopped_at: "Completed 02-03-PLAN.md (oEmbed health-check: scripts/check-embeds.ts + pnpm check:embeds + nightly workflows/oembed-check.yml + gitignore)"
+last_updated: "2026-05-25T19:11:57.996Z"
 progress:
   total_phases: 7
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -57,6 +57,7 @@ Plan: 3 of 3
 | Phase 01-foundation P03 | 18 min | 4 tasks | 10 files |
 | Phase 02-data-layer P01 | 6 min | 3 tasks tasks | 11 files files |
 | Phase 02-data-layer P02 | 2 | 1 tasks | 1 files |
+| Phase 02-data-layer P03 | 12 min | 4 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,8 @@ Recent decisions affecting current work:
 - [Phase 02-data-layer]: Pinned _four@07667658ee2fd16a3d56b66bbe832d08fc3badd5 in .videos-source-sha (D-05 current main HEAD at sync time); sha256=fd15e0568425ef8a8472b8bae856bc43a5a85810e4fb1a8f9d0cff771d8ef91c
 - [Phase 02-data-layer]: DATA-02 smoke-test verified: corrupting [0].source='tiktok' aborts pnpm build with exit 1 + 'Invalid discriminator value. Expected youtube | vimeo' at [0].source via [plugin validate-videos]
 - [Phase 02-data-layer]: Wired drift-check CI job into deploy.yml with __four/ subdir checkout, D-12/D-07/sidecar-mismatch error annotations, and pull_request trigger expansion — DATA-04/Trap A precondition closed
+- [Phase 02-data-layer]: Phase 2 P3 oEmbed health-check: standalone scripts/check-embeds.ts (Node 22 --experimental-strip-types, zero new deps); pnpm check:embeds entrypoint; nightly cron 06:00 UTC at .github/workflows/oembed-check.yml; auto-Issue via gh issue list --label embed-check; D-14 retry+classify (401/403=embed_disabled, 404/410=removed, 5xx/network=transient); D-15 hand-rolled per-host queue limit 6; D-20 .embed-check-report.json gitignored
+- [Phase 02-data-layer]: Phase 2 P3 smoke-tests verified: happy path 56/56 embeddable exit 0 (no .embed-check-report.json written); forced 404 path via temp-edited oembedUrl exited 1 with 14 YouTube failures classified 'removed' and report file written matching {ranAt, totalChecked, failures:[{source,id,title,status,classification}], warnings} shape; tree restored clean post-test
 
 ### Pending Todos
 
@@ -107,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T19:06:33.448Z
-Stopped at: Completed 02-02-PLAN.md (drift-check CI job + pull_request trigger)
+Last session: 2026-05-25T19:11:57.992Z
+Stopped at: Completed 02-03-PLAN.md (oEmbed health-check: scripts/check-embeds.ts + pnpm check:embeds + nightly workflows/oembed-check.yml + gitignore)
 Resume file: None
