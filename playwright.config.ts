@@ -29,8 +29,13 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    // Phase 3 (REEL system load-bearing risk on iOS Safari) adds:
-    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    // Plan 03-03 D-15 unlocks the WebKit + Firefox projects so the 4-pillar
+    // suite (tests/e2e/reel.spec.ts) runs on all three engines that Phase 1
+    // playwright.config.ts pre-allocated comments for. iOS Safari real-device
+    // QA (D-13/D-14) still requires BrowserStack — Playwright's webkit is
+    // desktop WebKit, not iOS WebKit.
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     // { name: 'mobile-safari', use: { ...devices['iPhone 14'] } },
   ],
   webServer: {
