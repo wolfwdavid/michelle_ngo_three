@@ -1,7 +1,9 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render } from '@testing-library/svelte';
+import { tick } from 'svelte';
 import ReelStage from './ReelStage.svelte';
 import type { Video } from '$lib/data';
+import { __resetMenuStateForTests, openMenu, closeMenu } from '$lib/state/menu.svelte';
 
 /**
  * ReelStage — scroll-snap container with ONE IntersectionObserver per mount
@@ -100,12 +102,14 @@ describe('ReelStage (REEL-01 / REEL-03 / NAV-03)', () => {
     expect(region?.getAttribute('aria-label')).toBe('Filmography reel');
   });
 
-  test('container uses h-svh + snap-y + snap-proximity + overscroll-y-contain + touch-pan-y', () => {
+  test('container uses h-svh (or Plan 04-03 chrome-aware compound) + snap-y + snap-proximity + overscroll-y-contain + touch-pan-y', () => {
     const { container } = render(ReelStage, { props: { videos: fixture(2) } });
     const region = container.querySelector('[role="region"]');
     expect(region).not.toBeNull();
     const classes = region?.className ?? '';
-    expect(classes).toContain('h-svh');
+    // Plan 04-03 D-01: container height became h-[calc(100svh-var(--chrome-nav-height,0px)-var(--chrome-pill-height,0px))].
+    // The Phase 3 h-svh literal is the fallback (no chrome on test pages); the new compound is the production form.
+    expect(classes).toMatch(/h-svh|h-\[calc\(100svh/);
     expect(classes).toContain('snap-y');
     expect(classes).toContain('snap-proximity');
     expect(classes).toContain('overscroll-y-contain');
@@ -205,5 +209,117 @@ describe('ReelStage (REEL-01 / REEL-03 / NAV-03)', () => {
     unmount();
     const removedVis = removeSpy.mock.calls.some((c) => c[0] === 'visibilitychange');
     expect(removedVis).toBe(true);
+  });
+});
+
+describe('ReelStage — Plan 04-03 NAV-02 keyboard + D-08 menu-pause + D-01 chrome-height', () => {
+  beforeEach(() => {
+    __resetMenuStateForTests();
+  });
+
+  test('container has tabindex="0" and onkeydown handler (D-09)', () => {
+    const { container } = render(ReelStage, { props: { videos: fixture(5) } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    expect(region).not.toBeNull();
+    expect(region?.getAttribute('tabindex')).toBe('0');
+  });
+
+  test('ArrowDown dispatches scrollIntoView on the next section', () => {
+    const videos = fixture(5);
+    const { container } = render(ReelStage, { props: { videos } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    expect(region).not.toBeNull();
+
+    // Drive IO callback to set activeIdx=0
+    const inst = ioInstances[0];
+    if (!inst) throw new Error('IO not constructed');
+    const targets = inst.observed;
+    const entries: IntersectionObserverEntry[] = targets.map((t, i) => ({
+      target: t,
+      intersectionRatio: i === 0 ? 0.9 : 0,
+      isIntersecting: i === 0,
+      boundingClientRect: t.getBoundingClientRect(),
+      intersectionRect: t.getBoundingClientRect(),
+      rootBounds: null,
+      time: performance.now(),
+    }));
+    inst.callback(entries, inst as unknown as IntersectionObserver);
+
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    region?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('Escape inside reel does NOT trigger scrollIntoView (D-12 — Escape is MobileMenu domain)', () => {
+    const videos = fixture(3);
+    const { container } = render(ReelStage, { props: { videos } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    region?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  test('Home key targets first section; End key targets last', () => {
+    const videos = fixture(5);
+    const { container } = render(ReelStage, { props: { videos } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    // Find the sectionRefs by their bind:this — they're the <article> children
+    const articles = Array.from(container.querySelectorAll('article')) as HTMLElement[];
+    expect(articles.length).toBe(5);
+
+    const spies = articles.map((a) => vi.spyOn(a, 'scrollIntoView').mockImplementation(() => {}));
+    region?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true }));
+    expect(spies[0]).toHaveBeenCalled();
+
+    region?.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+    expect(spies[4]).toHaveBeenCalled();
+  });
+
+  test('Space (no Shift) is +1; Shift+Space is -1', () => {
+    const videos = fixture(5);
+    const { container } = render(ReelStage, { props: { videos } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+
+    // Set activeIdx=2 via IO callback
+    const inst = ioInstances[0];
+    if (!inst) throw new Error('IO not constructed');
+    const targets = inst.observed;
+    inst.callback(
+      targets.map((t, i) => ({
+        target: t,
+        intersectionRatio: i === 2 ? 0.9 : 0,
+        isIntersecting: i === 2,
+        boundingClientRect: t.getBoundingClientRect(),
+        intersectionRect: t.getBoundingClientRect(),
+        rootBounds: null,
+        time: performance.now(),
+      })),
+      inst as unknown as IntersectionObserver
+    );
+
+    const articles = Array.from(container.querySelectorAll('article')) as HTMLElement[];
+    const spies = articles.map((a) => vi.spyOn(a, 'scrollIntoView').mockImplementation(() => {}));
+
+    region?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    expect(spies[3]).toHaveBeenCalled();
+
+    region?.dispatchEvent(
+      new KeyboardEvent('keydown', { key: ' ', shiftKey: true, bubbles: true })
+    );
+    expect(spies[1]).toHaveBeenCalled();
+  });
+
+  test('D-08: opening mobile menu flips data-doc-hidden to true', async () => {
+    const videos = fixture(3);
+    const { container } = render(ReelStage, { props: { videos } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    // Pre-state: documentHidden=false (no menu open, page visible)
+    expect(region?.getAttribute('data-doc-hidden')).toBe('false');
+    openMenu();
+    await tick();
+    expect(region?.getAttribute('data-doc-hidden')).toBe('true');
+    closeMenu();
+    await tick();
+    expect(region?.getAttribute('data-doc-hidden')).toBe('false');
   });
 });
