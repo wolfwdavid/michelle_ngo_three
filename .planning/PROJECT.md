@@ -18,20 +18,19 @@ A hiring producer can scroll through Michelle's filmography like a cinema reel �
 - [x] **DATA-02** — Validated in Phase 2: Data Layer (`validateVideosPlugin()` wired in `vite.config.ts` between Tailwind and SvelteKit; smoke-test confirms `this.error()` aborts build on schema mismatch)
 - [x] **DATA-03** — Validated in Phase 2: Data Layer (11-name `$lib/data` public surface live; `pnpm check` clean; data + ui Vitest projects both green — 49 tests / 7 files)
 - [x] **DATA-04** — Validated in Phase 2: Data Layer (drift-check job appended to `deploy.yml`; runs on every PR + push to main; Trap A "silent `_four` divergence" now caught at CI boundary)
+- [x] **REEL-01** — Validated in Phase 3: Reel System Core (`/work` renders 56 fullscreen `h-svh snap-y snap-proximity` sections with article-landmark wrapper)
+- [x] **REEL-02** — Validated in Phase 3: Reel System Core (silent muted autoplay via raw iframe URL params per `$lib/iframe/url.ts`; no `@vimeo/player` dep)
+- [x] **REEL-03** — Validated in Phase 3: Reel System Core (single IntersectionObserver per ReelStage, mountedIds capped at 3 — current ±1 viewport-windowed mounting confirmed at unit + e2e level)
+- [x] **REEL-04** — Validated in Phase 3: Reel System Core (unified poster-fallback codepath observable in `ReelSection.svelte:65` — 5 triggers collapse through one `$derived(motion.prefersReducedMotion || network.isCellularLike || autoplayFailedFromPreviewLoop)`; per-section isolation proven)
+- [x] **REEL-05** — Validated in Phase 3: Reel System Core (title + category overlay + `▷ PLAY WITH SOUND` deep-link present in ReelSection + PosterImage)
+- [x] **REEL-06** — Validated in Phase 3: Reel System Core (PreviewLoop 4-state lifecycle + 5-layer leak defense; mount/dispose symmetry pinned by unit test)
+- [x] **REEL-07** — Validated in Phase 3: Reel System Core (Page Visibility broadcast via `reel:visibility` context; pause-not-unmount with `wasHidden` transition guard)
 
 ### Active
 
 #### Foundation
 
 - [ ] **FOUND-03**: Production deploy reachable on `michellengo.net` apex with HTTPS (cutover-gated; only triggers if `_three` wins A/B)
-
-#### Immersive Reel (the killer feature)
-
-- [ ] **REEL-01**: `/work` renders the 56 videos as fullscreen scroll-snapped sections (one video = one viewport, vertical snap)
-- [ ] **REEL-02**: Each visible section autoplays a silent muted preview loop using the native Vimeo/YouTube embed (`?autoplay=1&mute=1&loop=1`)
-- [ ] **REEL-03**: Viewport-windowed mounting — only the current section + 1 above + 1 below are mounted as iframes; off-screen sections fall back to poster image (perf gate)
-- [ ] **REEL-04**: On cellular connections (`navigator.connection.effectiveType` ∈ {`2g`,`3g`,`slow-2g`}) all sections show poster + tap-to-play instead of autoplay (bandwidth fallback)
-- [ ] **REEL-05**: Each section shows title (bottom-left), category tag (top-right), and a `▷ PLAY WITH SOUND` action that deep-links to `/watch/[id]`
 
 #### Wayfinding
 
@@ -154,7 +153,8 @@ This document evolves at phase transitions and milestone boundaries.
 
 - **Phase 1: Foundation — Complete (2026-05-25).** Buildable, deploying SvelteKit scaffold live at `wolfwdavid.github.io/michelle_ngo_three/`. All day-one conventions locked: `mnp_three_` storage namespace, double-ring focus token, dark OKLCH palette, 7 self-hosted woff2 fonts, `PUBLIC_SITE_URL` env. CI pipeline runs 4 smoke gates + D-17 grep gate before every deploy.
 - **Phase 2: Data Layer — Complete (2026-05-25).** `videos.json` + 4 loader files + 4 test files mirrored byte-identical from `_four` (sha256 `fd15e056…`, pinned via `.videos-source-sha`). `validateVideosPlugin()` wired into Vite — schema violations abort `pnpm build`. `drift-check` CI job catches silent `_four` divergence on every PR/main. oEmbed health-check infra shipped (`scripts/check-embeds.ts` + nightly Action) — link rot will auto-file an issue before users see it. `pnpm check` 0 errors / `pnpm test` 49 tests green.
-- **Next:** Phase 3 (Reel System Core — load-bearing risk) — fullscreen scroll-snap reel with viewport-windowed iframe mounting (the killer feature; cellular fallback gated here).
+- **Phase 3: Reel System Core — Complete (2026-05-26).** The killer feature ships. `/work` renders all 56 videos as fullscreen scroll-snap sections (`h-svh snap-y snap-proximity`) with a single IntersectionObserver per stage and current ±1 viewport-windowed iframe mounting. PreviewLoop ships the 4-state lifecycle (idle → mounting → playing → paused) with 5-layer leak defense; URL-param-driven raw iframes (no `@vimeo/player` dep) plus Vimeo + YouTube postMessage adapters with origin allowlists. REEL-04 unified poster-fallback codepath observable as ONE `$derived` collapsing 5 triggers (reduced-motion, cellular, save-data, autoplay-failed, embed-disabled). Page Visibility broadcast pauses-not-unmounts when the tab hides. Build-time poster pipeline (`check-embeds.ts --posters-only` + `validatePostersPlugin`) ships 56 JPEGs + `posters.json` sidecar. Playwright 4-pillar e2e suite green across Chromium + WebKit + Firefox. `pnpm test` 165/165 / `pnpm check` 0 errors / `pnpm test:e2e` 21 passed. **Real-device QA (BrowserStack 7-OS matrix + physical iPhone thermal test) deferred to UAT** — tracked in `03-HUMAN-UAT.md` (status: partial); MUST close before Phase 7 cutover per CONTEXT D-13/D-14/D-16.
+- **Next:** Phase 4 (Wayfinding) — sticky filter pill bar above the reel + `/work/[category]` deep-linkable routing (FILT-01..04, NAV-01).
 
 ---
-*Last updated: 2026-05-25 after Phase 2 completion*
+*Last updated: 2026-05-26 after Phase 3 completion*
