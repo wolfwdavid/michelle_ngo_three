@@ -32,10 +32,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Wayfinding
 
-- [ ] **FILT-01**: Sticky `<FilterPillBar />` above the reel renders 8 category pills + "All" reset (PBS, Promo, Branded, Doc, Reel, Personal, Educational + All)
-- [ ] **FILT-02**: Tapping a pill filters the reel to that category and updates URL to `/work/[category]`; URL is the canonical source of state (no parallel store)
-- [ ] **FILT-03**: Reloading or pasting `/work/[category]` reproduces the filtered reel from server-prerender
-- [ ] **FILT-04**: 8 `/work/[category]` slug routes are prerendered via `entries()` (parity with `_four`)
+- [x] **FILT-01**: Sticky `<FilterPillBar />` above the reel renders 8 category pills + "All" reset (PBS, Promo, Branded, Doc, Reel, Personal, Educational + All)
+- [x] **FILT-02**: Tapping a pill filters the reel to that category and updates URL to `/work/[category]`; URL is the canonical source of state (no parallel store)
+- [x] **FILT-03**: Reloading or pasting `/work/[category]` reproduces the filtered reel from server-prerender
+- [x] **FILT-04**: 8 `/work/[category]` slug routes are prerendered via `entries()` (parity with `_four`)
 - [ ] **NAV-01**: Cinematic-minimal `<TopNav />` (wordmark + 8 category links + About/Press/Contact + mobile hamburger) — chrome fades during reel scroll, surfaces on hover/tap/focus; D-13 active-state on prerendered HTML via `endsWith` suffix-match
 - [ ] **NAV-02**: Keyboard navigation works — Arrow keys + PageUp/PageDown jump section-to-section, Tab exits scroll-snap to TopNav, Escape returns to top; visible focus ring contrasts dark video bg
 - [ ] **NAV-03**: Skip-to-content link visible only on focus, lands on `<main>`; section landmarks use `<article aria-label="Video N of M: [title]">` (suppresses screen-reader page-explosion)
@@ -147,10 +147,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REEL-05 | Phase 3 | Complete |
 | REEL-06 | Phase 3 | Complete |
 | REEL-07 | Phase 3 | Complete |
-| FILT-01 | Phase 4 | Pending |
-| FILT-02 | Phase 4 | Pending |
-| FILT-03 | Phase 4 | Pending |
-| FILT-04 | Phase 4 | Pending |
+| FILT-01 | Phase 4 | Complete |
+| FILT-02 | Phase 4 | Complete |
+| FILT-03 | Phase 4 | Complete |
+| FILT-04 | Phase 4 | Complete |
 | NAV-01 | Phase 4 | Pending |
 | NAV-02 | Phase 4 | Pending |
 | NAV-03 | Phase 4 | Pending |

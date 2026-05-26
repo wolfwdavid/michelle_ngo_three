@@ -86,7 +86,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Filter routing layer: FilterPillBar component + 8 prerendered /work/[category] routes + categoryAccent.ts static-literal class map (FILT-01..04)
+- [x] 04-01-PLAN.md — Filter routing layer: FilterPillBar component + 8 prerendered /work/[category] routes + categoryAccent.ts static-literal class map (FILT-01..04)
 - [ ] 04-02-PLAN.md — Cinematic chrome: TopNav + MobileMenu + skip-link + <main> wrapper + scrollIdle/menu state runes + chrome-fade rule (NAV-01 + NAV-03)
 - [ ] 04-03-PLAN.md — Keyboard nav + roving tabindex + D-08 menu-pause bridge in ReelStage + chrome-height math + 4-spec Playwright e2e suite (NAV-02 + 3-browser validation of NAV-01/NAV-03/FILT-01..03/D-08)
 

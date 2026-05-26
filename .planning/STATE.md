@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 4 context gathered
-last_updated: "2026-05-26T02:31:41.974Z"
+stopped_at: Completed 04-01-PLAN.md (FilterPillBar + 8 filter routes; 9 files; 17min; FILT-01..04 complete)
+last_updated: "2026-05-26T14:15:58.992Z"
 progress:
   total_phases: 7
   completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** A hiring producer can scroll through Michelle's filmography like a cinema reel — each video taking the full screen with silent motion — and feel the work the way they would in a screening room, not a portfolio grid.
-**Current focus:** Phase 03 — reel-system-core-load-bearing-risk (READY FOR VERIFICATION; real-device QA deferred to UAT)
+**Current focus:** Phase 04 — wayfinding
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (wayfinding) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Plan: Not started
 | Phase 03-reel-system-core-load-bearing-risk P01 | 41 min | 7 tasks tasks | 20 files files |
 | Phase 03-reel-system-core-load-bearing-risk P02 | 21min | 5 tasks | 10 files |
 | Phase 03 P03 | 90 | 7 tasks | 11 files |
+| Phase 04-wayfinding P01 | 17min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -109,6 +110,10 @@ Recent decisions affecting current work:
 - [Phase 03]: REEL-04 unified codepath SHIPPED — single $derived in ReelSection collapses 5 fallback triggers (motion.prefersReducedMotion || network.isCellularLike || autoplayFailedFromPreviewLoop) into ONE PosterImage render; PreviewLoop onautoplayfailed callback (Plan 03-02) consumed via Svelte 5 callback-prop idiom; per-section state isolation verified
 - [Phase 03]: validatePostersPlugin (D-03) mirrors validateVideosPlugin shape and placement (between tailwindcss and sveltekit); pattern carries forward to any future sidecar (captions, transcripts); aborts buildStart on missing sidecar entry OR missing static/posters/{source}-{id}.jpg with ::error:: annotation + literal 'pnpm check:embeds --posters-only' fix command
 - [Phase 03]: Playwright Page Visibility e2e tests skip on headless (visibilitychange unreliable on headless backgrounding); 3 skips documented as known caveat in 03-VERIFICATION.md and 03-03-SUMMARY.md; unit-level contract in PreviewLoop.test.ts pins behavior; real-device matrix (deferred) closes the headless gap
+- [Phase 04-wayfinding]: [Plan 04-01]: FilterPillBar ships with sticky top-0 (no chrome-nav-height var yet); Plan 04-02 publishes var, Plan 04-03 plumbs into FilterPillBar top + ReelStage h-svh
+- [Phase 04-wayfinding]: [Plan 04-01]: categoryAccent.ts ships 3 flavors (text/bg-15/ring-40) as separate Records — Pitfall 7 scanner-contract pinned with readFileSync().includes() test assertions
+- [Phase 04-wayfinding]: [Plan 04-01]: eslint per-file override pre-registers TopNav + MobileMenu so Plan 04-02 diff stays component-only (single source of truth at config level, NOT per-file inline directives)
+- [Phase 04-wayfinding]: [Plan 04-01]: jsdom missing scrollIntoView — guard added (typeof active.scrollIntoView === 'function'); same guard covers any future SSR codepath
 
 ### Pending Todos
 
@@ -127,6 +132,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-26T02:31:41.970Z
-Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-wayfinding/04-CONTEXT.md
+Last session: 2026-05-26T14:15:58.988Z
+Stopped at: Completed 04-01-PLAN.md (FilterPillBar + 8 filter routes; 9 files; 17min; FILT-01..04 complete)
+Resume file: None
