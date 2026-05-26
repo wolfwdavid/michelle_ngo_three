@@ -12,9 +12,9 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation** - Buildable, deploying SvelteKit 2 + Svelte 5 + TS strict scaffold on GH Pages with `BASE_PATH=/michelle_ngo_three/` and `mnp_three_*` namespacing from day one
-- [ ] **Phase 2: Data Layer** - `videos.json` byte-identical to `_four` + Zod schema + Vite build-fail plugin + oEmbed health-check + cross-repo drift CI (Trap A mitigation)
-- [ ] **Phase 3: Reel System Core (LOAD-BEARING RISK)** - `<ReelStage />` + `<ReelSection />` + `<PreviewLoop />` + `<PosterImage />` with 4-state iframe lifecycle, 5-layer leak defense, unified poster-fallback codepath, validated on real iOS Safari 16/17.0/17.1
+- [x] **Phase 1: Foundation** - Buildable, deploying SvelteKit 2 + Svelte 5 + TS strict scaffold on GH Pages with `BASE_PATH=/michelle_ngo_three/` and `mnp_three_*` namespacing from day one
+- [x] **Phase 2: Data Layer** - `videos.json` byte-identical to `_four` + Zod schema + Vite build-fail plugin + oEmbed health-check + cross-repo drift CI (Trap A mitigation)
+- [x] **Phase 3: Reel System Core (LOAD-BEARING RISK)** - `<ReelStage />` + `<ReelSection />` + `<PreviewLoop />` + `<PosterImage />` with 4-state iframe lifecycle, 5-layer leak defense, unified poster-fallback codepath; code-level gates green at commit `9207d45`; real-device matrix (iOS 16/17.0/17.1 BrowserStack + iPhone thermal QA) DEFERRED to UAT (see `.planning/phases/03-reel-system-core-load-bearing-risk/03-HUMAN-UAT.md`); must close before Phase 7 cutover
 - [ ] **Phase 4: Wayfinding** - `<FilterPillBar />` + 8 prerendered `/work/[category]` routes + cinematic chrome-fade `<TopNav />` + keyboard navigation + skip-to-content + screen-reader landmarks
 - [ ] **Phase 5: Hero & Watch** - `<HeroAmbient />` always-mounted producer reel on `/` + `<WatchPlayer />` letterboxed embed + chrome-fade-on-play + `<ContinueReelRail />` carousel + back-nav scroll restoration
 - [ ] **Phase 6: PBS / Press / About / Contact** - Four content surfaces with verbatim reuse of `_four`'s bio, PBS blockquote, ContactBlock, Footer contract — cinematic restyle only
@@ -66,10 +66,12 @@ Plans:
   4. After scrolling through all 56 sections then back, Chrome DevTools "Memory" snapshot shows no detached `<iframe>` nodes, no leaked postMessage listeners, no leaked IntersectionObservers — the 4-state lifecycle + 5-layer leak defense holds under real usage (REEL-06 verified).
   5. Backgrounding the tab (switching apps on iOS, switching tabs on desktop) pauses all preview loops within 300ms via the Page Visibility API; foregrounding resumes the current section's loop only (REEL-07; battery/thermal mitigation per Pitfall 5).
   6. Every section renders title (bottom-left), `<CategoryTag />` (top-right), and a `▷ PLAY WITH SOUND` action that deep-links to `/watch/[id]` with the section's video id (REEL-05).
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [x] 03-01: TBD
+- [x] 03-01-PLAN.md — Reel foundations (ReelStage scroll-snap + ONE-IO + module-scope state runes + ReelSection D-08 gate + REEL-05 overlay + /work prerendered route)
+- [x] 03-02-PLAN.md — Iframe lifecycle (URL builder + Vimeo/YouTube postMessage adapters + PreviewLoop 4-state machine + 5-layer leak defense + REEL-07 Page Visibility)
+- [x] 03-03-PLAN.md — Fallback + e2e + real-device QA (PosterImage full + REEL-04 unified codepath + check-embeds --posters-only + validatePostersPlugin + Playwright 4-pillar suite; Tasks 8+9 DEFERRED to UAT — see 03-HUMAN-UAT.md)
 
 ### Phase 4: Wayfinding
 **Goal**: A hiring producer can navigate the 56-section reel as fast as they navigate any other portfolio — pill-bar category filters above the reel, cinematic chrome-fade `<TopNav />` that surfaces on hover/focus/tap, keyboard navigation that respects scroll-snap, and screen-reader landmarks that don't explode into a 56-page tree.
@@ -140,9 +142,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
-| 2. Data Layer | 0/TBD | Not started | - |
-| 3. Reel System Core | 0/TBD | Not started | - |
+| 1. Foundation | 3/3 | Complete | 2026-05-25 |
+| 2. Data Layer | 3/3 | Complete | 2026-05-25 |
+| 3. Reel System Core | 3/3 | Complete (code-level — real-device QA deferred to UAT, see 03-HUMAN-UAT.md) | 2026-05-26 |
 | 4. Wayfinding | 0/TBD | Not started | - |
 | 5. Hero & Watch | 0/TBD | Not started | - |
 | 6. PBS / Press / About / Contact | 0/TBD | Not started | - |

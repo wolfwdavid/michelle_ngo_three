@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-stopped_at: "Completed 03-02-PLAN.md (Iframe lifecycle: url builder + Vimeo/YouTube adapters + PreviewLoop 4-state machine; 154 tests / 0 svelte-check warnings / pnpm build clean)"
-last_updated: "2026-05-25T23:11:52.633Z"
+status: ready_for_verification
+stopped_at: Completed 03-03-PLAN.md (Plan 3/3 — REEL-04 unified codepath + poster pipeline + Playwright 4-pillar suite; Tasks 8+9 DEFERRED to UAT 03-HUMAN-UAT.md; 165 tests / 21 e2e passed + 3 skipped headless; code-level Phase 3 close gates GREEN at commit 9207d45)
+last_updated: "2026-05-26T01:41:05.277Z"
 progress:
   total_phases: 7
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** A hiring producer can scroll through Michelle's filmography like a cinema reel — each video taking the full screen with silent motion — and feel the work the way they would in a screening room, not a portfolio grid.
-**Current focus:** Phase 03 — reel-system-core-load-bearing-risk
+**Current focus:** Phase 03 — reel-system-core-load-bearing-risk (READY FOR VERIFICATION; real-device QA deferred to UAT)
 
 ## Current Position
 
-Phase: 03 (reel-system-core-load-bearing-risk) — EXECUTING
-Plan: 3 of 3
+Phase: 03 (reel-system-core-load-bearing-risk) — READY FOR VERIFICATION
+Plan: 3 of 3 (all code-level tasks complete; Tasks 8+9 deferred to UAT — see 03-HUMAN-UAT.md)
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Plan: 3 of 3
 | Phase 02-data-layer P03 | 12 min | 4 tasks | 4 files |
 | Phase 03-reel-system-core-load-bearing-risk P01 | 41 min | 7 tasks tasks | 20 files files |
 | Phase 03-reel-system-core-load-bearing-risk P02 | 21min | 5 tasks | 10 files |
+| Phase 03 P03 | 90 | 7 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,10 @@ Recent decisions affecting current work:
 - [Phase 03-reel-system-core-load-bearing-risk]: PreviewLoop wasHidden guard ((false)) prevents spurious postMessage 'play' on initial render when documentHidden defaults to false; only the hidden→visible TRANSITION sends resume — every other dispatch path is gated on wasHidden===true
 - [Phase 03-reel-system-core-load-bearing-risk]: HANDSHAKE_TIMEOUT_MS=800 exported as named const from $lib/iframe/url.ts; Plan 03-03 BrowserStack matrix is the real-device gate — if iOS Safari 16/17.0/17.1 shows premature fallback on cellular, bump to 1200ms (NOT abandon the mechanism)
 - [Phase 03-reel-system-core-load-bearing-risk]: YouTube adapter dispose does NOT send a defensive postMessage (no clean unsubscribe protocol); relies on Layer 1 (Svelte iframe DOM teardown); Plan 03-03 Playwright leak-defense pillar verifies sufficiency on Chromium+WebKit+Firefox
+- [Phase 03]: Plan 03-03 finalized with Tasks 8 (BrowserStack matrix) + 9 (physical iPhone thermal QA) DEFERRED to UAT per user decision 2026-05-26; tracked in .planning/phases/03-reel-system-core-load-bearing-risk/03-HUMAN-UAT.md; both gates MUST close before Phase 7 cutover per CONTEXT D-13/D-14/D-16
+- [Phase 03]: REEL-04 unified codepath SHIPPED — single $derived in ReelSection collapses 5 fallback triggers (motion.prefersReducedMotion || network.isCellularLike || autoplayFailedFromPreviewLoop) into ONE PosterImage render; PreviewLoop onautoplayfailed callback (Plan 03-02) consumed via Svelte 5 callback-prop idiom; per-section state isolation verified
+- [Phase 03]: validatePostersPlugin (D-03) mirrors validateVideosPlugin shape and placement (between tailwindcss and sveltekit); pattern carries forward to any future sidecar (captions, transcripts); aborts buildStart on missing sidecar entry OR missing static/posters/{source}-{id}.jpg with ::error:: annotation + literal 'pnpm check:embeds --posters-only' fix command
+- [Phase 03]: Playwright Page Visibility e2e tests skip on headless (visibilitychange unreliable on headless backgrounding); 3 skips documented as known caveat in 03-VERIFICATION.md and 03-03-SUMMARY.md; unit-level contract in PreviewLoop.test.ts pins behavior; real-device matrix (deferred) closes the headless gap
 
 ### Pending Todos
 
@@ -122,6 +127,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-25T23:11:52.630Z
-Stopped at: Completed 03-02-PLAN.md (Iframe lifecycle: url builder + Vimeo/YouTube adapters + PreviewLoop 4-state machine; 154 tests / 0 svelte-check warnings / pnpm build clean)
+Last session: 2026-05-26T01:41:05.274Z
+Stopped at: Completed 03-03-PLAN.md (Plan 3/3 — REEL-04 unified codepath + poster pipeline + Playwright 4-pillar suite; Tasks 8+9 DEFERRED to UAT 03-HUMAN-UAT.md; 165 tests / 21 e2e passed + 3 skipped headless; code-level Phase 3 close gates GREEN at commit 9207d45)
 Resume file: None

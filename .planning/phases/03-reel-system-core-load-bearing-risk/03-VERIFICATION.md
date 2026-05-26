@@ -1,8 +1,12 @@
 ---
 phase: 03-reel-system-core-load-bearing-risk
 type: verification
-status: pending-real-device-runs
+status: partial
 created: 2026-05-25
+updated: 2026-05-26
+deferred_decision_date: 2026-05-26
+deferred_decision_by: user
+deferred_until: "before Phase 7 cutover (per CONTEXT D-13 / D-14 / D-16)"
 ---
 
 # Phase 3 — Real-Device Verification Evidence
@@ -13,6 +17,42 @@ This file collects evidence for the two manual gates that close Phase 3:
 
 The verifier (`/gsd:verify-work`) consumes this file as the load-bearing
 real-device evidence before signing off Phase 3.
+
+---
+
+## DEFERRAL NOTE (2026-05-26)
+
+**Tasks 8 + 9 of Plan 03-03 are DEFERRED as a UAT item.** The user explicitly
+elected to skip the BrowserStack matrix run and the physical-iPhone thermal QA
+during Plan 03-03 execution and finalize the plan against the green code-level
+gates documented below (commit `9207d45`).
+
+**Why deferred:** the all-3-play decision (CONTEXT D-09) is a design bet whose
+load-bearing fallback path (PreviewLoop's 800ms handshake → unified PosterImage
+codepath via `onautoplayfailed`) is already proven at the component and e2e
+level in headless browsers. The real-device matrix exists to validate the bet
+against iOS Safari 16/17.0/17.1 hardware quirks (Pitfall 1 scroll-freeze,
+Pitfall 3 LPM rejection) and thermal envelope. These are validation gates,
+not implementation gates — the code shipping in this plan does not change
+depending on the matrix outcome (only the D-16 escalation branches below
+would, IF the thermal test fails).
+
+**Deferred-until milestone (BLOCKING):** these gates **MUST be closed before
+Phase 7 cutover.** Per CONTEXT §Phase 3 done-criteria:
+- D-13 — full POL-04 real-device matrix during Phase 3 (now deferred to a
+  pre-Phase-7 UAT window).
+- D-14 — BrowserStack subscription must be active when the matrix is run.
+- D-16 — manual iPhone thermal QA with the documented escalation branches
+  (A: drop ±1 to 360p; B: reverse D-09 to current-only-plays) standing by
+  if the budget is exceeded.
+
+**Tracking:** see `03-HUMAN-UAT.md` in this directory — two test entries
+(BrowserStack matrix + iPhone thermal) status `[pending]`. `/gsd:audit-uat`
+and `/gsd:progress` pick up the deferral via the UAT file's `partial` status.
+
+**Status downgrade:** frontmatter `status: partial` (was
+`pending-real-device-runs`) so the verifier flags this as outstanding rather
+than complete.
 
 ---
 
@@ -30,8 +70,9 @@ Before the real-device runs below were performed, the following local gates were
 
 ## BrowserStack Real-Device Matrix (D-13 / D-14)
 
-**Status:** ⬜ pending — manual session runs required
-**Run date:** _YYYY-MM-DD (to be filled)_
+**Status:** 🟡 DEFERRED — tracked as UAT (see `03-HUMAN-UAT.md`); must close before Phase 7 cutover
+**Deferral decision date:** 2026-05-26
+**Run date:** _YYYY-MM-DD (to be filled when the matrix is actually run)_
 **BrowserStack subscription:** _confirmed active before run / link to billing dashboard_
 **Staging URL:** `https://wolfwdavid.github.io/michelle_ngo_three/work`
 **BrowserStack session links:** _paste links per row when sessions complete_
@@ -76,7 +117,8 @@ If any cell becomes ❌ FAIL, add a notes-column entry naming the bug + linking 
 
 ## Thermal QA (D-16 — physical iPhone 5-min reel scroll)
 
-**Status:** ⬜ pending — manual physical-device test required
+**Status:** 🟡 DEFERRED — tracked as UAT (see `03-HUMAN-UAT.md`); must close before Phase 7 cutover
+**Deferral decision date:** 2026-05-26
 **Run date:** _YYYY-MM-DD_
 **Device:** _iPhone model, iOS version_
 **Network:** _Wi-Fi / cellular type_
@@ -152,11 +194,27 @@ Reverse CONTEXT D-09 (all-3-play). Modify ReelStage to pause N-1 and N+1 immedia
 
 ## Sign-off
 
+**Code-level gates (Plan 03-03 — CLOSED 2026-05-26 at commit `9207d45`):**
+
+- [x] `pnpm test` green (165 / 165 unit + component tests)
+- [x] `pnpm check` clean (0 TS errors, 0 svelte warnings)
+- [x] `pnpm build` clean (validateVideosPlugin + validatePostersPlugin both green)
+- [x] `pnpm test:e2e` 21 passed / 3 skipped (chromium + webkit + firefox; Page Visibility skips are a documented headless caveat — see `03-03-SUMMARY.md`)
+- [x] All 7 anti-pattern grep gates clean
+
+**Real-device gates (DEFERRED 2026-05-26 — tracked in `03-HUMAN-UAT.md`):**
+
 - [ ] BrowserStack matrix populated for all 7 OS rows × 4 pillar columns (28 cells)
 - [ ] Thermal QA delta ≤ 8% in 5 min (after any escalations)
 - [ ] If D-09 reversed: explicit deviation block above with NEW_DELTA recorded
 - [ ] No P3 ❌ FAIL cells remaining (REEL-06 SC#4 is non-negotiable)
 - [ ] No iOS Safari 16/17.0/17.1 P1 ❌ FAIL cells remaining (Pitfall 1 mitigation verified)
 
-**Verifier note:** `/gsd:verify-work` reads this file in addition to `03-03-SUMMARY.md`
-for the formal Phase 3 close decision.
+**Cutover blocker:** all 5 unchecked items above must be ✅ before Phase 7
+cutover (production deploy to `michellengo.net`). Phase 4 / 5 / 6 may proceed
+on top of the code-level gates without the real-device evidence; the matrix
+exists to validate the D-09 design bet, not to gate downstream feature work.
+
+**Verifier note:** `/gsd:verify-work` reads this file in addition to
+`03-03-SUMMARY.md` and `03-HUMAN-UAT.md` for the formal Phase 3 close decision.
+The current decision posture is "code-complete, real-device-evidence pending."
