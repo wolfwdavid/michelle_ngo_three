@@ -133,10 +133,10 @@ test.describe('Pillar 3: leak defense', () => {
     }
 
     // Force GC if available (Chromium with --js-flags=--expose-gc;
-    // Firefox/WebKit best-effort).
+    // Firefox/WebKit best-effort). `gc` is exposed only on debug builds.
     await page.evaluate(() => {
-      // @ts-expect-error gc is non-standard
-      if (typeof gc === 'function') gc();
+      const w = window as Window & { gc?: () => void };
+      if (typeof w.gc === 'function') w.gc();
     });
     await page.waitForTimeout(500);
 

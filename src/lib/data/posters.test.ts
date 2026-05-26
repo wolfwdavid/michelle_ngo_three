@@ -29,10 +29,14 @@ describe('posters.json sidecar contract (D-02, D-03 shape)', () => {
     expect(Array.isArray(sidecar)).toBe(false);
   });
 
-  test('Plan 03-01 ships empty sidecar (no entries; Plan 03-03 populates)', () => {
-    // This assertion intentionally fails once Plan 03-03 populates the sidecar.
-    // At that point, replace with a count-based check (e.g., >= 56 entries).
-    expect(Object.keys(sidecar).length).toBe(0);
+  test('Plan 03-03 populates sidecar with 56 entries (one per video)', () => {
+    // Plan 03-01 shipped this assertion as `length === 0` (empty stub).
+    // Plan 03-03 Task 4 ran `pnpm check:embeds --posters-only` and populated
+    // the sidecar with 56 entries from videos.json (43 vimeo + 13 youtube
+    // after dedup — exact split tracked via the videos.json fixture). The
+    // validatePostersPlugin in vite.config.ts (Task 5) fails the build if
+    // any video lacks an entry, so this acts as a runtime mirror.
+    expect(Object.keys(sidecar).length).toBe(56);
   });
 
   test('every existing key matches /^(vimeo|youtube)-[A-Za-z0-9_-]+$/', () => {
