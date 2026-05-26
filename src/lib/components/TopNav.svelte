@@ -44,11 +44,7 @@
   import { onDestroy } from 'svelte';
   import { getCategoriesInDisplayOrder, categoryToSlug } from '$lib/data';
   import { categoryAccent } from './categoryAccent';
-  import {
-    scrollIdle,
-    initScrollIdle,
-    teardownScrollIdle,
-  } from '$lib/state/scrollIdle.svelte';
+  import { scrollIdle, initScrollIdle, teardownScrollIdle } from '$lib/state/scrollIdle.svelte';
   import { menu, openMenu } from '$lib/state/menu.svelte';
   import MobileMenu from './MobileMenu.svelte';
 
@@ -97,11 +93,7 @@
     }
     function onFocusOut(e: FocusEvent): void {
       // relatedTarget is the element gaining focus; if it's still inside the header, stay true.
-      if (
-        headerEl &&
-        e.relatedTarget instanceof Node &&
-        headerEl.contains(e.relatedTarget)
-      ) {
+      if (headerEl && e.relatedTarget instanceof Node && headerEl.contains(e.relatedTarget)) {
         return;
       }
       focusWithinChrome = false;
@@ -165,7 +157,9 @@
     aria-label="Main navigation"
     class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between"
   >
-    <a href={base || '/'} class="font-display text-sm font-bold uppercase tracking-widest"
+    <a
+      href={base || '/'}
+      class="font-display text-sm font-bold uppercase tracking-widest text-neutral-50 hover:text-neutral-300"
       >Michelle Ngo</a
     >
 
@@ -178,27 +172,20 @@
             href={`${base}/work/${slug}`}
             data-sveltekit-preload-data="hover"
             aria-current={isActive(slug) ? 'page' : undefined}
-            class={isActive(slug)
-              ? categoryAccent(category)
-              : 'text-neutral-300 hover:text-white'}>{category}</a
+            class={isActive(slug) ? categoryAccent(category) : 'text-neutral-300 hover:text-white'}
+            >{category}</a
           >
         </li>
       {/each}
       <li class="ml-2 flex gap-3 text-neutral-500">
-        <a
-          href={`${base}/about`}
-          data-sveltekit-preload-data="hover"
-          class="hover:text-white">About</a
+        <a href={`${base}/about`} data-sveltekit-preload-data="hover" class="hover:text-white"
+          >About</a
         >
-        <a
-          href={`${base}/press`}
-          data-sveltekit-preload-data="hover"
-          class="hover:text-white">Press</a
+        <a href={`${base}/press`} data-sveltekit-preload-data="hover" class="hover:text-white"
+          >Press</a
         >
-        <a
-          href={`${base}/contact`}
-          data-sveltekit-preload-data="hover"
-          class="hover:text-white">Contact</a
+        <a href={`${base}/contact`} data-sveltekit-preload-data="hover" class="hover:text-white"
+          >Contact</a
         >
       </li>
     </ul>

@@ -46,7 +46,7 @@
     <a
       href={base || '/'}
       onclick={closeMenu}
-      class="font-display text-sm font-bold uppercase tracking-widest"
+      class="font-display text-sm font-bold uppercase tracking-widest text-neutral-50 hover:text-neutral-300"
     >
       Michelle Ngo
     </a>

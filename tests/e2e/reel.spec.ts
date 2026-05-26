@@ -53,13 +53,22 @@ test.describe.parallel('Pillar 1: fast-flick', () => {
     await page.waitForTimeout(800); // let snap settle
 
     // Active section is no longer section 0. We measure by reading the article
-    // whose centerline is in the viewport.
+    // whose centerline is inside the REEL CONTAINER (NOT the viewport — Plan
+    // 04-03 D-01 chrome math: the reel container is `h-[calc(100svh -
+    // --chrome-nav-height - --chrome-pill-height)]` so its rect is smaller
+    // than the viewport, and articles span that smaller height. Using
+    // window.innerHeight as the centerline missed every article on Plan 04-02+
+    // builds where chrome sits above the reel).
     const activeIdx = await page.evaluate(() => {
       const articles = Array.from(document.querySelectorAll('article'));
-      const vp = window.innerHeight;
+      const reel = document.querySelector(
+        '[role="region"][aria-label="Filmography reel"]'
+      ) as HTMLElement | null;
+      const reelRect = reel?.getBoundingClientRect();
+      const centerline = reelRect ? reelRect.top + reelRect.height / 2 : window.innerHeight * 0.5;
       const idx = articles.findIndex((a) => {
         const r = a.getBoundingClientRect();
-        return r.top < vp * 0.5 && r.bottom > vp * 0.5;
+        return r.top < centerline && r.bottom > centerline;
       });
       return idx;
     });
