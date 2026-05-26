@@ -109,6 +109,17 @@
   --color-cat-other:    oklch(0.78 0.05 250);
 }
 
+/* Layout primitive — Phase 4 D-01.
+ * `_three`'s chrome eats viewport: TopNav (h-14 = 3.5rem) + FilterPillBar
+ * (pl-2 / pr-2 / py-2 = ~2.25rem) stack above the reel. The reel-section
+ * height becomes calc(100svh - var(--chrome-nav-height) - var(--chrome-pill-height,0px))
+ * inside <ReelStage>. FilterPillBar reads --chrome-nav-height for its sticky
+ * top; ReelStage (Plan 04-03 edit) reads BOTH vars for its h-svh adjustment.
+ */
+:root {
+  --chrome-nav-height: 3.5rem;
+}
+
 /* D-05, D-08: single global :focus-visible rule. Double ring via
  * outline (outer cream) + box-shadow (inner dark). Components opt in
  * automatically — a forgetful component cannot become invisible to
