@@ -42,5 +42,24 @@ export default tseslint.config(
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
     },
+  },
+  // Phase 4 NAV-01 / FILT-01 / FILT-04: FilterPillBar (Plan 04-01) and TopNav +
+  // MobileMenu (Plan 04-02) all consume `${base}/work/${slug}` literal href
+  // construction (mirror of _four/TopNav.svelte:30). resolve('/work/[category]',
+  // { category: slug }) rejects the literal-string slug at the point where the
+  // TS narrowing happens, AND the unit tests assert literal hrefs against a
+  // mocked base='' — resolve() output would not match. Same documented
+  // stop-gap as the ReelSection/PosterImage override above. TopNav.svelte and
+  // MobileMenu.svelte are pre-registered here so Plan 04-02's diff scope stays
+  // limited to the component files (single source of truth for the override).
+  {
+    files: [
+      'src/lib/components/FilterPillBar.svelte',
+      'src/lib/components/TopNav.svelte',
+      'src/lib/components/MobileMenu.svelte',
+    ],
+    rules: {
+      'svelte/no-navigation-without-resolve': 'off',
+    },
   }
 );
