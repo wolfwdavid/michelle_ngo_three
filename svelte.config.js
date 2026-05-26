@@ -24,9 +24,18 @@ const config = {
       // the build still surfaces them in CI without aborting Phase 3 work.
       // Plan 03-03 + Phase 5 plans remove this allow-list as their routes
       // ship; anything outside the allow-list still hard-fails.
+      //
+      // Plan 04-02 NAV-01: TopNav + MobileMenu ship About/Press/Contact links
+      // to /about, /press, /contact. Phase 6 (ABT-01, PRES-01, CONT-01) creates
+      // those routes. Until then they're known-pending 404s — same posture as
+      // /watch/[id] above, same documented stop-gap.
       handleHttpError: ({ path, message }) => {
         if (path.startsWith('/posters/') || path.startsWith('/watch/')) {
           console.warn(`[prerender] Expected pending 404 (Plan 03-03 / Phase 5): ${path}`);
+          return;
+        }
+        if (path === '/about' || path === '/press' || path === '/contact') {
+          console.warn(`[prerender] Expected pending 404 (Plan 04-02 NAV-01 / Phase 6): ${path}`);
           return;
         }
         throw new Error(message);
