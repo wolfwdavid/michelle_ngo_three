@@ -215,6 +215,14 @@ describe('ReelStage (REEL-01 / REEL-03 / NAV-03)', () => {
 describe('ReelStage — Plan 04-03 NAV-02 keyboard + D-08 menu-pause + D-01 chrome-height', () => {
   beforeEach(() => {
     __resetMenuStateForTests();
+    // jsdom doesn't implement HTMLElement.prototype.scrollIntoView — seed a
+    // no-op stub so per-instance vi.spyOn() calls have a property to wrap.
+    // Each test installs its own spy via vi.spyOn (auto-restored in afterEach).
+    if (typeof HTMLElement.prototype.scrollIntoView !== 'function') {
+      HTMLElement.prototype.scrollIntoView = function noop(): void {
+        return undefined;
+      };
+    }
   });
 
   test('container has tabindex="0" and onkeydown handler (D-09)', () => {

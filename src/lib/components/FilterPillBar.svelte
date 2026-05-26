@@ -88,9 +88,14 @@
   });
 </script>
 
+<!--
+  Plan 04-03 D-01: sticky top reads --chrome-nav-height (published by Plan 04-02
+  TopNav on :root in app.css; defaults to 0px so the pill bar still sits at the
+  top of the viewport on routes without TopNav chrome).
+-->
 <nav
   aria-label="Filmography filters"
-  class="sticky top-0 z-20 bg-neutral-950/95 backdrop-blur border-b border-white/10"
+  class="sticky top-[var(--chrome-nav-height,0px)] z-20 bg-neutral-950/95 backdrop-blur border-b border-white/10"
 >
   <ul
     bind:this={containerEl}

@@ -36,6 +36,8 @@
   import { useIntersectionObserver } from 'runed';
   import type { Video } from '$lib/data';
   import ReelSection from './ReelSection.svelte';
+  import { menu } from '$lib/state/menu.svelte';
+  import { motion } from '$lib/state/motion.svelte';
 
   let { videos }: { videos: readonly Video[] } = $props();
 
@@ -60,8 +62,15 @@
   // Current section index (D-10 — only set when intersectionRatio ≥ 0.5).
   let activeIdx = $state(-1);
 
-  // Document Page Visibility (REEL-07 / D-12 broadcast)
-  let documentHidden = $state(false);
+  // Document Page Visibility raw state (REEL-07 / D-12 broadcast). The
+  // visibilitychange listener (onMount block below) is the sole writer.
+  let pageHidden = $state(false);
+
+  // Plan 04-03 D-08 bridge: documentHidden combines document Page Visibility
+  // with the mobile-menu open state so opening MobileMenu pauses every within-
+  // window PreviewLoop via the existing reel:visibility context (Phase 3 D-12
+  // plumbing — PreviewLoop.svelte:61 consumer is preserved verbatim).
+  const documentHidden = $derived(pageHidden || menu.menuOpen);
 
   // Pitfall 12: debounce timer for the URL hash write on snap settle.
   // history.replaceState fires ~300ms after activeIdx changes so we don't
@@ -145,27 +154,78 @@
     { threshold: [0, 0.5, 1], rootMargin: '100% 0%' }
   );
 
-  // REEL-07 / D-12 — single visibilitychange subscription broadcast via context.
-  // PreviewLoop instances (Plan 03-02) read documentHidden via reel:visibility
-  // getContext and postMessage 'pause'/'play' to their iframes (300ms budget).
+  // REEL-07 / D-12 — single visibilitychange subscription broadcasts pageHidden
+  // via context. PreviewLoop instances (Plan 03-02) read documentHidden via
+  // reel:visibility getContext and postMessage 'pause'/'play' to their iframes
+  // (300ms budget). The $derived documentHidden above combines pageHidden with
+  // menu.menuOpen so Plan 04-03 D-08 (mobile-menu pause) reuses the same
+  // plumbing without a parallel pause mechanism.
   onMount(() => {
     const onVis = (): void => {
-      documentHidden = document.hidden;
+      pageHidden = document.hidden;
     };
     document.addEventListener('visibilitychange', onVis);
     return () => document.removeEventListener('visibilitychange', onVis);
   });
+
+  // D-09 keyboard handler — Arrow / PageDown / PageUp / Space / Home / End.
+  // Handler attaches to the reel container (NOT global window) so future form
+  // inputs in Phase 6 routes don't have their keys stolen. D-12: Escape is
+  // intentionally NOT mapped — MobileMenu's document-level keydown owns it;
+  // inside the reel Escape is a no-op (matches the producer's expectation of
+  // "nothing happens on Escape on a static-feel page").
+  //
+  // Note: some headless browsers don't fire scrollIntoView smoothly inside
+  // scroll-snap containers; smooth is a cinematic-only enhancement gated on
+  // prefers-reduced-motion. The browser falls back to instant snap on engines
+  // that don't honor the smooth option.
+  function onKey(e: KeyboardEvent): void {
+    type Nav = { delta: number; absolute?: 'first' | 'last' };
+    let nav: Nav | null = null;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') nav = { delta: 1 };
+    else if (e.key === 'ArrowUp' || e.key === 'PageUp') nav = { delta: -1 };
+    else if (e.key === ' ') nav = e.shiftKey ? { delta: -1 } : { delta: 1 };
+    else if (e.key === 'Home') nav = { delta: 0, absolute: 'first' };
+    else if (e.key === 'End') nav = { delta: 0, absolute: 'last' };
+    if (nav === null) return;
+    e.preventDefault();
+    let targetIdx: number;
+    if (nav.absolute === 'first') targetIdx = 0;
+    else if (nav.absolute === 'last') targetIdx = videos.length - 1;
+    else targetIdx = Math.max(0, Math.min(videos.length - 1, activeIdx + nav.delta));
+    const target = sectionRefs[targetIdx];
+    if (!target) return;
+    // jsdom guard mirrors the FilterPillBar pattern (Plan 04-01 Rule 1 deviation).
+    if (typeof target.scrollIntoView !== 'function') return;
+    target.scrollIntoView({
+      block: 'start',
+      behavior: motion.prefersReducedMotion ? 'auto' : 'smooth',
+    });
+  }
 </script>
 
+<!--
+  Plan 04-03 D-09: the reel container is intentionally focusable + keyboard-
+  handled so Arrow/PageDown/PageUp/Space/Home/End map to section navigation.
+  role="region" + aria-label makes it a meaningful landmark, but the Svelte
+  a11y linter still flags tabindex + onkeydown on a non-button element. The
+  contract requires both — the container is the scroll surface, not its
+  children — so the warnings are intentionally silenced.
+-->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
-  class="h-svh snap-y snap-proximity overflow-y-scroll overscroll-y-contain touch-pan-y"
+  class="h-[calc(100svh-var(--chrome-nav-height,0px)-var(--chrome-pill-height,0px))] snap-y snap-proximity overflow-y-scroll overscroll-y-contain touch-pan-y"
   role="region"
   aria-label="Filmography reel"
+  tabindex="0"
+  onkeydown={onKey}
+  data-doc-hidden={documentHidden}
 >
   {#each videos as video, i (video.id)}
     <article
       bind:this={sectionRefs[i]}
-      class="relative h-svh snap-start"
+      class="relative h-[calc(100svh-var(--chrome-nav-height,0px)-var(--chrome-pill-height,0px))] snap-start"
       aria-label={`Video ${i + 1} of ${videos.length}: ${video.title}`}
     >
       <ReelSection {video} index={i} total={videos.length} />
