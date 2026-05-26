@@ -36,9 +36,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **FILT-02**: Tapping a pill filters the reel to that category and updates URL to `/work/[category]`; URL is the canonical source of state (no parallel store)
 - [x] **FILT-03**: Reloading or pasting `/work/[category]` reproduces the filtered reel from server-prerender
 - [x] **FILT-04**: 8 `/work/[category]` slug routes are prerendered via `entries()` (parity with `_four`)
-- [ ] **NAV-01**: Cinematic-minimal `<TopNav />` (wordmark + 8 category links + About/Press/Contact + mobile hamburger) — chrome fades during reel scroll, surfaces on hover/tap/focus; D-13 active-state on prerendered HTML via `endsWith` suffix-match
+- [x] **NAV-01**: Cinematic-minimal `<TopNav />` (wordmark + 8 category links + About/Press/Contact + mobile hamburger) — chrome fades during reel scroll, surfaces on hover/tap/focus; D-13 active-state on prerendered HTML via `endsWith` suffix-match
 - [ ] **NAV-02**: Keyboard navigation works — Arrow keys + PageUp/PageDown jump section-to-section, Tab exits scroll-snap to TopNav, Escape returns to top; visible focus ring contrasts dark video bg
-- [ ] **NAV-03**: Skip-to-content link visible only on focus, lands on `<main>`; section landmarks use `<article aria-label="Video N of M: [title]">` (suppresses screen-reader page-explosion)
+- [x] **NAV-03**: Skip-to-content link visible only on focus, lands on `<main>`; section landmarks use `<article aria-label="Video N of M: [title]">` (suppresses screen-reader page-explosion)
 
 ### Home & Reel-Led Entry
 
@@ -151,9 +151,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FILT-02 | Phase 4 | Complete |
 | FILT-03 | Phase 4 | Complete |
 | FILT-04 | Phase 4 | Complete |
-| NAV-01 | Phase 4 | Pending |
+| NAV-01 | Phase 4 | Complete |
 | NAV-02 | Phase 4 | Pending |
-| NAV-03 | Phase 4 | Pending |
+| NAV-03 | Phase 4 | Complete |
 | HERO-01 | Phase 5 | Pending |
 | HERO-02 | Phase 5 | Pending |
 | HERO-03 | Phase 5 | Pending |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-01-PLAN.md (FilterPillBar + 8 filter routes; 9 files; 17min; FILT-01..04 complete)
-last_updated: "2026-05-26T14:15:58.992Z"
+stopped_at: Completed 04-wayfinding-02 (NAV-01 + NAV-03 chrome shell)
+last_updated: "2026-05-26T14:20:53.808Z"
 progress:
   total_phases: 7
   completed_phases: 3
   total_plans: 12
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 04 (wayfinding) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Plan: 2 of 3
 | Phase 03-reel-system-core-load-bearing-risk P02 | 21min | 5 tasks | 10 files |
 | Phase 03 P03 | 90 | 7 tasks | 11 files |
 | Phase 04-wayfinding P01 | 17min | 3 tasks | 9 files |
+| Phase 04-wayfinding P02 | 20 | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -114,6 +115,11 @@ Recent decisions affecting current work:
 - [Phase 04-wayfinding]: [Plan 04-01]: categoryAccent.ts ships 3 flavors (text/bg-15/ring-40) as separate Records — Pitfall 7 scanner-contract pinned with readFileSync().includes() test assertions
 - [Phase 04-wayfinding]: [Plan 04-01]: eslint per-file override pre-registers TopNav + MobileMenu so Plan 04-02 diff stays component-only (single source of truth at config level, NOT per-file inline directives)
 - [Phase 04-wayfinding]: [Plan 04-01]: jsdom missing scrollIntoView — guard added (typeof active.scrollIntoView === 'function'); same guard covers any future SSR codepath
+- [Phase 04-wayfinding]: scrollIdle target queried as [role=region][aria-label=Filmography reel] container, NOT window — reel-snap scroll fires on inner element; window listener would never fire
+- [Phase 04-wayfinding]: menu rune ships writer (openMenu/closeMenu); Plan 04-03 owns ReelStage consumer wiring via 1-line documentHidden OR — keeps parallel-wave file ownership clean
+- [Phase 04-wayfinding]: Splash page outer <main> -> <div> (Rule 3 deviation) — layout owns the single <main> landmark; nested would axe-fail WCAG 1.3.1
+- [Phase 04-wayfinding]: svelte.config.js handleHttpError allowlist extended for /about, /press, /contact (Phase 6 known-pending) — mirror of existing /watch/[id] pattern
+- [Phase 04-wayfinding]: WebKit skip-link e2e test uses element.focus() instead of page.keyboard.press(Tab) — WebKit macOS doesn't tab to <a> by default; focus() asserts focusability without depending on browser-default Tab behavior
 
 ### Pending Todos
 
@@ -132,6 +138,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-26T14:15:58.988Z
-Stopped at: Completed 04-01-PLAN.md (FilterPillBar + 8 filter routes; 9 files; 17min; FILT-01..04 complete)
+Last session: 2026-05-26T14:20:53.805Z
+Stopped at: Completed 04-wayfinding-02 (NAV-01 + NAV-03 chrome shell)
 Resume file: None
