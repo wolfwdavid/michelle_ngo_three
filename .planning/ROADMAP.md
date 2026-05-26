@@ -83,10 +83,12 @@ Plans:
   3. The cinematic `<TopNav />` (wordmark + 8 category links + About/Press/Contact + mobile hamburger) fades to transparent during active reel scroll and surfaces on hover/focus/tap; the PBS link is active-state on BOTH `/pbs-american-portrait/` and `/work/pbs-american-portrait/` (NAV-01, PBS-03 parity).
   4. A keyboard-only producer can navigate the entire `/work` surface — Arrow keys + PageUp/PageDown jump section-to-section, Tab exits the scroll-snap container to TopNav, Escape returns to top, focus ring is visible against any dark video background (NAV-02; Pitfall 10 mitigated).
   5. A screen-reader user lands on `/work`, hits a single skip-to-content link visible only on focus, and rotors through the page as `<main>` + ONE `<nav aria-label="Filmography filters">` + 56 `<article aria-label="Video N of M: [title]">` — not a 56-region landmark explosion (NAV-03; Pitfall 8 mitigated).
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: TBD
+- [ ] 04-01-PLAN.md — Filter routing layer: FilterPillBar component + 8 prerendered /work/[category] routes + categoryAccent.ts static-literal class map (FILT-01..04)
+- [ ] 04-02-PLAN.md — Cinematic chrome: TopNav + MobileMenu + skip-link + <main> wrapper + scrollIdle/menu state runes + chrome-fade rule (NAV-01 + NAV-03)
+- [ ] 04-03-PLAN.md — Keyboard nav + roving tabindex + D-08 menu-pause bridge in ReelStage + chrome-height math + 4-spec Playwright e2e suite (NAV-02 + 3-browser validation of NAV-01/NAV-03/FILT-01..03/D-08)
 
 ### Phase 5: Hero & Watch
 **Goal**: The cinematic entry surface (`/`) and the cinematic playback surface (`/watch/[id]`) both work on the iframe-lifecycle pattern proven sound in Phase 3. The hero is an always-mounted ambient producer reel that draws the user into the full `/work` reel below; the watch route is a letterboxed embed on full black with chrome that fades on play and rails the user toward sibling videos in the same category. Back-navigation from `/watch/[id]` restores the user's exact reel position.
