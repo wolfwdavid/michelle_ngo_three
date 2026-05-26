@@ -25,20 +25,19 @@ A hiring producer can scroll through Michelle's filmography like a cinema reel �
 - [x] **REEL-05** — Validated in Phase 3: Reel System Core (title + category overlay + `▷ PLAY WITH SOUND` deep-link present in ReelSection + PosterImage)
 - [x] **REEL-06** — Validated in Phase 3: Reel System Core (PreviewLoop 4-state lifecycle + 5-layer leak defense; mount/dispose symmetry pinned by unit test)
 - [x] **REEL-07** — Validated in Phase 3: Reel System Core (Page Visibility broadcast via `reel:visibility` context; pause-not-unmount with `wasHidden` transition guard)
+- [x] **FILT-01** — Validated in Phase 4: Wayfinding (sticky `<FilterPillBar />` renders 9 pills — 8 categories + "All" reset — above the reel on `/work` and `/work/[category]`)
+- [x] **FILT-02** — Validated in Phase 4: Wayfinding (tapping a pill navigates to `/work/[category]`; URL is canonical source of state, no parallel store)
+- [x] **FILT-03** — Validated in Phase 4: Wayfinding (reload/paste `/work/[category]` reproduces filtered reel from prerendered HTML on first paint)
+- [x] **FILT-04** — Validated in Phase 4: Wayfinding (8 `/work/[category]` routes prerendered via `entries: EntryGenerator`)
+- [x] **NAV-01** — Validated in Phase 4: Wayfinding (cinematic `<TopNav />` chrome-fades via `opacity-0 pointer-events-none` during reel scroll, surfaces on hover/focus/tap; PBS dual-route active state on `/pbs-american-portrait/` AND `/work/pbs-american-portrait/`)
+- [x] **NAV-02** — Validated in Phase 4: Wayfinding (Arrow/PageUp/PageDown/Space/Home/End map to section-to-section navigation; roving tabindex bounds reel tab-stops to 1; double-ring focus visible against dark video backgrounds)
+- [x] **NAV-03** — Validated in Phase 4: Wayfinding (skip-link → `<main id="main" tabindex="-1">` landmark; `<article aria-label="Video N of M: [title]">` per section; SR rotor surfaces 1 main + 1 header + 2 navs + 56 articles, not a 56-region explosion)
 
 ### Active
 
 #### Foundation
 
 - [ ] **FOUND-03**: Production deploy reachable on `michellengo.net` apex with HTTPS (cutover-gated; only triggers if `_three` wins A/B)
-
-#### Wayfinding
-
-- [ ] **FILT-01**: Sticky filter pill bar above the reel renders 8 category pills (PBS, Promo, Branded, Doc, Reel, Personal, Educational, plus an "All" reset)
-- [ ] **FILT-02**: Tapping a pill filters the reel to only that category's videos; URL becomes `/work/[category]` (deep-linkable, mirrors `_four`'s routing)
-- [ ] **FILT-03**: Reloading or pasting a `/work/[category]` URL reproduces the filtered reel
-- [ ] **FILT-04**: 8 `/work/[category]` slug routes are prerendered (parity with `_four`)
-- [ ] **NAV-01**: Minimal cinematic TopNav (wordmark + 8 category links + About/Press/Contact + hamburger on mobile) — chrome fades during reel scroll, surfaces on hover/tap
 
 #### Home & Reel-Led Entry
 
@@ -154,7 +153,8 @@ This document evolves at phase transitions and milestone boundaries.
 - **Phase 1: Foundation — Complete (2026-05-25).** Buildable, deploying SvelteKit scaffold live at `wolfwdavid.github.io/michelle_ngo_three/`. All day-one conventions locked: `mnp_three_` storage namespace, double-ring focus token, dark OKLCH palette, 7 self-hosted woff2 fonts, `PUBLIC_SITE_URL` env. CI pipeline runs 4 smoke gates + D-17 grep gate before every deploy.
 - **Phase 2: Data Layer — Complete (2026-05-25).** `videos.json` + 4 loader files + 4 test files mirrored byte-identical from `_four` (sha256 `fd15e056…`, pinned via `.videos-source-sha`). `validateVideosPlugin()` wired into Vite — schema violations abort `pnpm build`. `drift-check` CI job catches silent `_four` divergence on every PR/main. oEmbed health-check infra shipped (`scripts/check-embeds.ts` + nightly Action) — link rot will auto-file an issue before users see it. `pnpm check` 0 errors / `pnpm test` 49 tests green.
 - **Phase 3: Reel System Core — Complete (2026-05-26).** The killer feature ships. `/work` renders all 56 videos as fullscreen scroll-snap sections (`h-svh snap-y snap-proximity`) with a single IntersectionObserver per stage and current ±1 viewport-windowed iframe mounting. PreviewLoop ships the 4-state lifecycle (idle → mounting → playing → paused) with 5-layer leak defense; URL-param-driven raw iframes (no `@vimeo/player` dep) plus Vimeo + YouTube postMessage adapters with origin allowlists. REEL-04 unified poster-fallback codepath observable as ONE `$derived` collapsing 5 triggers (reduced-motion, cellular, save-data, autoplay-failed, embed-disabled). Page Visibility broadcast pauses-not-unmounts when the tab hides. Build-time poster pipeline (`check-embeds.ts --posters-only` + `validatePostersPlugin`) ships 56 JPEGs + `posters.json` sidecar. Playwright 4-pillar e2e suite green across Chromium + WebKit + Firefox. `pnpm test` 165/165 / `pnpm check` 0 errors / `pnpm test:e2e` 21 passed. **Real-device QA (BrowserStack 7-OS matrix + physical iPhone thermal test) deferred to UAT** — tracked in `03-HUMAN-UAT.md` (status: partial); MUST close before Phase 7 cutover per CONTEXT D-13/D-14/D-16.
-- **Next:** Phase 4 (Wayfinding) — sticky filter pill bar above the reel + `/work/[category]` deep-linkable routing (FILT-01..04, NAV-01).
+- **Phase 4: Wayfinding — Complete (2026-05-26).** Navigation contract ships. `<FilterPillBar />` renders a sticky 9-pill row (8 categories + "All") above the reel; URL is the canonical source of state — `/work/[category]` via `entries: EntryGenerator` prerenders 8 routes so reload/paste reproduces the filtered reel from HTML on first paint. Cinematic `<TopNav />` chrome-fades via `opacity-0 pointer-events-none` (never `display:none` — SR-safe), surfaces on hover/focus/tap, with verbatim PBS dual-route active-state guard. `$lib/state/menu.svelte.ts` rune exposes `menu.menuOpen` for the D-08 menu-pause bridge consumed by `ReelStage` as `documentHidden = $derived(pageHidden || menu.menuOpen)`. NAV-02 keyboard handler maps Arrow/PageDown/PageUp/Space±Shift/Home/End to section navigation with roving tabindex bounding reel tab-stops to 1. Skip-link → `<main id="main" tabindex="-1">` landmark + `<article aria-label="Video N of M: [title]">` per section delivers a clean SR rotor (1 main + 1 header + 2 navs + 56 articles). Chrome-height math via `--chrome-nav-height` + `--chrome-pill-height` CSS vars in container `calc(100svh - …)`. 261/261 unit tests green; 4 new Playwright e2e specs (~33 tests × 3 browsers) covering NAV-01 chrome-fade, NAV-02 keyboard, FILT-01..03 routing, D-08 mobile-menu pause. **iOS Safari real-device aesthetic QA deferred** — chrome-fade timing under address-bar collapse, focus-ring legibility against live video, touch-scroll feel; tracked for human review, not gating.
+- **Next:** Phase 5 (Hero & Watch) — ambient producer-reel `<HeroAmbient />` on `/`, full-bleed letterboxed `/watch/[id]` with `<ContinueReelRail />`, back-nav reel-position restoration via `history.state` + hash fragment.
 
 ---
-*Last updated: 2026-05-26 after Phase 3 completion*
+*Last updated: 2026-05-26 after Phase 4 completion*
