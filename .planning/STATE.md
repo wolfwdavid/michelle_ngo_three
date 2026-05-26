@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 04-wayfinding-02 (NAV-01 + NAV-03 chrome shell)
-last_updated: "2026-05-26T14:20:53.808Z"
+stopped_at: Completed 04-wayfinding-03 (NAV-02 keyboard handler + D-08 menu-pause bridge + D-01 chrome-height math + 4-spec e2e pillar)
+last_updated: "2026-05-26T16:38:14.901Z"
 progress:
   total_phases: 7
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -63,6 +63,7 @@ Plan: 3 of 3
 | Phase 03 P03 | 90 | 7 tasks | 11 files |
 | Phase 04-wayfinding P01 | 17min | 3 tasks | 9 files |
 | Phase 04-wayfinding P02 | 20 | 3 tasks | 13 files |
+| Phase 04-wayfinding P03 | 128min | 3 tasks tasks | 11 files files |
 
 ## Accumulated Context
 
@@ -120,6 +121,12 @@ Recent decisions affecting current work:
 - [Phase 04-wayfinding]: Splash page outer <main> -> <div> (Rule 3 deviation) — layout owns the single <main> landmark; nested would axe-fail WCAG 1.3.1
 - [Phase 04-wayfinding]: svelte.config.js handleHttpError allowlist extended for /about, /press, /contact (Phase 6 known-pending) — mirror of existing /watch/[id] pattern
 - [Phase 04-wayfinding]: WebKit skip-link e2e test uses element.focus() instead of page.keyboard.press(Tab) — WebKit macOS doesn't tab to <a> by default; focus() asserts focusability without depending on browser-default Tab behavior
+- [Phase 04-wayfinding]: [Plan 04-03] documentHidden refactored from $state+$effect bridge to $derived(pageHidden || menu.menuOpen) — purer expression, satisfies svelte/prefer-writable-derived, PreviewLoop consumer unchanged
+- [Phase 04-wayfinding]: [Plan 04-03] Keyboard handler scoped to reel container (NOT global window) with tabindex='0' — future Phase 6 form inputs don't have keys stolen; svelte-ignore directives for noninteractive tabindex+element-interactions justified inline
+- [Phase 04-wayfinding]: [Plan 04-03] data-doc-hidden attribute on reel container — exposes documentHidden for unit-test introspection without mocking setContext or PreviewLoop consumer
+- [Phase 04-wayfinding]: [Plan 04-03] Tab-walk e2e verified via DOM-introspection (linkOrder list) not physical Tab presses — cross-origin iframes briefly capture focus on attach; deterministic + headless-safe
+- [Phase 04-wayfinding]: [Plan 04-03] TopNav+MobileMenu wordmark text-neutral-50 (Rule 1 deviation) — fixes pre-existing Plan 04-02 color-contrast WCAG AA failure (1.19:1 black on dark canvas)
+- [Phase 04-wayfinding]: [Plan 04-03] reel.spec.ts Pillar 1 centerline math uses reel container bounding rect not window.innerHeight (Rule 3 deviation, chartered by Plan 04-02 deferred-items.md)
 
 ### Pending Todos
 
@@ -138,6 +145,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-26T14:20:53.805Z
-Stopped at: Completed 04-wayfinding-02 (NAV-01 + NAV-03 chrome shell)
+Last session: 2026-05-26T16:38:14.897Z
+Stopped at: Completed 04-wayfinding-03 (NAV-02 keyboard handler + D-08 menu-pause bridge + D-01 chrome-height math + 4-spec e2e pillar)
 Resume file: None
