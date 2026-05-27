@@ -4,6 +4,7 @@ import { tick } from 'svelte';
 import ReelStage from './ReelStage.svelte';
 import type { Video } from '$lib/data';
 import { __resetMenuStateForTests, openMenu, closeMenu } from '$lib/state/menu.svelte';
+import { initVisibilityListener, __resetVisibilityForTests } from '$lib/state/visibility.svelte';
 
 /**
  * ReelStage — scroll-snap container with ONE IntersectionObserver per mount
@@ -200,21 +201,23 @@ describe('ReelStage (REEL-01 / REEL-03 / NAV-03)', () => {
     expect(() => inst.callback(entriesN, inst as unknown as IntersectionObserver)).not.toThrow();
   });
 
-  test('visibilitychange listener attached on mount, removed on unmount', () => {
+  test('ReelStage does NOT directly register a visibilitychange listener (Plan 05-01 Finding 10: rune owns the writer)', () => {
+    __resetVisibilityForTests();
     const addSpy = vi.spyOn(document, 'addEventListener');
-    const removeSpy = vi.spyOn(document, 'removeEventListener');
-    const { unmount } = render(ReelStage, { props: { videos: fixture(3) } });
-    const addedVis = addSpy.mock.calls.some((c) => c[0] === 'visibilitychange');
-    expect(addedVis).toBe(true);
-    unmount();
-    const removedVis = removeSpy.mock.calls.some((c) => c[0] === 'visibilitychange');
-    expect(removedVis).toBe(true);
+    render(ReelStage, { props: { videos: fixture(3) } });
+    // Phase 5 Finding 10 option (a): the writer side migrated to pageVisibility
+    // rune (registered ONCE at app boot via +layout.svelte's initVisibility-
+    // Listener). ReelStage now only READS pageVisibility.documentHidden — it
+    // must NOT register its own visibilitychange listener.
+    const visCalls = addSpy.mock.calls.filter((c) => c[0] === 'visibilitychange');
+    expect(visCalls.length).toBe(0);
   });
 });
 
 describe('ReelStage — Plan 04-03 NAV-02 keyboard + D-08 menu-pause + D-01 chrome-height', () => {
   beforeEach(() => {
     __resetMenuStateForTests();
+    __resetVisibilityForTests();
     // jsdom doesn't implement HTMLElement.prototype.scrollIntoView — seed a
     // no-op stub so per-instance vi.spyOn() calls have a property to wrap.
     // Each test installs its own spy via vi.spyOn (auto-restored in afterEach).
@@ -327,6 +330,155 @@ describe('ReelStage — Plan 04-03 NAV-02 keyboard + D-08 menu-pause + D-01 chro
     await tick();
     expect(region?.getAttribute('data-doc-hidden')).toBe('true');
     closeMenu();
+    await tick();
+    expect(region?.getAttribute('data-doc-hidden')).toBe('false');
+  });
+});
+
+/**
+ * Phase 5 Plan 05-01 — D-14/D-15/D-16/D-17 hash-restoration consumer side.
+ *
+ * Phase 3 already WRITES `/work#video=<id>` on snap-settle (lines 117-132 in
+ * ReelStage.svelte); this test block pins the new $effect that READS the hash
+ * on mount and scrollIntoView's the matching article. Pitfall C: $effect (not
+ * onMount) so sectionRefs[] is populated by bind:this before we read it.
+ */
+describe('ReelStage — Plan 05-01 D-15 hash restoration', () => {
+  /**
+   * Mutates window.location.hash for the test. In jsdom the hash setter is
+   * writable on the location object directly, but we use the property-setter
+   * idiom for explicitness — the setter triggers a hashchange event we don't
+   * care about (no listener) so this is safe.
+   */
+  function setHash(hash: string): void {
+    // jsdom: window.location.hash is writable directly.
+    window.location.hash = hash;
+  }
+
+  beforeEach(() => {
+    __resetMenuStateForTests();
+    __resetVisibilityForTests();
+    setHash('');
+    if (typeof HTMLElement.prototype.scrollIntoView !== 'function') {
+      HTMLElement.prototype.scrollIntoView = function noop(): void {
+        return undefined;
+      };
+    }
+  });
+
+  afterEach(() => {
+    setHash('');
+  });
+
+  test('hash restoration scrolls the matching section into view (block: start, behavior: auto)', async () => {
+    const videos = fixture(5);
+    const targetId = videos[2]?.id ?? 'v3';
+    setHash(`#video=${targetId}`);
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    const { container } = render(ReelStage, { props: { videos } });
+    await tick();
+    await tick();
+    expect(spy).toHaveBeenCalled();
+    // The first call must request block:start + behavior:auto (D-15: NOT smooth).
+    const firstCall = spy.mock.calls[0]?.[0];
+    expect(firstCall).toMatchObject({ block: 'start', behavior: 'auto' });
+    // The element that received scrollIntoView is the article at index 2.
+    const articles = Array.from(container.querySelectorAll('article')) as HTMLElement[];
+    const targetArticle = articles[2];
+    expect(targetArticle).toBeDefined();
+    // mock.contexts is available on Vitest 4 — the `this` of each call.
+    const scrolledOnTarget = spy.mock.instances.some((inst) => inst === targetArticle);
+    expect(scrolledOnTarget).toBe(true);
+  });
+
+  test('hash restoration is a no-op when window.location.hash is empty (D-15)', async () => {
+    const videos = fixture(4);
+    setHash('');
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    render(ReelStage, { props: { videos } });
+    await tick();
+    await tick();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  test('hash restoration is a no-op when hash id is not in current videos prop (D-17)', async () => {
+    const videos = fixture(4);
+    setHash('#video=does-not-exist');
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    render(ReelStage, { props: { videos } });
+    await tick();
+    await tick();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  test('hash restoration is a no-op for non-#video= fragments', async () => {
+    const videos = fixture(3);
+    setHash('#main');
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    render(ReelStage, { props: { videos } });
+    await tick();
+    await tick();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  test('hash restoration fires only ONCE per mount (idempotent — does not re-fire on subsequent reactivity)', async () => {
+    const videos = fixture(5);
+    const targetId = videos[1]?.id ?? 'v2';
+    setHash(`#video=${targetId}`);
+    const spy = vi.spyOn(HTMLElement.prototype, 'scrollIntoView').mockImplementation(() => {});
+    render(ReelStage, { props: { videos } });
+    await tick();
+    await tick();
+    const initialCallCount = spy.mock.calls.length;
+    expect(initialCallCount).toBeGreaterThan(0);
+    // Open the mobile menu — triggers a re-evaluation of the documentHidden
+    // $derived that ReelStage reads. The hash-restore $effect MUST NOT re-fire
+    // because restoredFromHash is set to true on first run.
+    openMenu();
+    await tick();
+    closeMenu();
+    await tick();
+    expect(spy.mock.calls.length).toBe(initialCallCount);
+  });
+});
+
+/**
+ * Phase 5 Plan 05-01 — Finding 10 option (a) cross-cutting check: ReelStage's
+ * documentHidden context broadcast (Phase 3 D-12 reel:visibility) now flows
+ * from the pageVisibility rune. Asserting via the data-doc-hidden attribute
+ * verifies the wiring without mocking setContext.
+ */
+describe('ReelStage — Plan 05-01 pageVisibility rune subscription', () => {
+  beforeEach(() => {
+    __resetMenuStateForTests();
+    __resetVisibilityForTests();
+  });
+
+  afterEach(() => {
+    __resetMenuStateForTests();
+    __resetVisibilityForTests();
+  });
+
+  test('documentHidden reflects pageVisibility rune (menu open after init)', async () => {
+    const { container } = render(ReelStage, { props: { videos: fixture(2) } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    expect(region?.getAttribute('data-doc-hidden')).toBe('false');
+    openMenu();
+    await tick();
+    expect(region?.getAttribute('data-doc-hidden')).toBe('true');
+  });
+
+  test('documentHidden reflects pageVisibility rune (document.hidden flip after init)', async () => {
+    initVisibilityListener();
+    const { container } = render(ReelStage, { props: { videos: fixture(2) } });
+    const region = container.querySelector('[role="region"]') as HTMLElement | null;
+    expect(region?.getAttribute('data-doc-hidden')).toBe('false');
+    Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    await tick();
+    expect(region?.getAttribute('data-doc-hidden')).toBe('true');
+    Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
     await tick();
     expect(region?.getAttribute('data-doc-hidden')).toBe('false');
   });
