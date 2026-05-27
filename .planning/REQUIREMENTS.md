@@ -43,8 +43,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Home & Reel-Led Entry
 
 - [x] **HERO-01**: `/` renders `<HeroAmbient />` — Michelle's producer reel (Vimeo 264677021) playing silently muted as the entire `100svh` background, gradient overlay, name + tagline + `▷ PLAY REEL` CTA centered; iframe is always-mounted (not viewport-windowed) since hero is single-instance
-- [ ] **HERO-02**: `↓` scroll-cue invites entry; scrolling past hero reveals the first ReelSection of the full `/work` reel below
-- [ ] **HERO-03**: `▷ PLAY REEL` navigates to `/watch/264677021` and the embed plays with sound
+- [x] **HERO-02**: `↓` scroll-cue invites entry; scrolling past hero reveals the first ReelSection of the full `/work` reel below
+- [x] **HERO-03**: `▷ PLAY REEL` navigates to `/watch/264677021` and the embed plays with sound
 
 ### Watch View
 
@@ -155,8 +155,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-02 | Phase 4 | Complete |
 | NAV-03 | Phase 4 | Complete |
 | HERO-01 | Phase 5 | Complete |
-| HERO-02 | Phase 5 | Pending |
-| HERO-03 | Phase 5 | Pending |
+| HERO-02 | Phase 5 | Complete |
+| HERO-03 | Phase 5 | Complete |
 | WATCH-01 | Phase 5 | Complete |
 | WATCH-02 | Phase 5 | Complete |
 | WATCH-03 | Phase 5 | Complete |

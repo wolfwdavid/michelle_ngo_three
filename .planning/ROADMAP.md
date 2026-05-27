@@ -106,7 +106,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md — Foundation extensions (vimeoAdapter pause subscription + url.ts playsinline=1 in 'play' mode + pageVisibility module-scope rune + ReelStage D-15 hash-restore $effect consumer)
 - [x] 05-02-PLAN.md — Watch surface (WatchPlayer letterbox + chrome-fade state machine + ContinueReelRail pure CSS scroll-snap-x + /watch/[id] route + page.test + Playwright watch.spec + restore.spec)
-- [ ] 05-03-PLAN.md — Hero surface (createHeroDefer factory rune + HeroAmbient 5-layer z-stack with own IO + /+page.{ts,svelte} rewrite replacing Phase 1 splash + Playwright hero.spec)
+- [x] 05-03-PLAN.md — Hero surface (createHeroDefer factory rune + HeroAmbient 5-layer z-stack with own IO + /+page.{ts,svelte} rewrite replacing Phase 1 splash + Playwright hero.spec)
 
 ### Phase 6: PBS / Press / About / Contact
 **Goal**: The four content surfaces (`/pbs-american-portrait/`, `/press`, `/about`, `/contact`) are cinematically restyled but content-identical to `_four` — Michelle's user-approved bio, the verbatim PBS blockquote, the 13-credit prestige order, and the single-source-of-truth `<ContactBlock />` all come across without re-authoring. The cinematic restyle is shallow styling work atop established `_four` contracts.

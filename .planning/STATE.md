@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-02-PLAN.md (Wave 2 parallel — Plan 05-03 ongoing)
-last_updated: "2026-05-27T14:16:13.925Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-05-27T14:27:33.497Z"
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 05 (hero-watch) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -66,6 +66,7 @@ Plan: 2 of 3
 | Phase 04-wayfinding P03 | 128min | 3 tasks tasks | 11 files files |
 | Phase 05-hero-watch P01 | 16min | 3 tasks | 8 files |
 | Phase 05 P02 | 22 min | 3 tasks | 13 files |
+| Phase 05-hero-watch P03 | 34min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,10 @@ Recent decisions affecting current work:
 - [Phase 05]: [Plan 05-02] data-video-id={video.id} landed on the <article aria-label='Video N of M: ...'> in ReelStage.svelte (NOT ReelSection.svelte as plan literally said). The article landmark lives in ReelStage's {#each} loop wrapping ReelSection; ReelSection.svelte starts with a <div>. Documented as Rule 1 deviation.
 - [Phase 05]: [Plan 05-02] VideoObject JSON-LD payload (@context schema.org + @type VideoObject + name + description + thumbnailUrl + uploadDate + embedUrl + contentUrl) ships in <svelte:head> per video; contentUrl branches on video.source (vimeo: vimeo.com/{id}; youtube: youtube.com/watch?v={id}). Phase 7 POL-01 audits.
 - [Phase 05]: [Plan 05-02] WatchPlayer unit tests required flushSync() under vi.useFakeTimers() so the $effect microtask captures adapter handlers before assertions. PointerEvent + TouchEvent dispatches need {bubbles: true} for Svelte 5 jsdom event delegation; pointerleave stays non-bubbling (native behavior). ESLint glob for src/routes/watch/[id]/+page.svelte must use src/routes/watch/**/+page.svelte (minimatch treats literal [id] as char class).
+- [Phase 05-hero-watch]: Plan 05-03: createHeroDefer is a factory (not module-scope singleton) so Phase 6 ABT-01 /about ambient bg can instantiate its own without timer/listener tangle during SPA transitions
+- [Phase 05-hero-watch]: Plan 05-03: HeroAmbient (SIBLING of ReelStage) sets its OWN setContext('reel:visibility', { documentHidden }) so PreviewLoop child sees zero API change — the bridge value sources from pageVisibility.documentHidden which already ORs document.hidden with menu.menuOpen
+- [Phase 05-hero-watch]: Plan 05-03: e2e D-03 defer-mechanism assertion targets the LCP-bearing poster image (not the iframe-attached check) because PreviewLoop's 800ms HANDSHAKE_TIMEOUT_MS unmounts the iframe in headless before Playwright can poll — same documented caveat as Phase 3 reel.spec.ts
+- [Phase 05-hero-watch]: Plan 05-03: e2e test stubs live in src/lib/components/ so svelte-check resolves the .svelte declarations via the lib alias
 
 ### Pending Todos
 
@@ -156,6 +161,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-27T14:16:00.782Z
-Stopped at: Completed 05-02-PLAN.md (Wave 2 parallel — Plan 05-03 ongoing)
+Last session: 2026-05-27T14:27:33.493Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
