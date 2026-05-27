@@ -26,17 +26,23 @@
   import { onMount } from 'svelte';
   import { initMotionState } from '$lib/state/motion.svelte';
   import { initNetworkState } from '$lib/state/network.svelte';
+  import { initVisibilityListener } from '$lib/state/visibility.svelte';
   import TopNav from '$lib/components/TopNav.svelte';
 
   let { children } = $props();
 
-  // Hydrate the module-scope state runes (REEL-04 triggers 1 + 2; D-08).
-  // SSR/prerender does NOT call these — both helpers are __isBrowser-guarded
-  // and the call site is onMount (browser-only). Idempotent so HMR re-mounts
-  // can't double-bind the matchMedia / navigator.connection change listeners.
+  // Hydrate the module-scope state runes (REEL-04 triggers 1 + 2; D-08; Plan
+  // 05-01 Finding 10). All three init helpers are SSR-safe (typeof window /
+  // typeof document guarded) and idempotent so HMR re-mounts can't double-
+  // bind the matchMedia / navigator.connection / visibilitychange listeners.
+  // Phase 5 Finding 10 option (a): pageVisibility rune is registered ONCE
+  // here so ReelStage + HeroAmbient (Plan 05-03) + WatchPlayer (Plan 05-02)
+  // all subscribe to the SAME source-of-truth without per-component listener
+  // overhead.
   onMount(() => {
     initMotionState();
     initNetworkState();
+    initVisibilityListener();
   });
 </script>
 
