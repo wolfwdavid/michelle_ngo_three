@@ -42,17 +42,17 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Home & Reel-Led Entry
 
-- [ ] **HERO-01**: `/` renders `<HeroAmbient />` — Michelle's producer reel (Vimeo 264677021) playing silently muted as the entire `100svh` background, gradient overlay, name + tagline + `▷ PLAY REEL` CTA centered; iframe is always-mounted (not viewport-windowed) since hero is single-instance
+- [x] **HERO-01**: `/` renders `<HeroAmbient />` — Michelle's producer reel (Vimeo 264677021) playing silently muted as the entire `100svh` background, gradient overlay, name + tagline + `▷ PLAY REEL` CTA centered; iframe is always-mounted (not viewport-windowed) since hero is single-instance
 - [ ] **HERO-02**: `↓` scroll-cue invites entry; scrolling past hero reveals the first ReelSection of the full `/work` reel below
 - [ ] **HERO-03**: `▷ PLAY REEL` navigates to `/watch/264677021` and the embed plays with sound
 
 ### Watch View
 
-- [ ] **WATCH-01**: `/watch/[id]` plays the selected video full-bleed letterboxed on full black (Vimeo/YouTube embed); chrome fades out on play and back in on hover/pause via postMessage events
+- [x] **WATCH-01**: `/watch/[id]` plays the selected video full-bleed letterboxed on full black (Vimeo/YouTube embed); chrome fades out on play and back in on hover/pause via postMessage events
 - [ ] **WATCH-02**: Below the player, title + uploader + category + year metadata fade in on idle, fade out on play
 - [ ] **WATCH-03**: `<ContinueReelRail />` horizontal carousel surfaces same-category siblings beneath the player (replaces `_four`'s grid rail)
 - [ ] **WATCH-04**: 56 `/watch/[id]` slug routes prerender via `entries()` (parity with `_four`)
-- [ ] **WATCH-05**: Back-nav from `/watch/[id]` restores the user to the same section they came from (via `history.state` + hash fragment on entry)
+- [x] **WATCH-05**: Back-nav from `/watch/[id]` restores the user to the same section they came from (via `history.state` + hash fragment on entry)
 
 ### PBS American Portrait
 
@@ -154,14 +154,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NAV-01 | Phase 4 | Complete |
 | NAV-02 | Phase 4 | Complete |
 | NAV-03 | Phase 4 | Complete |
-| HERO-01 | Phase 5 | Pending |
+| HERO-01 | Phase 5 | Complete |
 | HERO-02 | Phase 5 | Pending |
 | HERO-03 | Phase 5 | Pending |
-| WATCH-01 | Phase 5 | Pending |
+| WATCH-01 | Phase 5 | Complete |
 | WATCH-02 | Phase 5 | Pending |
 | WATCH-03 | Phase 5 | Pending |
 | WATCH-04 | Phase 5 | Pending |
-| WATCH-05 | Phase 5 | Pending |
+| WATCH-05 | Phase 5 | Complete |
 | PBS-01 | Phase 6 | Pending |
 | PBS-02 | Phase 6 | Pending |
 | PBS-03 | Phase 6 | Pending |

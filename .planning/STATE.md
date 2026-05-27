@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 5 context gathered
-last_updated: "2026-05-27T11:51:35.445Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-05-27T13:42:32.112Z"
 progress:
   total_phases: 7
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 13
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** A hiring producer can scroll through Michelle's filmography like a cinema reel — each video taking the full screen with silent motion — and feel the work the way they would in a screening room, not a portfolio grid.
-**Current focus:** Phase 04 — wayfinding
+**Current focus:** Phase 05 — hero-watch
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (hero-watch) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Plan: Not started
 | Phase 04-wayfinding P01 | 17min | 3 tasks | 9 files |
 | Phase 04-wayfinding P02 | 20 | 3 tasks | 13 files |
 | Phase 04-wayfinding P03 | 128min | 3 tasks tasks | 11 files files |
+| Phase 05-hero-watch P01 | 16min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -127,6 +128,10 @@ Recent decisions affecting current work:
 - [Phase 04-wayfinding]: [Plan 04-03] Tab-walk e2e verified via DOM-introspection (linkOrder list) not physical Tab presses — cross-origin iframes briefly capture focus on attach; deterministic + headless-safe
 - [Phase 04-wayfinding]: [Plan 04-03] TopNav+MobileMenu wordmark text-neutral-50 (Rule 1 deviation) — fixes pre-existing Plan 04-02 color-contrast WCAG AA failure (1.19:1 black on dark canvas)
 - [Phase 04-wayfinding]: [Plan 04-03] reel.spec.ts Pillar 1 centerline math uses reel container bounding rect not window.innerHeight (Rule 3 deviation, chartered by Plan 04-02 deferred-items.md)
+- [Phase 05-hero-watch]: [Plan 05-01] vimeoAdapter.onLoad now subscribes 'play'+'pause'+'error'; dispose symmetrically removes play+pause (Finding 1 gap closure). YouTube adapter untouched — onStateChange info=2 already routes to onPause.
+- [Phase 05-hero-watch]: [Plan 05-01] buildEmbedUrl playsinline=1 lifted out of 'if mode === preview' for BOTH Vimeo + YouTube — now unconditional per provider (Finding 11 / Pitfall B). 'play' mode iOS Safari tap-to-play stays in-document; chrome-fade postMessage flow survives.
+- [Phase 05-hero-watch]: [Plan 05-01] pageVisibility module-scope rune ($lib/state/visibility.svelte.ts) is the single source-of-truth for documentHidden = _pageHidden OR menu.menuOpen. Registered once via initVisibilityListener from +layout.svelte; ReelStage + HeroAmbient (05-03) + WatchPlayer (05-02) all subscribe. Phase 3 D-12 'reel:visibility' setContext shape preserved verbatim.
+- [Phase 05-hero-watch]: [Plan 05-01] D-15 hash-restoration consumer in ReelStage uses $effect (not onMount — Pitfall C: sectionRefs[] bind:this populates after first paint flush). restoredFromHash $state guard makes effect single-fire per mount so Phase 4 filter-narrowing doesn't re-scroll. scrollIntoView({block:'start', behavior:'auto'}) per D-15 — explicitly NOT 'smooth'.
 
 ### Pending Todos
 
@@ -145,6 +150,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-27T11:51:35.441Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-hero-watch/05-CONTEXT.md
+Last session: 2026-05-27T13:42:32.108Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
