@@ -1,28 +1,35 @@
 <!--
-  D-01 splash placeholder. Matches _four D-09/D-10 verbatim posture for
-  A/B-parity-neutral build-window UX. Phase 5 (HERO-01/02/03) replaces
-  this with the full <HeroAmbient /> always-mounted producer reel.
+  `/` — Phase 5 Plan 05-03. HERO-01 + HERO-02.
 
-  Locked decisions inlined here:
-    D-01  wordmark + tagline placeholder, centered, dark bg
-    D-02  bg-neutral-950 = oklch(0.16 0 0) (Tailwind v4 reads --color-neutral-950 from @theme)
-    D-03  wordmark uses --font-display (Source Serif 4)
-    D-04  tagline literal: "Filmmaker. Site coming soon."
+  Replaces the Phase 1 splash placeholder. Composes <HeroAmbient /> (Plan
+  05-03 Task 2) + <ReelStage videos={data.videos} /> (Phase 3 sealed contract).
+  Scrolling past the 100svh hero surface reveals the first ReelSection of the
+  full /work reel.
 
-  Plan 04-02 NAV-03 (Rule 3 deviation): the splash content now renders inside
-  the layout's <main id="main"> wrapper. This file's outer container changed
-  from <main> -> <div> to avoid nested landmark roles (axe + WCAG 1.3.1).
+  D-01 lock: cinematic-immersive entry — the producer reel plays silently
+  muted as the hero background, NOT a separate poster grid like _four's
+  hero. This IS the A/B differentiator vs the sibling project.
+
+  HeroAmbient is a SIBLING of ReelStage on `/`, not a child. HeroAmbient owns
+  its OWN IntersectionObserver (D-02) for unmount-when-off-screen; ReelStage's
+  ±1 viewport-windowed mounting handles the reel below. Peak iframe budget:
+  hero +1 (while visible) plus reel ±1 = 3 iframes max (D-09 carry-forward).
 -->
+<script lang="ts">
+  import HeroAmbient from '$lib/components/HeroAmbient.svelte';
+  import ReelStage from '$lib/components/ReelStage.svelte';
+  import type { PageData } from './$types';
+
+  let { data }: { data: PageData } = $props();
+</script>
+
 <svelte:head>
   <title>Michelle Ngo — Filmmaker</title>
-  <meta name="description" content="Michelle Ngo — Filmmaker. Site coming soon." />
+  <meta
+    name="description"
+    content="Michelle Ngo — Filmmaker. Cinematic reel and select works."
+  />
 </svelte:head>
 
-<div class="flex min-h-svh flex-col items-center justify-center bg-neutral-950 text-neutral-100">
-  <h1 class="font-display text-5xl font-semibold tracking-[0.2em] md:text-7xl">
-    MICHELLE NGO
-  </h1>
-  <p class="mt-6 font-sans text-sm tracking-wide text-neutral-300 md:text-base">
-    Filmmaker. Site coming soon.
-  </p>
-</div>
+<HeroAmbient />
+<ReelStage videos={data.videos} />
