@@ -173,22 +173,73 @@ describe('attachVimeo — event mapping', () => {
   });
 });
 
-describe('attachVimeo — load handshake (subscribe to play + error)', () => {
-  test('iframe.load triggers 2 postMessage calls (play + error subscription)', () => {
+describe('attachVimeo — load handshake (subscribe to play + pause + error)', () => {
+  test('iframe.load triggers 3 postMessage calls (play + pause + error subscription)', () => {
     const dispose = attachVimeo(iframe, {});
     iframe.dispatchEvent(new Event('load'));
-    // 2 subscribes on load: play + error
-    expect(postMessageSpy).toHaveBeenCalledTimes(2);
+    // Phase 5 D-07 / Finding 1: 3 subscribes on load — play + pause + error.
+    expect(postMessageSpy).toHaveBeenCalledTimes(3);
     const playCall = postMessageSpy.mock.calls.find(
       (c) => typeof c[0] === 'string' && c[0].includes('"value":"play"')
+    );
+    const pauseCall = postMessageSpy.mock.calls.find(
+      (c) => typeof c[0] === 'string' && c[0].includes('"value":"pause"')
     );
     const errorCall = postMessageSpy.mock.calls.find(
       (c) => typeof c[0] === 'string' && c[0].includes('"value":"error"')
     );
     expect(playCall).toBeTruthy();
+    expect(pauseCall).toBeTruthy();
     expect(errorCall).toBeTruthy();
     expect(playCall?.[1]).toBe(ALLOWED_ORIGIN);
+    expect(pauseCall?.[1]).toBe(ALLOWED_ORIGIN);
     expect(errorCall?.[1]).toBe(ALLOWED_ORIGIN);
+    // Phase 5 D-07 / Finding 1: pause subscription is the load-bearing addition
+    // — WatchPlayer (Plan 05-02) chrome-fade-back-in consumes this event.
+    expect(pauseCall?.[0]).toContain('"method":"addEventListener"');
+    dispose();
+  });
+
+  test('attachVimeo onLoad subscribes to pause event (Finding 1)', () => {
+    const onPause = vi.fn();
+    const dispose = attachVimeo(iframe, { onPause });
+    iframe.dispatchEvent(new Event('load'));
+    const pauseSubscribe = postMessageSpy.mock.calls.find(
+      (c) =>
+        typeof c[0] === 'string' &&
+        c[0].includes('"method":"addEventListener"') &&
+        c[0].includes('"value":"pause"')
+    );
+    expect(pauseSubscribe).toBeTruthy();
+    expect(pauseSubscribe?.[1]).toBe(ALLOWED_ORIGIN);
+    dispose();
+  });
+
+  test('pause postMessage from ALLOWED_ORIGIN invokes handlers.onPause (routing regression)', () => {
+    const onPause = vi.fn();
+    const dispose = attachVimeo(iframe, { onPause });
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        origin: ALLOWED_ORIGIN,
+        source: iframe.contentWindow,
+        data: JSON.stringify({ event: 'pause' }),
+      })
+    );
+    expect(onPause).toHaveBeenCalledTimes(1);
+    dispose();
+  });
+
+  test('pause postMessage from foreign origin is ignored (Layer 5 regression)', () => {
+    const onPause = vi.fn();
+    const dispose = attachVimeo(iframe, { onPause });
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        origin: 'https://evil.example.com',
+        source: iframe.contentWindow,
+        data: JSON.stringify({ event: 'pause' }),
+      })
+    );
+    expect(onPause).not.toHaveBeenCalled();
     dispose();
   });
 });
@@ -220,6 +271,20 @@ describe('attachVimeo — dispose (Layer 2 + Layer 4 symmetry)', () => {
     );
     expect(defensiveCall).toBeTruthy();
     expect(defensiveCall?.[1]).toBe(ALLOWED_ORIGIN);
+  });
+
+  test('dispose() sends symmetric {method:removeEventListener, value:pause} postMessage (Finding 1)', () => {
+    const dispose = attachVimeo(iframe, {});
+    postMessageSpy.mockClear();
+    dispose();
+    const pauseUnsubscribe = postMessageSpy.mock.calls.find(
+      (c) =>
+        typeof c[0] === 'string' &&
+        c[0].includes('"method":"removeEventListener"') &&
+        c[0].includes('"value":"pause"')
+    );
+    expect(pauseUnsubscribe).toBeTruthy();
+    expect(pauseUnsubscribe?.[1]).toBe(ALLOWED_ORIGIN);
   });
 
   test('dispose() is idempotent — second call is no-op', () => {
