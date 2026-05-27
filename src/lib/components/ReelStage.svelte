@@ -260,6 +260,7 @@
       bind:this={sectionRefs[i]}
       class="relative h-[calc(100svh-var(--chrome-nav-height,0px)-var(--chrome-pill-height,0px))] snap-start"
       aria-label={`Video ${i + 1} of ${videos.length}: ${video.title}`}
+      data-video-id={video.id}
     >
       <ReelSection {video} index={i} total={videos.length} />
     </article>

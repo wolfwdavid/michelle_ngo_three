@@ -66,7 +66,14 @@ export default tseslint.config(
       // for Plan 05-03 (single source of truth at config level).
       'src/lib/components/WatchPlayer.svelte',
       'src/lib/components/ContinueReelRail.svelte',
-      'src/routes/watch/[id]/+page.svelte',
+      // CategoryTag — Plan 05-02 Task 3 extracted as a tiny reusable chip
+      // for /watch/[id]'s metadata block; consumes ${base}/work/{slug} when
+      // rendered as an anchor (href provided). Same stop-gap rationale.
+      'src/lib/components/CategoryTag.svelte',
+      // Note: src/routes/watch/[id]/+page.svelte — eslint's minimatch glob
+      // treats `[id]` as a character class, so the literal-bracket path
+      // needs escaping. Use a pattern that also matches the bracketed dir.
+      'src/routes/watch/**/+page.svelte',
       'src/lib/components/HeroAmbient.svelte',
       'src/routes/+page.svelte',
     ],
