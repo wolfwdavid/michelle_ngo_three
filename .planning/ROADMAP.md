@@ -101,10 +101,12 @@ Plans:
   4. Below the player, a `<ContinueReelRail />` horizontal carousel surfaces same-category sibling videos as poster-only cards (no nested iframes — rail is browse signal, not preview); replaces `_four`'s grid rail (WATCH-03).
   5. All 56 `/watch/[id]` routes are prerendered via `entries()` (sitemap-discoverable, SEO-eligible, parity with `_four`) — WATCH-04.
   6. Back-navigating from `/watch/[id]` to `/work` (or `/work/[category]`) restores the producer to the exact section they came from, via `history.state` + hash fragment on outbound navigation (WATCH-05; Pitfall 12 mitigated).
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: TBD
+- [ ] 05-01-PLAN.md — Foundation extensions (vimeoAdapter pause subscription + url.ts playsinline=1 in 'play' mode + pageVisibility module-scope rune + ReelStage D-15 hash-restore $effect consumer)
+- [ ] 05-02-PLAN.md — Watch surface (WatchPlayer letterbox + chrome-fade state machine + ContinueReelRail pure CSS scroll-snap-x + /watch/[id] route + page.test + Playwright watch.spec + restore.spec)
+- [ ] 05-03-PLAN.md — Hero surface (createHeroDefer factory rune + HeroAmbient 5-layer z-stack with own IO + /+page.{ts,svelte} rewrite replacing Phase 1 splash + Playwright hero.spec)
 
 ### Phase 6: PBS / Press / About / Contact
 **Goal**: The four content surfaces (`/pbs-american-portrait/`, `/press`, `/about`, `/contact`) are cinematically restyled but content-identical to `_four` — Michelle's user-approved bio, the verbatim PBS blockquote, the 13-credit prestige order, and the single-source-of-truth `<ContactBlock />` all come across without re-authoring. The cinematic restyle is shallow styling work atop established `_four` contracts.
