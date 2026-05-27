@@ -105,7 +105,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md — Foundation extensions (vimeoAdapter pause subscription + url.ts playsinline=1 in 'play' mode + pageVisibility module-scope rune + ReelStage D-15 hash-restore $effect consumer)
-- [ ] 05-02-PLAN.md — Watch surface (WatchPlayer letterbox + chrome-fade state machine + ContinueReelRail pure CSS scroll-snap-x + /watch/[id] route + page.test + Playwright watch.spec + restore.spec)
+- [x] 05-02-PLAN.md — Watch surface (WatchPlayer letterbox + chrome-fade state machine + ContinueReelRail pure CSS scroll-snap-x + /watch/[id] route + page.test + Playwright watch.spec + restore.spec)
 - [ ] 05-03-PLAN.md — Hero surface (createHeroDefer factory rune + HeroAmbient 5-layer z-stack with own IO + /+page.{ts,svelte} rewrite replacing Phase 1 splash + Playwright hero.spec)
 
 ### Phase 6: PBS / Press / About / Contact

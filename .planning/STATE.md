@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-05-27T13:42:32.112Z"
+stopped_at: Completed 05-02-PLAN.md (Wave 2 parallel — Plan 05-03 ongoing)
+last_updated: "2026-05-27T14:16:13.925Z"
 progress:
   total_phases: 7
   completed_phases: 4
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
 ---
 
 # Project State
@@ -65,6 +65,7 @@ Plan: 2 of 3
 | Phase 04-wayfinding P02 | 20 | 3 tasks | 13 files |
 | Phase 04-wayfinding P03 | 128min | 3 tasks tasks | 11 files files |
 | Phase 05-hero-watch P01 | 16min | 3 tasks | 8 files |
+| Phase 05 P02 | 22 min | 3 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -132,6 +133,11 @@ Recent decisions affecting current work:
 - [Phase 05-hero-watch]: [Plan 05-01] buildEmbedUrl playsinline=1 lifted out of 'if mode === preview' for BOTH Vimeo + YouTube — now unconditional per provider (Finding 11 / Pitfall B). 'play' mode iOS Safari tap-to-play stays in-document; chrome-fade postMessage flow survives.
 - [Phase 05-hero-watch]: [Plan 05-01] pageVisibility module-scope rune ($lib/state/visibility.svelte.ts) is the single source-of-truth for documentHidden = _pageHidden OR menu.menuOpen. Registered once via initVisibilityListener from +layout.svelte; ReelStage + HeroAmbient (05-03) + WatchPlayer (05-02) all subscribe. Phase 3 D-12 'reel:visibility' setContext shape preserved verbatim.
 - [Phase 05-hero-watch]: [Plan 05-01] D-15 hash-restoration consumer in ReelStage uses $effect (not onMount — Pitfall C: sectionRefs[] bind:this populates after first paint flush). restoredFromHash $state guard makes effect single-fire per mount so Phase 4 filter-narrowing doesn't re-scroll. scrollIntoView({block:'start', behavior:'auto'}) per D-15 — explicitly NOT 'smooth'.
+- [Phase 05]: [Plan 05-02] WatchPlayer ships D-06 letterbox (bg-black min-h-svh + aspect-video w-full max-h-svh flex-centered) + D-07 8-transition chrome-fade state machine. chromeFaded exposed as $bindable so the route's +page.svelte shares opacity with the below-player chrome region (D-08).
+- [Phase 05]: [Plan 05-02] ContinueReelRail ships pure CSS scroll-snap-x mandatory rail (NO embla dep) + D-11 fractional-peek widths + D-12 heading-is-link + D-13 hide-when-empty. <section aria-labelledby='rail-heading'> per UI-SPEC (rail is content, not nav).
+- [Phase 05]: [Plan 05-02] data-video-id={video.id} landed on the <article aria-label='Video N of M: ...'> in ReelStage.svelte (NOT ReelSection.svelte as plan literally said). The article landmark lives in ReelStage's {#each} loop wrapping ReelSection; ReelSection.svelte starts with a <div>. Documented as Rule 1 deviation.
+- [Phase 05]: [Plan 05-02] VideoObject JSON-LD payload (@context schema.org + @type VideoObject + name + description + thumbnailUrl + uploadDate + embedUrl + contentUrl) ships in <svelte:head> per video; contentUrl branches on video.source (vimeo: vimeo.com/{id}; youtube: youtube.com/watch?v={id}). Phase 7 POL-01 audits.
+- [Phase 05]: [Plan 05-02] WatchPlayer unit tests required flushSync() under vi.useFakeTimers() so the $effect microtask captures adapter handlers before assertions. PointerEvent + TouchEvent dispatches need {bubbles: true} for Svelte 5 jsdom event delegation; pointerleave stays non-bubbling (native behavior). ESLint glob for src/routes/watch/[id]/+page.svelte must use src/routes/watch/**/+page.svelte (minimatch treats literal [id] as char class).
 
 ### Pending Todos
 
@@ -150,6 +156,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-27T13:42:32.108Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-05-27T14:16:00.782Z
+Stopped at: Completed 05-02-PLAN.md (Wave 2 parallel — Plan 05-03 ongoing)
 Resume file: None

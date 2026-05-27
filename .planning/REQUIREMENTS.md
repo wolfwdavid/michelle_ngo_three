@@ -49,9 +49,9 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Watch View
 
 - [x] **WATCH-01**: `/watch/[id]` plays the selected video full-bleed letterboxed on full black (Vimeo/YouTube embed); chrome fades out on play and back in on hover/pause via postMessage events
-- [ ] **WATCH-02**: Below the player, title + uploader + category + year metadata fade in on idle, fade out on play
-- [ ] **WATCH-03**: `<ContinueReelRail />` horizontal carousel surfaces same-category siblings beneath the player (replaces `_four`'s grid rail)
-- [ ] **WATCH-04**: 56 `/watch/[id]` slug routes prerender via `entries()` (parity with `_four`)
+- [x] **WATCH-02**: Below the player, title + uploader + category + year metadata fade in on idle, fade out on play
+- [x] **WATCH-03**: `<ContinueReelRail />` horizontal carousel surfaces same-category siblings beneath the player (replaces `_four`'s grid rail)
+- [x] **WATCH-04**: 56 `/watch/[id]` slug routes prerender via `entries()` (parity with `_four`)
 - [x] **WATCH-05**: Back-nav from `/watch/[id]` restores the user to the same section they came from (via `history.state` + hash fragment on entry)
 
 ### PBS American Portrait
@@ -158,9 +158,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HERO-02 | Phase 5 | Pending |
 | HERO-03 | Phase 5 | Pending |
 | WATCH-01 | Phase 5 | Complete |
-| WATCH-02 | Phase 5 | Pending |
-| WATCH-03 | Phase 5 | Pending |
-| WATCH-04 | Phase 5 | Pending |
+| WATCH-02 | Phase 5 | Complete |
+| WATCH-03 | Phase 5 | Complete |
+| WATCH-04 | Phase 5 | Complete |
 | WATCH-05 | Phase 5 | Complete |
 | PBS-01 | Phase 6 | Pending |
 | PBS-02 | Phase 6 | Pending |
