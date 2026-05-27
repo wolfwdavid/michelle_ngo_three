@@ -53,12 +53,18 @@ export function buildEmbedUrl(video: Video, mode: EmbedMode): string {
     const params = new URLSearchParams();
     params.set('autoplay', '1');
     params.set('dnt', '1'); // D-06: Vimeo Do-Not-Track for EU posture
+    // Phase 5 Finding 11 / Pitfall B: playsinline=1 in BOTH modes. Pitfall 1
+    // already required it for the preview-mode iOS 16/17 autoplay handshake;
+    // 'play' mode needs it too — without it, iOS Safari tap-to-play detaches
+    // the embed to native fullscreen and the WatchPlayer chrome-fade
+    // postMessage flow (D-07) breaks because the iframe is no longer the
+    // active surface. Universal on both modes keeps it in-document.
+    params.set('playsinline', '1');
     if (mode === 'preview') {
       params.set('muted', '1');
       params.set('loop', '1');
       params.set('background', '1'); // implies muted+loop+autoplay+no-chrome
       params.set('quality', VIMEO_QUALITY_PREVIEW); // Pitfall 4 cap
-      params.set('playsinline', '1'); // Pitfall 1 iOS 16/17.0/17.1
     }
     return `${base}?${params.toString()}`;
   }
@@ -69,11 +75,15 @@ export function buildEmbedUrl(video: Video, mode: EmbedMode): string {
   params.set('modestbranding', '1');
   params.set('iv_load_policy', '3');
   params.set('enablejsapi', '1'); // required for postMessage protocol
+  // Phase 5 Finding 11 / Pitfall B: same rationale as the Vimeo branch above.
+  // iOS Safari tap-to-play stays in-document only with playsinline=1; without
+  // it, the YouTube embed detaches to native fullscreen and breaks postMessage
+  // event flow. Set unconditionally for both 'preview' and 'play' modes.
+  params.set('playsinline', '1');
   if (mode === 'preview') {
     params.set('mute', '1');
     params.set('loop', '1');
     params.set('playlist', video.id); // Pitfall 3: loop=1 ALONE does not loop YouTube
-    params.set('playsinline', '1');
     params.set('vq', YOUTUBE_QUALITY_HINT);
     params.set('controls', '0');
   }
