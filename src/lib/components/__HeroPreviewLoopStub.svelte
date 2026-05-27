@@ -14,21 +14,24 @@
 <script lang="ts">
   import type { Video } from '$lib/data';
 
-  let {
-    video: _video,
-    onautoplayfailed,
-  }: {
-    video: Video;
-    onautoplayfailed?: () => void;
-  } = $props();
+  // The `video` prop is required by the contract HeroAmbient passes; the stub
+  // doesn't use it but $props() must accept it to mirror PreviewLoop's surface.
+  // The eslint disable below covers svelte's no-unused-props rule (the prop IS
+  // declared in the type but intentionally not consumed in this test-only stub).
+  // eslint-disable-next-line svelte/no-unused-props
+  let { onautoplayfailed }: { video: Video; onautoplayfailed?: () => void } = $props();
 
-  // Push the callback into the shared registry so tests can fire it.
-  if (onautoplayfailed) {
+  // Push the callback into the shared registry so tests can fire it. Wrapped
+  // in $effect.pre so the prop is read inside a reactive closure (avoiding the
+  // svelte/state_referenced_locally warning that fires on top-level prop reads).
+  $effect.pre(() => {
+    const cb = onautoplayfailed;
+    if (!cb) return;
     const reg = (
       globalThis as { __heroPreviewLoopFailCallbacks?: Array<() => void> }
     ).__heroPreviewLoopFailCallbacks;
-    if (reg) reg.push(onautoplayfailed);
-  }
+    if (reg) reg.push(cb);
+  });
 </script>
 
 <div data-stub="preview-loop" class="absolute inset-0">
