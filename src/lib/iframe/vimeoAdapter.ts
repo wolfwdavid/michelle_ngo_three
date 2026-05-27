@@ -60,6 +60,14 @@ export function attachVimeo(iframe: HTMLIFrameElement, handlers: VimeoHandlers):
       JSON.stringify({ method: 'addEventListener', value: 'play' }),
       ALLOWED_ORIGIN
     );
+    // Phase 5 D-07 / Finding 1: Vimeo requires explicit subscription per event
+    // name; without this addEventListener post, the iframe NEVER sends 'pause'
+    // events even though our onMsg switch already routes them to handlers.onPause.
+    // WatchPlayer's chrome-fade-back-in (Plan 05-02) consumes this.
+    iframe.contentWindow?.postMessage(
+      JSON.stringify({ method: 'addEventListener', value: 'pause' }),
+      ALLOWED_ORIGIN
+    );
     iframe.contentWindow?.postMessage(
       JSON.stringify({ method: 'addEventListener', value: 'error' }),
       ALLOWED_ORIGIN
@@ -79,6 +87,12 @@ export function attachVimeo(iframe: HTMLIFrameElement, handlers: VimeoHandlers):
     try {
       iframe.contentWindow?.postMessage(
         JSON.stringify({ method: 'removeEventListener', value: 'play' }),
+        ALLOWED_ORIGIN
+      );
+      // Phase 5 D-07 / Finding 1: symmetric Layer 2 removal of the 'pause'
+      // subscription added in onLoad. Keeps 5-layer leak defense intact.
+      iframe.contentWindow?.postMessage(
+        JSON.stringify({ method: 'removeEventListener', value: 'pause' }),
         ALLOWED_ORIGIN
       );
     } catch {
