@@ -145,3 +145,15 @@
   outline: none;
   box-shadow: none;
 }
+
+/* Phase 5 Plan 05-02 Task 1: ContinueReelRail (Task 2) consumes this @utility.
+ * Tailwind v4 doesn't ship `scrollbar-hide` built-in (Recipe §6); the
+ * one-liner here keeps the horizontal rail clean on Chromium/Firefox. iOS
+ * Safari shows scrollbars briefly during scroll then auto-hides per platform
+ * default — acceptable degradation. */
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

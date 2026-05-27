@@ -57,6 +57,18 @@ export default tseslint.config(
       'src/lib/components/FilterPillBar.svelte',
       'src/lib/components/TopNav.svelte',
       'src/lib/components/MobileMenu.svelte',
+      // Phase 5 Plan 05-02 additions — WatchPlayer's iframe + ContinueReelRail
+      // cards + the route page itself all build `${base}/work/...` and
+      // `${base}/watch/...` literal hrefs. Same documented stop-gap as the
+      // earlier overrides above (resolve('/watch/[id]', { id }) rejects the
+      // literal-string id at the call site; unit tests assert literal hrefs
+      // against a mocked base=''). Pre-register HeroAmbient + /+page.svelte
+      // for Plan 05-03 (single source of truth at config level).
+      'src/lib/components/WatchPlayer.svelte',
+      'src/lib/components/ContinueReelRail.svelte',
+      'src/routes/watch/[id]/+page.svelte',
+      'src/lib/components/HeroAmbient.svelte',
+      'src/routes/+page.svelte',
     ],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
