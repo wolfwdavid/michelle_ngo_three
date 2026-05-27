@@ -64,17 +64,28 @@ describe('buildEmbedUrl — Vimeo preview', () => {
     expect(url).toContain('playsinline=1');
   });
 
-  test('Vimeo play mode URL has autoplay=1 and dnt=1 but NO preview-only params', () => {
+  test('Vimeo play mode URL has autoplay=1, dnt=1, AND playsinline=1 (Finding 11 / Pitfall B) but NO preview-only params', () => {
     const v = makeVimeoVideo({ id: '111' });
     const url = buildEmbedUrl(v, 'play');
     expect(url.startsWith('https://player.vimeo.com/video/111?')).toBe(true);
     expect(url).toContain('autoplay=1');
     expect(url).toContain('dnt=1');
+    // Phase 5 Finding 11 / Pitfall B: playsinline=1 in 'play' mode keeps iOS
+    // Safari tap-to-play in-document — without it the embed detaches to native
+    // fullscreen and the chrome-fade postMessage flow breaks.
+    expect(url).toContain('playsinline=1');
     expect(url).not.toContain('background=1');
     expect(url).not.toContain('muted=1');
     expect(url).not.toContain('quality=');
-    expect(url).not.toContain('playsinline=');
     expect(url).not.toContain('loop=');
+  });
+
+  test('buildEmbedUrl vimeo preview still includes playsinline=1 (regression)', () => {
+    const v = makeVimeoVideo({ id: '222' });
+    const url = buildEmbedUrl(v, 'preview');
+    expect(url).toContain('playsinline=1');
+    expect(url).toContain('background=1');
+    expect(url).toContain('muted=1');
   });
 });
 
@@ -112,17 +123,28 @@ describe('buildEmbedUrl — YouTube preview', () => {
     expect(url).toContain('playlist=abcXYZ');
   });
 
-  test('YouTube play mode URL has autoplay/modestbranding/iv_load_policy/enablejsapi but NO preview-only params', () => {
+  test('YouTube play mode URL has autoplay/modestbranding/iv_load_policy/enablejsapi AND playsinline=1 (Finding 11 / Pitfall B) but NO preview-only params', () => {
     const v = makeYouTubeVideo({ id: 'zzz' });
     const url = buildEmbedUrl(v, 'play');
     expect(url).toContain('autoplay=1');
     expect(url).toContain('modestbranding=1');
     expect(url).toContain('iv_load_policy=3');
     expect(url).toContain('enablejsapi=1');
+    // Phase 5 Finding 11 / Pitfall B: same rationale as Vimeo — iOS Safari
+    // tap-to-play stays in-document only with playsinline=1.
+    expect(url).toContain('playsinline=1');
     expect(url).not.toContain('mute=1');
     expect(url).not.toContain('loop=');
     expect(url).not.toContain('playlist=');
     expect(url).not.toContain('controls=0');
+  });
+
+  test('buildEmbedUrl youtube preview still includes playsinline=1 (regression)', () => {
+    const v = makeYouTubeVideo({ id: '9Zmw69UZSsI' });
+    const url = buildEmbedUrl(v, 'preview');
+    expect(url).toContain('playsinline=1');
+    expect(url).toContain('mute=1');
+    expect(url).toContain('playlist=9Zmw69UZSsI');
   });
 });
 
