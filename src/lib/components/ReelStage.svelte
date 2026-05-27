@@ -30,14 +30,19 @@
     - Use the runed wrapper for IntersectionObserver; no module-scope IO construction.
 -->
 <script lang="ts">
-  import { setContext, onMount } from 'svelte';
+  import { setContext } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { base } from '$app/paths';
   import { useIntersectionObserver } from 'runed';
   import type { Video } from '$lib/data';
   import ReelSection from './ReelSection.svelte';
-  import { menu } from '$lib/state/menu.svelte';
   import { motion } from '$lib/state/motion.svelte';
+  // Phase 5 Finding 10 option (a): the documentHidden composition (pageHidden
+  // OR menu.menuOpen) now lives in pageVisibility — a single module-scope rune
+  // subscribed by ReelStage AND HeroAmbient (Plan 05-03) AND WatchPlayer
+  // (Plan 05-02). The Phase 3 D-12 'reel:visibility' setContext broadcast is
+  // preserved verbatim for PreviewLoop consumers; only the writer migrated.
+  import { pageVisibility } from '$lib/state/visibility.svelte';
 
   let { videos }: { videos: readonly Video[] } = $props();
 
@@ -62,15 +67,14 @@
   // Current section index (D-10 — only set when intersectionRatio ≥ 0.5).
   let activeIdx = $state(-1);
 
-  // Document Page Visibility raw state (REEL-07 / D-12 broadcast). The
-  // visibilitychange listener (onMount block below) is the sole writer.
-  let pageHidden = $state(false);
-
-  // Plan 04-03 D-08 bridge: documentHidden combines document Page Visibility
-  // with the mobile-menu open state so opening MobileMenu pauses every within-
-  // window PreviewLoop via the existing reel:visibility context (Phase 3 D-12
-  // plumbing — PreviewLoop.svelte:61 consumer is preserved verbatim).
-  const documentHidden = $derived(pageHidden || menu.menuOpen);
+  // Plan 05-01 Finding 10 option (a): documentHidden now sources from the
+  // pageVisibility rune which internally ORs document.hidden with
+  // menu.menuOpen. The Phase 3 D-12 + Plan 04-03 D-08 semantics are preserved
+  // verbatim — only the writer (visibilitychange listener) moved out of
+  // ReelStage into the rune (registered ONCE at app boot from +layout.svelte's
+  // initVisibilityListener call). The 'reel:visibility' setContext broadcast
+  // below stays unchanged so PreviewLoop consumers see no API change.
+  const documentHidden = $derived(pageVisibility.documentHidden);
 
   // Pitfall 12: debounce timer for the URL hash write on snap settle.
   // history.replaceState fires ~300ms after activeIdx changes so we don't
@@ -154,18 +158,47 @@
     { threshold: [0, 0.5, 1], rootMargin: '100% 0%' }
   );
 
-  // REEL-07 / D-12 — single visibilitychange subscription broadcasts pageHidden
-  // via context. PreviewLoop instances (Plan 03-02) read documentHidden via
-  // reel:visibility getContext and postMessage 'pause'/'play' to their iframes
-  // (300ms budget). The $derived documentHidden above combines pageHidden with
-  // menu.menuOpen so Plan 04-03 D-08 (mobile-menu pause) reuses the same
-  // plumbing without a parallel pause mechanism.
-  onMount(() => {
-    const onVis = (): void => {
-      pageHidden = document.hidden;
-    };
-    document.addEventListener('visibilitychange', onVis);
-    return () => document.removeEventListener('visibilitychange', onVis);
+  // Plan 05-01 D-15 hash-restoration consumer (WATCH-05). Phase 3 ReelStage
+  // already WRITES `${base}/work#video=<id>` on snap-settle (the bestIdx
+  // branch above); this $effect READS the hash on first paint AND on
+  // cross-route arrival / direct paste / back-nav from /watch/[id], scrolling
+  // the matching article to viewport top. Pitfall C: must use $effect NOT
+  // onMount because sectionRefs[] is populated by bind:this AFTER the first
+  // paint flush — onMount runs too early. The `restoredFromHash` guard makes
+  // the effect single-fire per mount so Phase 4 /work/[category] filter
+  // narrowing (which mutates videos.length → sectionRefs.length) does NOT
+  // re-scroll on every change. D-15 specifies behavior:'auto' (instant) — NOT
+  // 'smooth' — to avoid animated-scroll noise on cinema entry. D-16/D-17:
+  // direct paste behaves identically; if hash id is not in the current
+  // filtered videos prop, no-op land at top.
+  let restoredFromHash = $state(false);
+  $effect(() => {
+    if (restoredFromHash) return;
+    if (typeof window === 'undefined') return;
+    if (sectionRefs.length !== videos.length) return;
+    const hash = window.location.hash;
+    if (!hash.startsWith('#video=')) {
+      restoredFromHash = true;
+      return;
+    }
+    const id = hash.slice('#video='.length);
+    const idx = videos.findIndex((v) => v.id === id);
+    if (idx < 0) {
+      // D-17: id not in current filtered set — land at top, no-op.
+      restoredFromHash = true;
+      return;
+    }
+    const target = sectionRefs[idx];
+    if (!target) {
+      restoredFromHash = true;
+      return;
+    }
+    // jsdom guard mirrors the keyboard-handler pattern above (Plan 04-01
+    // Rule 1 deviation). scrollIntoView may be undefined in older test envs.
+    if (typeof target.scrollIntoView === 'function') {
+      target.scrollIntoView({ block: 'start', behavior: 'auto' });
+    }
+    restoredFromHash = true;
   });
 
   // D-09 keyboard handler — Arrow / PageDown / PageUp / Space / Home / End.
