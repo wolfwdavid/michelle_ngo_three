@@ -252,6 +252,64 @@ describe('REEL-04 unified fallback codepath (Plan 03-03 Task 2 wiring)', () => {
     expect(container.querySelector('[data-stub="poster-image"]')).not.toBeNull();
   });
 
+  test('Plan 06-02 D-03 — WITH pbsCollectionUrl prop: renders "See on PBS →" anchor in top-right overlay', () => {
+    const video = makeVideo({ id: 'pbs-1', category: 'PBS American Portrait' });
+    const url = 'https://www.pbs.org/american-portrait/collection/pride/';
+    const { container } = render(Harness, {
+      props: { video, index: 0, total: 1, mountedIdsArr: [video.id], pbsCollectionUrl: url },
+    });
+    const link = Array.from(container.querySelectorAll('a')).find((a) =>
+      (a.textContent ?? '').includes('See on PBS')
+    );
+    expect(link).toBeDefined();
+    expect(link?.getAttribute('href')).toBe(url);
+    expect(link?.getAttribute('target')).toBe('_blank');
+    expect(link?.getAttribute('rel')).toContain('noopener');
+  });
+
+  test('Plan 06-02 D-03 — WITHOUT pbsCollectionUrl: zero "See on PBS" text (Phase 3-5 regression-guard)', () => {
+    const video = makeVideo({ id: 'noPbs-1' });
+    const { container } = render(Harness, {
+      props: { video, index: 0, total: 1, mountedIdsArr: [video.id] },
+    });
+    expect(container.textContent ?? '').not.toContain('See on PBS');
+  });
+
+  test('Plan 06-02 D-03 — badge stacks AFTER CategoryTag in DOM order (top-right overlay)', () => {
+    const video = makeVideo({ id: 'pbs-2', category: 'PBS American Portrait' });
+    const url = 'https://www.pbs.org/american-portrait/collection/veterans/';
+    const { container } = render(Harness, {
+      props: { video, index: 0, total: 1, mountedIdsArr: [video.id], pbsCollectionUrl: url },
+    });
+    // CategoryTag span (data-category attr) and the badge anchor both live
+    // inside the same top-right wrapper. The badge MUST come after.
+    const categoryEl = container.querySelector('[data-category]');
+    const badge = Array.from(container.querySelectorAll('a')).find((a) =>
+      (a.textContent ?? '').includes('See on PBS')
+    );
+    expect(categoryEl).not.toBeNull();
+    expect(badge).toBeDefined();
+    if (!categoryEl || !badge) return;
+    // DOCUMENT_POSITION_FOLLOWING (4) bit indicates `badge` comes after categoryEl.
+    expect(categoryEl.compareDocumentPosition(badge) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  test('Plan 06-02 D-03 — badge uses bg-white/5 backdrop-blur-sm + mt-2 classes (UI-SPEC)', () => {
+    const video = makeVideo({ id: 'pbs-3', category: 'PBS American Portrait' });
+    const url = 'https://www.pbs.org/american-portrait/collection/family/';
+    const { container } = render(Harness, {
+      props: { video, index: 0, total: 1, mountedIdsArr: [video.id], pbsCollectionUrl: url },
+    });
+    const badge = Array.from(container.querySelectorAll('a')).find((a) =>
+      (a.textContent ?? '').includes('See on PBS')
+    );
+    expect(badge).toBeDefined();
+    const cls = badge?.className ?? '';
+    expect(cls).toContain('bg-white/5');
+    expect(cls).toContain('backdrop-blur-sm');
+    expect(cls).toContain('mt-2');
+  });
+
   test('autoplayFailed in one section does NOT cascade to siblings', async () => {
     // Each Harness mount instantiates its own ReelSection, which owns its own
     // autoplayFailedFromPreviewLoop $state. Mount 3 harnesses; only fire the

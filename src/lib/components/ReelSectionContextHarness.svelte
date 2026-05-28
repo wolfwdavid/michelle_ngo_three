@@ -16,6 +16,7 @@
     mountedIdsArr = [],
     activeIdx = -1,
     documentHidden = false,
+    pbsCollectionUrl,
   }: {
     video: Video;
     index?: number;
@@ -23,6 +24,7 @@
     mountedIdsArr?: string[];
     activeIdx?: number;
     documentHidden?: boolean;
+    pbsCollectionUrl?: string;
   } = $props();
 
   // Static snapshot at mount — the harness only ships one props value per test
@@ -50,4 +52,4 @@
   });
 </script>
 
-<ReelSection {video} {index} {total} />
+<ReelSection {video} {index} {total} {pbsCollectionUrl} />

@@ -483,3 +483,173 @@ describe('ReelStage — Plan 05-01 pageVisibility rune subscription', () => {
     expect(region?.getAttribute('data-doc-hidden')).toBe('false');
   });
 });
+
+/**
+ * Phase 6 Plan 06-02 Task 1 — extension contract for ReelStage.
+ *
+ * Two new optional props:
+ *   - `intro?: Snippet` — D-04 non-video section-zero slot rendered BEFORE the
+ *     {#each videos} loop. When provided, renders inside a <section
+ *     aria-labelledby="reel-intro-heading"> with snap-start + h-svh classes so
+ *     the intro participates in the same scroll-snap rhythm as the video
+ *     sections below.
+ *   - `getPbsCollectionUrl?: (video: Video) => string | undefined` — per-video
+ *     hook invoked inside the {#each} loop; return value is forwarded to each
+ *     ReelSection as `pbsCollectionUrl` (D-03 badge).
+ *
+ * Both extensions MUST be additive — existing Phase 3-5 callers on /work + /
+ * + /work/[category] keep working byte-identically.
+ */
+describe('ReelStage — Plan 06-02 D-04 intro slot + getPbsCollectionUrl hook', () => {
+  beforeEach(() => {
+    __resetMenuStateForTests();
+    __resetVisibilityForTests();
+  });
+
+  test('WITHOUT intro prop: zero <section> siblings of the articles (Phase 3 regression-guard)', async () => {
+    // Import the harness only inside the test so the static import in
+    // __ReelStageIntroHarness.svelte does not affect tests above.
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    // First: render WITHOUT the harness (no intro). Reproduces Phase 3 surface.
+    const { container } = render(ReelStage, { props: { videos: fixture(3) } });
+    // Existing reel container is role=region.
+    const region = container.querySelector('[role="region"]');
+    expect(region).not.toBeNull();
+    // No intro slot used — there should be ZERO <section> elements inside the
+    // reel container. Articles only.
+    const sections = container.querySelectorAll('section');
+    expect(sections.length).toBe(0);
+    const articles = container.querySelectorAll('article');
+    expect(articles.length).toBe(3);
+    // Harness reference (silence unused-import).
+    expect(Harness).toBeDefined();
+  });
+
+  test('WITH intro prop + N videos: renders exactly 1 <section> intro followed by N <article>s', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    const { container } = render(Harness, { props: { videos: fixture(4) } });
+    const sections = container.querySelectorAll('section');
+    const articles = container.querySelectorAll('article');
+    expect(sections.length).toBe(1);
+    expect(articles.length).toBe(4);
+    // Intro section contains the harness marker (id="reel-intro-heading").
+    const introHeading = container.querySelector('#reel-intro-heading');
+    expect(introHeading).not.toBeNull();
+    expect(introHeading?.closest('section')).not.toBeNull();
+  });
+
+  test('intro <section> has snap-start + h-svh classes (D-04 uniform scroll rhythm)', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    const { container } = render(Harness, { props: { videos: fixture(2) } });
+    const introSection = container.querySelector('section');
+    expect(introSection).not.toBeNull();
+    const cls = introSection?.className ?? '';
+    expect(cls).toContain('snap-start');
+    expect(cls).toContain('h-svh');
+  });
+
+  test('intro <section> uses aria-labelledby="reel-intro-heading" (landmark contract)', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    const { container } = render(Harness, { props: { videos: fixture(2) } });
+    const introSection = container.querySelector('section');
+    expect(introSection?.getAttribute('aria-labelledby')).toBe('reel-intro-heading');
+  });
+
+  test('intro section is NOT added to sectionRefs / IO targets (the IO observes only videos)', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    render(Harness, { props: { videos: fixture(5) } });
+    // Find the IO instance constructed for the ReelStage. The intro is rendered
+    // outside the bind:this pattern, so the observed-target count must equal
+    // videos.length — NOT videos.length + 1.
+    const inst = ioInstances[0];
+    expect(inst).toBeDefined();
+    expect(inst?.observed.length).toBe(5);
+  });
+
+  test('intro renders even when videos.length === 0 (contract robustness)', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    const { container } = render(Harness, { props: { videos: [] as readonly Video[] } });
+    const sections = container.querySelectorAll('section');
+    const articles = container.querySelectorAll('article');
+    expect(sections.length).toBe(1);
+    expect(articles.length).toBe(0);
+  });
+
+  test('getPbsCollectionUrl hook receives each video and the return value flows into rendered DOM', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    const seen: string[] = [];
+    const hook = (v: Video): string | undefined => {
+      seen.push(v.id);
+      return `https://www.pbs.org/american-portrait/collection/test-${v.id}`;
+    };
+    const { container } = render(Harness, {
+      props: { videos: fixture(2), getPbsCollectionUrl: hook },
+    });
+    // Hook called once per video.
+    expect(seen.sort()).toEqual(['v1', 'v2']);
+    // The ReelSection should now render "See on PBS →" anchors with the synthetic hrefs.
+    const links = Array.from(container.querySelectorAll('a')).filter((a) =>
+      (a.textContent ?? '').includes('See on PBS')
+    );
+    expect(links.length).toBe(2);
+    const hrefs = links.map((a) => a.getAttribute('href') ?? '');
+    expect(hrefs.some((h) => h.endsWith('test-v1'))).toBe(true);
+    expect(hrefs.some((h) => h.endsWith('test-v2'))).toBe(true);
+  });
+
+  test('WITHOUT getPbsCollectionUrl prop: no "See on PBS" text anywhere (Phase 3-5 regression-guard)', () => {
+    const { container } = render(ReelStage, { props: { videos: fixture(3) } });
+    expect(container.textContent ?? '').not.toContain('See on PBS');
+  });
+
+  test('hash-write guard: scrolling intro section into view does NOT set a #video=<intro> hash', async () => {
+    const { default: Harness } = await import('./__ReelStageIntroHarness.svelte');
+    render(Harness, { props: { videos: fixture(3) } });
+    const inst = ioInstances[0];
+    expect(inst).toBeDefined();
+    // Pre-state: clear any pre-existing hash so we can detect a fresh write.
+    window.location.hash = '';
+    // The IO targets are the 3 ARTICLE sections (not the intro). Drive the
+    // callback with all ratio=0 (e.g., user is somewhere above section 1, at
+    // the intro). The hash-write codepath is gated on bestIdx >= 0 AND ratio
+    // >= 0.5 AND videos[bestIdx]?.id being truthy — if no entry crosses the
+    // 0.5 threshold, NO write occurs. Then drive a "section 1 in view" entry
+    // and confirm the hash flips to videos[0].id (NOT an intro id, which
+    // doesn't exist in the videos array).
+    inst!.callback(
+      inst!.observed.map((t) => ({
+        target: t,
+        intersectionRatio: 0,
+        isIntersecting: false,
+        boundingClientRect: t.getBoundingClientRect(),
+        intersectionRect: t.getBoundingClientRect(),
+        rootBounds: null,
+        time: performance.now(),
+      })),
+      inst as unknown as IntersectionObserver
+    );
+    expect(window.location.hash).toBe('');
+    // Now simulate section 1 (the first video, idx 0) being most-visible.
+    inst!.callback(
+      inst!.observed.map((t, i) => ({
+        target: t,
+        intersectionRatio: i === 0 ? 0.9 : 0,
+        isIntersecting: i === 0,
+        boundingClientRect: t.getBoundingClientRect(),
+        intersectionRect: t.getBoundingClientRect(),
+        rootBounds: null,
+        time: performance.now(),
+      })),
+      inst as unknown as IntersectionObserver
+    );
+    // The debounced setTimeout fires after 300ms — advance fake clock by
+    // running real timers via await + a small delay. Using vi.useFakeTimers
+    // would conflict with existing tests in this file, so we use a 350ms
+    // real-time wait (ReelStage's history.replaceState is synchronous once
+    // the timer fires).
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    expect(window.location.hash).toBe('#video=v1');
+    // Reset for any later tests.
+    window.location.hash = '';
+  });
+});
