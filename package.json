@@ -14,6 +14,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "check:embeds": "node --experimental-strip-types scripts/check-embeds.ts",
+    "test:prerender": "node scripts/test-prerender-coverage.mjs",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
@@ -22,8 +23,13 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts,svelte}": ["eslint --fix", "prettier --write"],
-    "*.{css,json,md,yaml,yml}": ["prettier --write"]
+    "*.{js,ts,svelte}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,json,md,yaml,yml}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.3",
