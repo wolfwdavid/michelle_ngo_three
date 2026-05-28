@@ -76,6 +76,13 @@ export default tseslint.config(
       'src/routes/watch/**/+page.svelte',
       'src/lib/components/HeroAmbient.svelte',
       'src/routes/+page.svelte',
+      // Phase 6 Plan 06-01: Footer ships ${base}/... literal hrefs for
+      // category links (PBS retargeted to /pbs-american-portrait/), site
+      // nav (/about, /press, /contact), and View All Work → (/work).
+      // Same documented stop-gap as the earlier overrides — resolve()
+      // rejects literal-string slug args at the call site; unit tests
+      // assert literal hrefs against a mocked base=''.
+      'src/lib/components/Footer.svelte',
     ],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',

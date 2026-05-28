@@ -62,6 +62,7 @@
     '/work',
     '/work/[category]',
     '/pbs-american-portrait',
+    '/press', // Plan 06-01 / D-16 — chrome-fade scope extends to /press (scroll-snap reel surface like /work and PBS landing)
   ]);
 
   $effect(() => {

@@ -19,7 +19,7 @@
        — exactly one <main>, two <nav>s, one region, 56 articles. Pitfall 8
        landmark-explosion avoided (NAV-03).
 
-  Phase 6 will add <Footer /> AFTER {@render children()} (CONT-03).
+  Phase 6 Plan 06-01 added <Footer /> below </main> (CONT-03).
 -->
 <script lang="ts">
   import '../app.css';
@@ -28,6 +28,7 @@
   import { initNetworkState } from '$lib/state/network.svelte';
   import { initVisibilityListener } from '$lib/state/visibility.svelte';
   import TopNav from '$lib/components/TopNav.svelte';
+  import Footer from '$lib/components/Footer.svelte';
 
   let { children } = $props();
 
@@ -68,3 +69,5 @@
 <main id="main" tabindex="-1" class="block">
   {@render children()}
 </main>
+
+<Footer />
