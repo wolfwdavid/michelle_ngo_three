@@ -75,10 +75,13 @@
       return; // no listeners to clean up — early-return
     }
 
-    // Attach scroll listener on the reel container (the [role="region"][aria-label="Filmography reel"]
-    // owned by ReelStage). Fall back to window if the container is not yet queryable (mount-order timing).
+    // Attach scroll listener on the reel container. Matches BOTH reel-surface labels:
+    // [aria-label="Filmography reel"] (ReelStage — /work, /work/[category], /pbs-american-portrait/)
+    // and [aria-label="Press credits reel"] (/press's bespoke container — D-16). Exactly one exists
+    // per route, so the selector-list resolves unambiguously. Fall back to window if not yet
+    // queryable (mount-order timing — safe no-op; the $effect re-runs on route change).
     const reelContainer = document.querySelector(
-      '[role="region"][aria-label="Filmography reel"]'
+      '[role="region"][aria-label="Filmography reel"], [role="region"][aria-label="Press credits reel"]'
     ) as HTMLElement | null;
     initScrollIdle(reelContainer ?? window);
 
