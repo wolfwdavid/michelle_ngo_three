@@ -35,7 +35,27 @@
   import PreviewLoop from './PreviewLoop.svelte';
   import PosterImage from './PosterImage.svelte';
 
-  let { video, index, total }: { video: Video; index: number; total: number } = $props();
+  // Phase 6 Plan 06-02 Task 1 / D-03: optional `pbsCollectionUrl` prop. When
+  // non-null, the top-right overlay stack renders a "See on PBS →" badge
+  // BELOW the CategoryTag chip (mt-2 spacing). Backward-compatible: when
+  // undefined (the /work, /work/[category], /+page.svelte case), the badge
+  // does NOT render and the existing single-chip top-right overlay survives
+  // byte-identically. The 3 PBS rows lacking a collection URL (IDs
+  // 620232398, 1007061884, 1007027015 per PBS-02 audit) render CategoryTag
+  // alone — the parent ReelStage passes undefined via
+  // getPbsCollectionUrl?.(video) -> pbsCollectionUrl(v.description ?? '')
+  // returning null.
+  let {
+    video,
+    index,
+    total,
+    pbsCollectionUrl,
+  }: {
+    video: Video;
+    index: number;
+    total: number;
+    pbsCollectionUrl?: string;
+  } = $props();
 
   interface ReelStageContext {
     readonly mountedIds: ReadonlySet<string>;
@@ -120,8 +140,11 @@
     aria-hidden="true"
   ></div>
 
-  <!-- REEL-05 CategoryTag (top-right) — consumes --color-cat-{token} -->
-  <div class="pointer-events-none absolute top-6 right-6 z-10">
+  <!-- REEL-05 CategoryTag (top-right) — consumes --color-cat-{token}.
+       Phase 6 Plan 06-02 D-03: when `pbsCollectionUrl` is provided, the
+       "See on PBS →" badge stacks BELOW the CategoryTag (mt-2 gap) inside
+       a flex-col wrapper. Wrapper is items-end so both pieces right-align. -->
+  <div class="pointer-events-none absolute top-6 right-6 z-10 flex flex-col items-end">
     <span
       class="pointer-events-auto inline-block rounded-full border px-3 py-1 font-mono text-xs tracking-wider text-neutral-50 uppercase"
       style={`border-color: var(--color-cat-${tokenName}); color: var(--color-cat-${tokenName});`}
@@ -129,6 +152,16 @@
     >
       {video.category}
     </span>
+    {#if pbsCollectionUrl}
+      <a
+        href={pbsCollectionUrl}
+        target="_blank"
+        rel="noopener"
+        class="pointer-events-auto inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm px-3 py-1 mt-2 font-mono text-sm tracking-wider text-neutral-50"
+      >
+        See on PBS →
+      </a>
+    {/if}
   </div>
 
   <!-- REEL-05 title (bottom-left, font-display) + PLAY WITH SOUND CTA -->

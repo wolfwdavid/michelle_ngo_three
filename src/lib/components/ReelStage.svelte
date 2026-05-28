@@ -30,7 +30,7 @@
     - Use the runed wrapper for IntersectionObserver; no module-scope IO construction.
 -->
 <script lang="ts">
-  import { setContext } from 'svelte';
+  import { setContext, type Snippet } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
   import { base } from '$app/paths';
   import { useIntersectionObserver } from 'runed';
@@ -44,7 +44,37 @@
   // preserved verbatim for PreviewLoop consumers; only the writer migrated.
   import { pageVisibility } from '$lib/state/visibility.svelte';
 
-  let { videos }: { videos: readonly Video[] } = $props();
+  // Phase 6 Plan 06-02 Task 1 — two ADDITIVE props for the PBS landing route:
+  //   - `intro?: Snippet` (D-04): optional non-video section-zero slot rendered
+  //      BEFORE the {#each videos} loop. Wrapped in a <section
+  //      aria-labelledby="reel-intro-heading"> with snap-start + h-svh so the
+  //      intro participates in the same scroll-snap rhythm as sections 1-N.
+  //      Consumer (PBS landing) is responsible for rendering an element with
+  //      id="reel-intro-heading" INSIDE the snippet for landmark integrity.
+  //      The intro section is excluded from the ±1 viewport-windowing budget
+  //      (it's a non-iframe slot — no PreviewLoop mount, just whatever the
+  //      snippet renders). NOT added to sectionRefs[]/IO targets so the
+  //      hash-write codepath at lines below stays gated on videos[bestIdx]?.id
+  //      and never tries to set a #video=<intro-id> hash (intro has no id in
+  //      the videos array).
+  //   - `getPbsCollectionUrl?: (video: Video) => string | undefined` (D-03):
+  //      per-video hook invoked inside the {#each} loop; return value forwarded
+  //      to each ReelSection as `pbsCollectionUrl` for the "See on PBS →"
+  //      badge. Optional-chaining + undefined default ensures backward compat:
+  //      when undefined (the /work + /work/[category] + /+page.svelte case),
+  //      every ReelSection receives pbsCollectionUrl={undefined} and the badge
+  //      does NOT render. When the hook returns undefined for a specific video
+  //      (the 3 PBS rows without collection URLs), the same outcome — no
+  //      badge on that section.
+  let {
+    videos,
+    intro,
+    getPbsCollectionUrl,
+  }: {
+    videos: readonly Video[];
+    intro?: Snippet;
+    getPbsCollectionUrl?: (video: Video) => string | undefined;
+  } = $props();
 
   // Section element refs registered via bind:this. Length tracked via $derived
   // so a future videos-prop change (e.g., Phase 4 /work/[category] filter
@@ -255,6 +285,21 @@
   onkeydown={onKey}
   data-doc-hidden={documentHidden}
 >
+  <!-- Phase 6 Plan 06-02 D-04: optional non-video section-zero slot. Snippet
+       content must include an element with id="reel-intro-heading" for landmark
+       integrity. The intro section is excluded from the ±1 viewport-windowing
+       budget (it's a non-iframe slot — no PreviewLoop mount, just whatever the
+       snippet renders) and is NOT registered with sectionRefs[] / IO targets,
+       so the existing activeIdx hash-write codepath stays gated on
+       videos[bestIdx]?.id and never tries to emit a #video=<intro-id> hash. -->
+  {#if intro}
+    <section
+      class="snap-start h-svh relative"
+      aria-labelledby="reel-intro-heading"
+    >
+      {@render intro()}
+    </section>
+  {/if}
   {#each videos as video, i (video.id)}
     <article
       bind:this={sectionRefs[i]}
@@ -262,7 +307,12 @@
       aria-label={`Video ${i + 1} of ${videos.length}: ${video.title}`}
       data-video-id={video.id}
     >
-      <ReelSection {video} index={i} total={videos.length} />
+      <ReelSection
+        {video}
+        index={i}
+        total={videos.length}
+        pbsCollectionUrl={getPbsCollectionUrl?.(video)}
+      />
     </article>
   {/each}
 </div>
