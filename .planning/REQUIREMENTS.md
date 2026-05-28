@@ -70,7 +70,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Polish & Cutover
 
-- [ ] **POL-01**: Per-page `<title>` + meta descriptions across all 7 routes; sitewide OG/Twitter cards; Person JSON-LD on `/about`; VideoObject JSON-LD on every `/watch/[id]`; build-time `sitemap.xml` endpoint (70 URLs — matches `_four`)
+- [x] **POL-01**: Per-page `<title>` + meta descriptions across all 7 routes; sitewide OG/Twitter cards; Person JSON-LD on `/about`; VideoObject JSON-LD on every `/watch/[id]`; build-time `sitemap.xml` endpoint (70 URLs — matches `_four`)
 - [ ] **POL-02**: Cinematic chrome budget — `/` LCP < 2.5s on simulated 4G (poster image first paint, hero iframe deferred until interaction or 1s idle); Lighthouse CI gates this in CI (warning-only initially, blocking pre-cutover)
 - [ ] **POL-03**: No layout shift on poster→iframe swap; iframes inherit each section's exact aspect-ratio container; `100svh` (not vh / not dvh) for scroll-snap section height
 - [ ] **POL-04**: axe-core CI catches WCAG AA violations; manual real-device QA matrix (iOS 16, iOS 17.0/17.1, iOS 17.2+, Chrome Android, Firefox desktop, Safari macOS) signs off before cutover
@@ -170,7 +170,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CONT-01 | Phase 6 | Complete |
 | CONT-02 | Phase 6 | Complete |
 | CONT-03 | Phase 6 | Complete |
-| POL-01 | Phase 7 | Pending |
+| POL-01 | Phase 7 | Complete |
 | POL-02 | Phase 7 | Pending |
 | POL-03 | Phase 7 | Pending |
 | POL-04 | Phase 7 | Pending |

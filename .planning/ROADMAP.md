@@ -140,7 +140,7 @@ Plans:
 **Plans**: 5 plans
 
 Plans:
-- [ ] 07-01-PLAN.md — Metadata core: sitemap.xml endpoint (70 URLs) + layout favicon/OG block + / brand-only title + JSON-LD audit + test-prerender-coverage.mjs (POL-01)
+- [x] 07-01-PLAN.md — Metadata core: sitemap.xml endpoint (70 URLs) + layout favicon/OG block + / brand-only title + JSON-LD audit + test-prerender-coverage.mjs (POL-01)
 - [ ] 07-02-PLAN.md — Cinematic-dark binary assets: favicon set (6) + 1200×630 og-image + .nojekyll, with asset-authoring checkpoint (POL-01/POL-05 Trap B)
 - [ ] 07-03-PLAN.md — axe 7-route harden + POL-03 100svh/CLS grep gate + D-17 measure-first Lighthouse (POL-02/03/04)
 - [ ] 07-04-PLAN.md — CI trap gates: prerender-coverage assert + Trap E route-manifest diff + Trap B OG-dim diff + Lighthouse CI; verify Trap A/D (POL-02/04/05)
