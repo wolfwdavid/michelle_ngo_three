@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-01-PLAN.md — shared chrome (ContactBlock + Footer + layout mount + trailingSlash + D-16 + svelte.config cleanup)
-last_updated: "2026-05-28T01:56:27.734Z"
+stopped_at: Completed 06-02-PLAN.md — PBS landing + Press reel surfaces (PBS-01/02/03 + PRES-01); ReelStage extended with intro slot + getPbsCollectionUrl hook
+last_updated: "2026-05-28T02:24:01.212Z"
 progress:
   total_phases: 7
   completed_phases: 5
   total_plans: 18
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 06 (pbs-press-about-contact) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Plan: 2 of 3
 | Phase 05 P02 | 22 min | 3 tasks | 13 files |
 | Phase 05-hero-watch P03 | 34min | 3 tasks | 11 files |
 | Phase 06-pbs-press-about-contact P01 | 22min | 3 tasks | 8 files |
+| Phase 06-pbs-press-about-contact P02 | 14min | 4 tasks tasks | 17 files files |
 
 ## Accumulated Context
 
@@ -147,6 +148,10 @@ Recent decisions affecting current work:
 - [Phase 06-pbs-press-about-contact]: [Plan 06-01] trailingSlash='always' adopted at +layout.ts — resolves D-13 PBS retarget URL form contract; matches _four verbatim; TopNav endsWith() guard already normalizes trailing slash
 - [Phase 06-pbs-press-about-contact]: [Plan 06-01] Typography ramp consolidated to text-sm for Footer headers + bottom strip (UI-SPEC Dim 4 — no text-xs) — diverges from _four's text-xs intentionally
 - [Phase 06-pbs-press-about-contact]: [Plan 06-01] svelte.config.js handleHttpError allow-list dropped entirely (no empty prerender block) — strict prerender default restored as end-state; 06-02 + 06-03 must close /about, /press, /contact, /pbs-american-portrait 404s in same phase
+- [Phase 06-pbs-press-about-contact]: [Plan 06-02] ReelStage intro slot resolved via intro?: Snippet prop — minimal extension, preserves ±1 viewport-windowing budget, not added to sectionRefs[]/IO targets so hash-write codepath stays gated on videos[bestIdx]?.id
+- [Phase 06-pbs-press-about-contact]: [Plan 06-02] getPbsCollectionUrl per-video hook landed on ReelStage (not ReelSection slot/discriminator); forwarded to each ReelSection inside existing {#each} loop via pbsCollectionUrl={getPbsCollectionUrl?.(video)} — backward-compatible additive contract
+- [Phase 06-pbs-press-about-contact]: [Plan 06-02] /press uses snap-mandatory (not snap-proximity like /work + PBS landing) — Pitfall 7 reason for proximity (postMessage handshake timing) does not apply on poster-only NO-iframe /press
+- [Phase 06-pbs-press-about-contact]: [Plan 06-02] /press flat array shape PressCredit[] (D-08 divergence from _four's grouped shape) — one fullscreen section per credit; today's 1:1 data yields 13 records; forward-defensive for multi-credit-per-network futures
 
 ### Pending Todos
 
@@ -165,6 +170,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-28T01:56:27.730Z
-Stopped at: Completed 06-01-PLAN.md — shared chrome (ContactBlock + Footer + layout mount + trailingSlash + D-16 + svelte.config cleanup)
+Last session: 2026-05-28T02:24:01.207Z
+Stopped at: Completed 06-02-PLAN.md — PBS landing + Press reel surfaces (PBS-01/02/03 + PRES-01); ReelStage extended with intro slot + getPbsCollectionUrl hook
 Resume file: None

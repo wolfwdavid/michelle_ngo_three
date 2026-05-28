@@ -56,13 +56,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### PBS American Portrait
 
-- [ ] **PBS-01**: `/pbs-american-portrait/` renders a dedicated landing — section zero is the verbatim PBS blockquote (reused from `_four` 05-01 Candidate C) over a still; sections 1-18 are the 18 PBS American Portrait videos in the immersive scroll-snap reel format
-- [ ] **PBS-02**: 15 of 18 PBS video sections carry a `See on PBS →` badge linking to the collection URL (3 lack a URL by design — IDs 620232398, 1007061884, 1007027015 — same as `_four`)
-- [ ] **PBS-03**: TopNav PBS link active-state covers both `/pbs-american-portrait/` and `/work/pbs-american-portrait/` (filter route parity with `_four`)
+- [x] **PBS-01**: `/pbs-american-portrait/` renders a dedicated landing — section zero is the verbatim PBS blockquote (reused from `_four` 05-01 Candidate C) over a still; sections 1-18 are the 18 PBS American Portrait videos in the immersive scroll-snap reel format
+- [x] **PBS-02**: 15 of 18 PBS video sections carry a `See on PBS →` badge linking to the collection URL (3 lack a URL by design — IDs 620232398, 1007061884, 1007027015 — same as `_four`)
+- [x] **PBS-03**: TopNav PBS link active-state covers both `/pbs-american-portrait/` and `/work/pbs-american-portrait/` (filter route parity with `_four`)
 
 ### Press, About, Contact
 
-- [ ] **PRES-01**: `/press` renders 13 broadcast credits as vertical scroll-snap sections in prestige order (HBO Max → HBO → PBS → ABC News → U2 → Amazon News → Music Box Films → Monument Releasing → Cargo Film & Releasing → AZPM → HBODocs → GrasshalmClips → Lenny Cooke Movie); each section is a fullscreen still + network logo + caption + `▷ Watch` CTA → `/watch/[id]`
+- [x] **PRES-01**: `/press` renders 13 broadcast credits as vertical scroll-snap sections in prestige order (HBO Max → HBO → PBS → ABC News → U2 → Amazon News → Music Box Films → Monument Releasing → Cargo Film & Releasing → AZPM → HBODocs → GrasshalmClips → Lenny Cooke Movie); each section is a fullscreen still + network logo + caption + `▷ Watch` CTA → `/watch/[id]`
 - [ ] **ABT-01**: `/about` renders Michelle's user-approved first-person bio (reused verbatim from `_four` 06-02) layered over an ambient muted reel loop (same producer reel as `/` hero); embedded `<ContactBlock />` below; reduced-motion serves still poster instead
 - [x] **CONT-01**: Shared `<ContactBlock />` lives on `/contact`, `/about`, AND the site-wide `<Footer />` (single `mailto:` literal source-of-truth — same pattern as `_four`); 5 contact channels appear on every prerendered route
 - [x] **CONT-02**: IMDb + LinkedIn URLs use the same channel-homepage fallbacks as `_four` (pre-cutover blocker — Michelle's personalized URLs swap in before A/B winner cutover)
@@ -162,10 +162,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WATCH-03 | Phase 5 | Complete |
 | WATCH-04 | Phase 5 | Complete |
 | WATCH-05 | Phase 5 | Complete |
-| PBS-01 | Phase 6 | Pending |
-| PBS-02 | Phase 6 | Pending |
-| PBS-03 | Phase 6 | Pending |
-| PRES-01 | Phase 6 | Pending |
+| PBS-01 | Phase 6 | Complete |
+| PBS-02 | Phase 6 | Complete |
+| PBS-03 | Phase 6 | Complete |
+| PRES-01 | Phase 6 | Complete |
 | ABT-01 | Phase 6 | Pending |
 | CONT-01 | Phase 6 | Complete |
 | CONT-02 | Phase 6 | Complete |
