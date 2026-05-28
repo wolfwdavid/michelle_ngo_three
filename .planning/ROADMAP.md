@@ -137,10 +137,14 @@ Plans:
   4. axe-core CI catches WCAG AA violations on every PR; a manual real-device QA matrix (iOS 16, iOS 17.0/17.1, iOS 17.2+, Chrome Android, Firefox desktop, Safari macOS) is signed off and documented before cutover (POL-04).
   5. All localStorage keys are namespaced `mnp_three_*` (Trap D mitigation — both siblings share `wolfwdavid.github.io` origin), and OG image dimensions are byte-identical to `_four`'s (Trap B mitigation) — verifiable by grep + filesize diff (POL-05).
   6. Production cutover infrastructure (`static/CNAME` = `michellengo.net`, `deploy-production.yml` workflow, atomic noindex flip pattern inherited from `_four` D-16, 9-step Launch Runbook) is committed and ready; the cutover fires only after the user declares `_three` the A/B winner. The runbook is reviewable end-to-end and the cutover is reversible (FOUND-03).
-**Plans**: TBD
+**Plans**: 5 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Metadata core: sitemap.xml endpoint (70 URLs) + layout favicon/OG block + / brand-only title + JSON-LD audit + test-prerender-coverage.mjs (POL-01)
+- [ ] 07-02-PLAN.md — Cinematic-dark binary assets: favicon set (6) + 1200×630 og-image + .nojekyll, with asset-authoring checkpoint (POL-01/POL-05 Trap B)
+- [ ] 07-03-PLAN.md — axe 7-route harden + POL-03 100svh/CLS grep gate + D-17 measure-first Lighthouse (POL-02/03/04)
+- [ ] 07-04-PLAN.md — CI trap gates: prerender-coverage assert + Trap E route-manifest diff + Trap B OG-dim diff + Lighthouse CI; verify Trap A/D (POL-02/04/05)
+- [ ] 07-05-PLAN.md — Cutover infra: CNAME + deploy-production.yml + staged D-12 atomic flip + consolidated 07-QA-MATRIX.md + 9-step Launch Runbook (FOUND-03/POL-04)
 
 ## Progress
 
@@ -155,7 +159,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 4. Wayfinding | 0/TBD | Not started | - |
 | 5. Hero & Watch | 0/TBD | Not started | - |
 | 6. PBS / Press / About / Contact | 0/3 | Planned | - |
-| 7. Polish & Cutover | 0/TBD | Not started | - |
+| 7. Polish & Cutover | 0/5 | Planned | - |
 
 ---
 *Roadmap created: 2026-05-19*
