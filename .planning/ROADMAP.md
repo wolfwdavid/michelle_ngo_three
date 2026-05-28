@@ -124,7 +124,7 @@ Plans:
 - [x] 06-01-PLAN.md — Shared chrome (ContactBlock + Footer + +layout.svelte mount + trailingSlash='always' + TopNav /press fade extension + svelte.config.js handleHttpError cleanup) — CONT-01/02/03 component-level + D-13/D-14/D-15/D-16/D-20/D-21
 - [x] 06-02-PLAN.md — PBS landing + Press reel surfaces (ReelStage intro?: Snippet slot + ReelSection pbsCollectionUrl prop + verbatim _pbsCollectionUrl regex + flat-array _pressCredits + 3-browser e2e + axe) — PBS-01/02/03 + PRES-01
 - [x] 06-03-PLAN.md — About + Contact splash surfaces (HeroAmbient wordmark/tagline props + bio approval gate + Person JSON-LD + /contact static-poster splash + 3-browser e2e with reduced-motion emulation + cross-surface CONT-01 check) — ABT-01 + CONT-01 + CONT-02
-- [ ] 06-04-PLAN.md — Gap closure: broaden TopNav scroll-target querySelector to match both reel container labels so the D-16 chrome-fade fires on /press (press.spec.ts Test D) — PRES-01 (D-16)
+- [x] 06-04-PLAN.md — Gap closure: broaden TopNav scroll-target querySelector to match both reel container labels so the D-16 chrome-fade fires on /press (press.spec.ts Test D) — PRES-01 (D-16)
 
 ### Phase 7: Polish & Cutover
 **Goal**: The site is production-ready and A/B-eligible. Per-page SEO + JSON-LD + sitemap + Lighthouse CI + axe-core CI all gate; real-device QA matrix signs off; the 5 A/B integrity traps (videos.json drift, OG asymmetry, sitemap canonical, shared localStorage, divergent entry routes) are all mitigated explicitly; production cutover infrastructure (`static/CNAME`, `deploy-production.yml`, atomic noindex flip, 9-step Launch Runbook) is ready to fire IF and ONLY IF `_three` wins the A/B vs `_four`.

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-03-PLAN.md — /about + /contact splash surfaces (ABT-01 + CONT-01 + CONT-02); HeroAmbient extended with wordmark/tagline props; Phase 6 complete, zero prerender 404s
-last_updated: "2026-05-28T02:54:27.746Z"
+stopped_at: Completed 06-04-PLAN.md — D-16 /press chrome-fade gap closed (PRES-01); Test D green on 3 browsers; Test C deferred (test-wait fragility, product correct)
+last_updated: "2026-05-28T04:18:29.301Z"
 progress:
   total_phases: 7
   completed_phases: 6
-  total_plans: 18
-  completed_plans: 18
+  total_plans: 19
+  completed_plans: 19
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 06 (pbs-press-about-contact) — EXECUTING
-Plan: 3 of 3
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -70,6 +70,7 @@ Plan: 3 of 3
 | Phase 06-pbs-press-about-contact P01 | 22min | 3 tasks | 8 files |
 | Phase 06-pbs-press-about-contact P02 | 14min | 4 tasks tasks | 17 files files |
 | Phase 06-pbs-press-about-contact P03 | 21min | 6 tasks | 8 files |
+| Phase 06-pbs-press-about-contact P04 | 55 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -156,6 +157,8 @@ Recent decisions affecting current work:
 - [Phase 06-pbs-press-about-contact]: [Plan 06-03] HeroAmbient tagline suppression via Svelte 5 sentinel key-presence ('tagline' in rest props) — / keeps default 'Filmmaker & Producer'; /about's tagline={undefined} renders no tagline (Svelte applies default on undefined, can't distinguish absent from explicit-undefined)
 - [Phase 06-pbs-press-about-contact]: [Plan 06-03] /about bio embedded with STRAIGHT apostrophes to match user-approved _four-shipped source byte-for-byte (plan's 'curly apostrophes' template comment was incorrect)
 - [Phase 06-pbs-press-about-contact]: [Plan 06-03] Person JSON-LD sameAs byte-identical to ContactBlock literals (D-21 single-source duplication + sync-warning); /about needs no eslint override, /contact does (poster src ${base} literal)
+- [Phase 06-pbs-press-about-contact]: [Plan 06-04] D-16 fix: TopNav scroll-target querySelector broadened to a CSS selector-list matching BOTH reel-container labels (Filmography reel + Press credits reel) — exactly one per route, resolves unambiguously; closes the /press chrome-fade gap with the ?? window fallback preserved
+- [Phase 06-pbs-press-about-contact]: [Plan 06-04] press.spec.ts Test C deferred (not fixed): clicking ▷ Watch navigates correctly (proven via waitForURL probe → /watch/<id>/) but the test's networkidle wait races the trailingSlash='always' 307 redirect; the D-16 listener activation exposed this latent fragility. Honored gap-only scope (TopNav.svelte only); one-line waitForURL fix recommended for follow-up
 
 ### Pending Todos
 
@@ -174,6 +177,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-28T02:54:27.741Z
-Stopped at: Completed 06-03-PLAN.md — /about + /contact splash surfaces (ABT-01 + CONT-01 + CONT-02); HeroAmbient extended with wordmark/tagline props; Phase 6 complete, zero prerender 404s
+Last session: 2026-05-28T04:18:07.286Z
+Stopped at: Completed 06-04-PLAN.md — D-16 /press chrome-fade gap closed (PRES-01); Test D green on 3 browsers; Test C deferred (test-wait fragility, product correct)
 Resume file: None
