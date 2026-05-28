@@ -118,12 +118,13 @@ Plans:
   3. `/about` renders Michelle's user-approved first-person bio verbatim (reused from `_four` 06-02) layered over an ambient muted reel loop (same producer reel as `/`'s hero); under `prefers-reduced-motion: reduce` the bg degrades to a still poster instead; an embedded `<ContactBlock />` lives below the bio (ABT-01).
   4. `/contact` renders a minimal full-bleed surface — Michelle's name in display serif over a static poster, with the `<ContactBlock />` centered (CONT-01 home).
   5. The shared `<ContactBlock />` appears on `/contact`, `/about`, AND the site-wide restyled `<Footer />` — 5 contact channels (email, phone, IMDb, LinkedIn, Vimeo) on every prerendered route from a single `mailto:` literal source-of-truth, with the same channel-homepage IMDb/LinkedIn fallbacks as `_four` (CONT-01, CONT-02, CONT-03).
-**Plans**: 3 plans
+**Plans**: 4 plans (3 + 1 gap-closure)
 
 Plans:
 - [x] 06-01-PLAN.md — Shared chrome (ContactBlock + Footer + +layout.svelte mount + trailingSlash='always' + TopNav /press fade extension + svelte.config.js handleHttpError cleanup) — CONT-01/02/03 component-level + D-13/D-14/D-15/D-16/D-20/D-21
 - [x] 06-02-PLAN.md — PBS landing + Press reel surfaces (ReelStage intro?: Snippet slot + ReelSection pbsCollectionUrl prop + verbatim _pbsCollectionUrl regex + flat-array _pressCredits + 3-browser e2e + axe) — PBS-01/02/03 + PRES-01
 - [x] 06-03-PLAN.md — About + Contact splash surfaces (HeroAmbient wordmark/tagline props + bio approval gate + Person JSON-LD + /contact static-poster splash + 3-browser e2e with reduced-motion emulation + cross-surface CONT-01 check) — ABT-01 + CONT-01 + CONT-02
+- [ ] 06-04-PLAN.md — Gap closure: broaden TopNav scroll-target querySelector to match both reel container labels so the D-16 chrome-fade fires on /press (press.spec.ts Test D) — PRES-01 (D-16)
 
 ### Phase 7: Polish & Cutover
 **Goal**: The site is production-ready and A/B-eligible. Per-page SEO + JSON-LD + sitemap + Lighthouse CI + axe-core CI all gate; real-device QA matrix signs off; the 5 A/B integrity traps (videos.json drift, OG asymmetry, sitemap canonical, shared localStorage, divergent entry routes) are all mitigated explicitly; production cutover infrastructure (`static/CNAME`, `deploy-production.yml`, atomic noindex flip, 9-step Launch Runbook) is ready to fire IF and ONLY IF `_three` wins the A/B vs `_four`.
