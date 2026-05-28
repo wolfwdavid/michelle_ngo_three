@@ -58,7 +58,7 @@ test.describe('/press — Phase 6 PRES-01 + D-16 chrome-fade regression', () => 
     expect(href).toBeTruthy();
     expect(href ?? '').toMatch(/\/watch\/[\w-]+$/);
     await firstWatchLink.click();
-    await page.waitForLoadState('networkidle');
+    await page.waitForURL(/\/watch\//);
     expect(page.url()).toContain('/watch/');
   });
 

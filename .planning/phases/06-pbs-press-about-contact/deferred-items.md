@@ -29,7 +29,11 @@ _Original entry (for history):_
 **Discovered:** Plan 06-03 Task 6 full-suite e2e verification.
 **Out of scope for 06-03:** Plan 06-03's contract is /about + /contact + the HeroAmbient `wordmark?`/`tagline?` extension. Verified via `git diff 925b74f~3..HEAD` that none of the four 06-03 task commits touch `TopNav.svelte`, `src/routes/press/*`, the scroll-idle rune, or the chrome-fade scope — so this failure is NOT caused by 06-03's changes. Fixing it would require editing TopNav's scroll-target/fade-scope logic (06-02/Phase-4 domain). Recommend a follow-up 06-02 repair (or Phase 7 polish) that wires the TopNav scroll-idle listener + D-16 fade-scope predicate to the /press reel container. All 30 /about + /contact e2e tests (this plan's deliverable) pass on all 3 browsers.
 
-## tests/e2e/press.spec.ts Test C — weak wait condition races the trailing-slash 307 redirect [SURFACED by Plan 06-04]
+## tests/e2e/press.spec.ts Test C — weak wait condition races the trailing-slash 307 redirect [RESOLVED in Plan 06-04]
+
+**Status:** ✅ RESOLVED 2026-05-28 (authorized one-line 06-04 amendment). Applied the test-only fix at `tests/e2e/press.spec.ts:61` — `await page.waitForLoadState('networkidle')` → `await page.waitForURL(/\/watch\//)` (the correct Playwright primitive for SPA navigation; not a retry/sleep hack). Full `press.spec.ts` re-run is green: 15/15 (5 tests × chromium + webkit + firefox), Test C and Test D both passing on all three browsers. No product code changed.
+
+_Original entry (for history):_
 
 **File:** `tests/e2e/press.spec.ts:52-63` (Test C — "clicking ▷ Watch on article 1 navigates to /watch/<id>")
 **Symptom:** After `firstWatchLink.click()` followed by `page.waitForLoadState('networkidle')`, `expect(page.url()).toContain('/watch/')` fails with `Received string: "http://localhost:4183/press/"` on webkit + firefox (and intermittently chromium under serial isolation). The URL is read at `/press/` before SPA navigation completes.
