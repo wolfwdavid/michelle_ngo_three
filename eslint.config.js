@@ -90,6 +90,12 @@ export default tseslint.config(
       // literal hrefs for the ▷ Watch CTAs. Same documented stop-gap.
       'src/routes/pbs-american-portrait/+page.svelte',
       'src/routes/press/+page.svelte',
+      // Phase 6 Plan 06-03: /contact/+page.svelte builds `${base}${getPosterFor(...)}`
+      // literal img src for the splash poster bg. Same documented stop-gap as the
+      // earlier overrides — resolve() rejects literal-string args at the call site.
+      // (/about/+page.svelte needs NO override — it has no ${base}/... nav hrefs;
+      // it only imports HeroAmbient + ContactBlock + an inline JSON-LD {@html}.)
+      'src/routes/contact/+page.svelte',
     ],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
