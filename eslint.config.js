@@ -83,6 +83,13 @@ export default tseslint.config(
       // rejects literal-string slug args at the call site; unit tests
       // assert literal hrefs against a mocked base=''.
       'src/lib/components/Footer.svelte',
+      // Phase 6 Plan 06-02: /pbs-american-portrait/+page.svelte builds
+      // `${base}${getPosterFor(...)}` literal img src and consumes
+      // ReelStage's getPbsCollectionUrl hook (which returns absolute
+      // off-site URLs). /press/+page.svelte builds `${base}/watch/${id}`
+      // literal hrefs for the ▷ Watch CTAs. Same documented stop-gap.
+      'src/routes/pbs-american-portrait/+page.svelte',
+      'src/routes/press/+page.svelte',
     ],
     rules: {
       'svelte/no-navigation-without-resolve': 'off',
