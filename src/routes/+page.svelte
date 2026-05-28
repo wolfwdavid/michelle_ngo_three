@@ -24,11 +24,8 @@
 </script>
 
 <svelte:head>
-  <title>Michelle Ngo — Filmmaker</title>
-  <meta
-    name="description"
-    content="Michelle Ngo — Filmmaker. Cinematic reel and select works."
-  />
+  <title>Michelle Ngo</title>
+  <meta name="description" content="Michelle Ngo — Filmmaker. Cinematic reel and select works." />
 </svelte:head>
 
 <HeroAmbient />
