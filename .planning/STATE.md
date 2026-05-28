@@ -19,7 +19,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** A hiring producer can scroll through Michelle's filmography like a cinema reel — each video taking the full screen with silent motion — and feel the work the way they would in a screening room, not a portfolio grid.
-**Current focus:** Phase 06 — pbs-press-about-contact
+**Current focus:** Phase 07 — polish-cutover (phases 1-6 complete; phase 7 planned, not yet executed)
 
 ## Current Position
 

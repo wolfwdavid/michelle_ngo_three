@@ -156,9 +156,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 | 1. Foundation | 3/3 | Complete | 2026-05-25 |
 | 2. Data Layer | 3/3 | Complete | 2026-05-25 |
 | 3. Reel System Core | 3/3 | Complete (code-level — real-device QA deferred to UAT, see 03-HUMAN-UAT.md) | 2026-05-26 |
-| 4. Wayfinding | 0/TBD | Not started | - |
-| 5. Hero & Watch | 0/TBD | Not started | - |
-| 6. PBS / Press / About / Contact | 0/3 | Planned | - |
+| 4. Wayfinding | 3/3 | Complete | 2026-05-26 |
+| 5. Hero & Watch | 3/3 | Complete (code-level — human UAT pending, see 05-HUMAN-UAT.md) | 2026-05-27 |
+| 6. PBS / Press / About / Contact | 4/4 | Complete | 2026-05-28 |
 | 7. Polish & Cutover | 0/5 | Planned | - |
 
 ---
