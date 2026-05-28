@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Phase 6 context gathered
-last_updated: "2026-05-28T00:15:45.829Z"
+stopped_at: Completed 06-01-PLAN.md — shared chrome (ContactBlock + Footer + layout mount + trailingSlash + D-16 + svelte.config cleanup)
+last_updated: "2026-05-28T01:56:27.734Z"
 progress:
   total_phases: 7
   completed_phases: 5
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 18
+  completed_plans: 16
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** A hiring producer can scroll through Michelle's filmography like a cinema reel — each video taking the full screen with silent motion — and feel the work the way they would in a screening room, not a portfolio grid.
-**Current focus:** Phase 05 — hero-watch
+**Current focus:** Phase 06 — pbs-press-about-contact
 
 ## Current Position
 
-Phase: 6
-Plan: Not started
+Phase: 06 (pbs-press-about-contact) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Plan: Not started
 | Phase 05-hero-watch P01 | 16min | 3 tasks | 8 files |
 | Phase 05 P02 | 22 min | 3 tasks | 13 files |
 | Phase 05-hero-watch P03 | 34min | 3 tasks | 11 files |
+| Phase 06-pbs-press-about-contact P01 | 22min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -143,6 +144,9 @@ Recent decisions affecting current work:
 - [Phase 05-hero-watch]: Plan 05-03: HeroAmbient (SIBLING of ReelStage) sets its OWN setContext('reel:visibility', { documentHidden }) so PreviewLoop child sees zero API change — the bridge value sources from pageVisibility.documentHidden which already ORs document.hidden with menu.menuOpen
 - [Phase 05-hero-watch]: Plan 05-03: e2e D-03 defer-mechanism assertion targets the LCP-bearing poster image (not the iframe-attached check) because PreviewLoop's 800ms HANDSHAKE_TIMEOUT_MS unmounts the iframe in headless before Playwright can poll — same documented caveat as Phase 3 reel.spec.ts
 - [Phase 05-hero-watch]: Plan 05-03: e2e test stubs live in src/lib/components/ so svelte-check resolves the .svelte declarations via the lib alias
+- [Phase 06-pbs-press-about-contact]: [Plan 06-01] trailingSlash='always' adopted at +layout.ts — resolves D-13 PBS retarget URL form contract; matches _four verbatim; TopNav endsWith() guard already normalizes trailing slash
+- [Phase 06-pbs-press-about-contact]: [Plan 06-01] Typography ramp consolidated to text-sm for Footer headers + bottom strip (UI-SPEC Dim 4 — no text-xs) — diverges from _four's text-xs intentionally
+- [Phase 06-pbs-press-about-contact]: [Plan 06-01] svelte.config.js handleHttpError allow-list dropped entirely (no empty prerender block) — strict prerender default restored as end-state; 06-02 + 06-03 must close /about, /press, /contact, /pbs-american-portrait 404s in same phase
 
 ### Pending Todos
 
@@ -161,6 +165,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-28T00:15:45.826Z
-Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-pbs-press-about-contact/06-CONTEXT.md
+Last session: 2026-05-28T01:56:27.730Z
+Stopped at: Completed 06-01-PLAN.md — shared chrome (ContactBlock + Footer + layout mount + trailingSlash + D-16 + svelte.config cleanup)
+Resume file: None

@@ -64,9 +64,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **PRES-01**: `/press` renders 13 broadcast credits as vertical scroll-snap sections in prestige order (HBO Max → HBO → PBS → ABC News → U2 → Amazon News → Music Box Films → Monument Releasing → Cargo Film & Releasing → AZPM → HBODocs → GrasshalmClips → Lenny Cooke Movie); each section is a fullscreen still + network logo + caption + `▷ Watch` CTA → `/watch/[id]`
 - [ ] **ABT-01**: `/about` renders Michelle's user-approved first-person bio (reused verbatim from `_four` 06-02) layered over an ambient muted reel loop (same producer reel as `/` hero); embedded `<ContactBlock />` below; reduced-motion serves still poster instead
-- [ ] **CONT-01**: Shared `<ContactBlock />` lives on `/contact`, `/about`, AND the site-wide `<Footer />` (single `mailto:` literal source-of-truth — same pattern as `_four`); 5 contact channels appear on every prerendered route
-- [ ] **CONT-02**: IMDb + LinkedIn URLs use the same channel-homepage fallbacks as `_four` (pre-cutover blocker — Michelle's personalized URLs swap in before A/B winner cutover)
-- [ ] **CONT-03**: Site-wide `<Footer />` (cinematic restyle of `_four`'s pattern) mirrors TopNav (categories + secondary nav) and surfaces 5 contact channels on every route
+- [x] **CONT-01**: Shared `<ContactBlock />` lives on `/contact`, `/about`, AND the site-wide `<Footer />` (single `mailto:` literal source-of-truth — same pattern as `_four`); 5 contact channels appear on every prerendered route
+- [x] **CONT-02**: IMDb + LinkedIn URLs use the same channel-homepage fallbacks as `_four` (pre-cutover blocker — Michelle's personalized URLs swap in before A/B winner cutover)
+- [x] **CONT-03**: Site-wide `<Footer />` (cinematic restyle of `_four`'s pattern) mirrors TopNav (categories + secondary nav) and surfaces 5 contact channels on every route
 
 ### Polish & Cutover
 
@@ -167,9 +167,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PBS-03 | Phase 6 | Pending |
 | PRES-01 | Phase 6 | Pending |
 | ABT-01 | Phase 6 | Pending |
-| CONT-01 | Phase 6 | Pending |
-| CONT-02 | Phase 6 | Pending |
-| CONT-03 | Phase 6 | Pending |
+| CONT-01 | Phase 6 | Complete |
+| CONT-02 | Phase 6 | Complete |
+| CONT-03 | Phase 6 | Complete |
 | POL-01 | Phase 7 | Pending |
 | POL-02 | Phase 7 | Pending |
 | POL-03 | Phase 7 | Pending |
