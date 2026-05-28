@@ -6,10 +6,7 @@ import {
   __resetMotionStateForTests,
   __setPrefersReducedMotionForTests,
 } from '$lib/state/motion.svelte';
-import {
-  __resetNetworkStateForTests,
-  __setEffectiveTypeForTests,
-} from '$lib/state/network.svelte';
+import { __resetNetworkStateForTests, __setEffectiveTypeForTests } from '$lib/state/network.svelte';
 import { __resetVisibilityForTests } from '$lib/state/visibility.svelte';
 import { __resetMenuStateForTests, openMenu } from '$lib/state/menu.svelte';
 
@@ -52,8 +49,9 @@ vi.mock('$app/paths', () => ({ base: '' }));
 
 // Shared registry the stub pushes its onautoplayfailed callbacks into.
 const previewLoopFailCallbacks: Array<() => void> = [];
-(globalThis as { __heroPreviewLoopFailCallbacks?: Array<() => void> }).__heroPreviewLoopFailCallbacks =
-  previewLoopFailCallbacks;
+(
+  globalThis as { __heroPreviewLoopFailCallbacks?: Array<() => void> }
+).__heroPreviewLoopFailCallbacks = previewLoopFailCallbacks;
 
 vi.mock('./PreviewLoop.svelte', async () => {
   const { default: Stub } = await import('./__HeroPreviewLoopStub.svelte');
@@ -96,6 +94,52 @@ describe('HeroAmbient — D-05 overlay content (HERO-01)', () => {
     const { container } = render(HeroAmbient);
     const p = container.querySelector('p');
     expect(p?.textContent?.trim()).toBe('Filmmaker & Producer');
+  });
+
+  // Phase 6 Plan 06-03 Task 2: optional wordmark + tagline props.
+  test('h1 wordmark uses UI-SPEC single-size text-6xl ramp (no responsive bump)', () => {
+    const { container } = render(HeroAmbient);
+    const h1 = container.querySelector('h1');
+    expect(h1?.className).toContain('text-6xl');
+    expect(h1?.className).not.toContain('text-5xl');
+    expect(h1?.className).not.toContain('md:text-7xl');
+  });
+
+  test('CTA uses font-semibold (UI-SPEC consolidated 2-weight ramp, weight 600)', () => {
+    const { container } = render(HeroAmbient);
+    const cta = Array.from(container.querySelectorAll('a')).find((a) =>
+      a.textContent?.includes('PLAY REEL')
+    );
+    expect(cta?.className).toContain('font-semibold');
+    expect(cta?.className).not.toContain('font-medium');
+  });
+
+  test('Test 3 (custom wordmark): <HeroAmbient wordmark="ABOUT" /> renders ABOUT in <h1>', () => {
+    const { container } = render(HeroAmbient, { props: { wordmark: 'ABOUT' } });
+    const h1 = container.querySelector('h1');
+    expect(h1?.textContent?.trim()).toBe('ABOUT');
+  });
+
+  test('Test 4 (omit tagline): <HeroAmbient wordmark="ABOUT" tagline={undefined} /> renders NO tagline <p>', () => {
+    const { container } = render(HeroAmbient, {
+      props: { wordmark: 'ABOUT', tagline: undefined },
+    });
+    const paragraphs = Array.from(container.querySelectorAll('p'));
+    const taglineP = paragraphs.find((p) => p.textContent?.includes('Filmmaker & Producer'));
+    expect(taglineP).toBeUndefined();
+    // No <p> should exist inside the Layer-4 content stack at all when tagline is omitted.
+    // (the only <p> in the component is the conditional tagline)
+    expect(paragraphs.length).toBe(0);
+  });
+
+  test('Test 5 (CTA preserved): CTA still links to /watch/<producerReelId> for any prop combo', () => {
+    const { container } = render(HeroAmbient, {
+      props: { wordmark: 'ABOUT', tagline: undefined },
+    });
+    const cta = Array.from(container.querySelectorAll('a')).find((a) =>
+      a.textContent?.includes('PLAY REEL')
+    );
+    expect(cta?.getAttribute('href')).toBe(`/watch/${producerReelId}`);
   });
 
   test('renders the ▷ PLAY REEL anchor with href ending in /watch/<producerReelId>', () => {
