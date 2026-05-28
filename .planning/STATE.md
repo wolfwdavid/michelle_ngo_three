@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 06-02-PLAN.md — PBS landing + Press reel surfaces (PBS-01/02/03 + PRES-01); ReelStage extended with intro slot + getPbsCollectionUrl hook
-last_updated: "2026-05-28T02:24:01.212Z"
+stopped_at: Completed 06-03-PLAN.md — /about + /contact splash surfaces (ABT-01 + CONT-01 + CONT-02); HeroAmbient extended with wordmark/tagline props; Phase 6 complete, zero prerender 404s
+last_updated: "2026-05-28T02:54:27.746Z"
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 18
-  completed_plans: 17
+  completed_plans: 18
 ---
 
 # Project State
@@ -69,6 +69,7 @@ Plan: 3 of 3
 | Phase 05-hero-watch P03 | 34min | 3 tasks | 11 files |
 | Phase 06-pbs-press-about-contact P01 | 22min | 3 tasks | 8 files |
 | Phase 06-pbs-press-about-contact P02 | 14min | 4 tasks tasks | 17 files files |
+| Phase 06-pbs-press-about-contact P03 | 21min | 6 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -152,6 +153,9 @@ Recent decisions affecting current work:
 - [Phase 06-pbs-press-about-contact]: [Plan 06-02] getPbsCollectionUrl per-video hook landed on ReelStage (not ReelSection slot/discriminator); forwarded to each ReelSection inside existing {#each} loop via pbsCollectionUrl={getPbsCollectionUrl?.(video)} — backward-compatible additive contract
 - [Phase 06-pbs-press-about-contact]: [Plan 06-02] /press uses snap-mandatory (not snap-proximity like /work + PBS landing) — Pitfall 7 reason for proximity (postMessage handshake timing) does not apply on poster-only NO-iframe /press
 - [Phase 06-pbs-press-about-contact]: [Plan 06-02] /press flat array shape PressCredit[] (D-08 divergence from _four's grouped shape) — one fullscreen section per credit; today's 1:1 data yields 13 records; forward-defensive for multi-credit-per-network futures
+- [Phase 06-pbs-press-about-contact]: [Plan 06-03] HeroAmbient tagline suppression via Svelte 5 sentinel key-presence ('tagline' in rest props) — / keeps default 'Filmmaker & Producer'; /about's tagline={undefined} renders no tagline (Svelte applies default on undefined, can't distinguish absent from explicit-undefined)
+- [Phase 06-pbs-press-about-contact]: [Plan 06-03] /about bio embedded with STRAIGHT apostrophes to match user-approved _four-shipped source byte-for-byte (plan's 'curly apostrophes' template comment was incorrect)
+- [Phase 06-pbs-press-about-contact]: [Plan 06-03] Person JSON-LD sameAs byte-identical to ContactBlock literals (D-21 single-source duplication + sync-warning); /about needs no eslint override, /contact does (poster src ${base} literal)
 
 ### Pending Todos
 
@@ -170,6 +174,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-28T02:24:01.207Z
-Stopped at: Completed 06-02-PLAN.md — PBS landing + Press reel surfaces (PBS-01/02/03 + PRES-01); ReelStage extended with intro slot + getPbsCollectionUrl hook
+Last session: 2026-05-28T02:54:27.741Z
+Stopped at: Completed 06-03-PLAN.md — /about + /contact splash surfaces (ABT-01 + CONT-01 + CONT-02); HeroAmbient extended with wordmark/tagline props; Phase 6 complete, zero prerender 404s
 Resume file: None
