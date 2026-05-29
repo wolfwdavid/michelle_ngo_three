@@ -23,52 +23,121 @@
     "throttlingProfile": "lighthouse mobile default (Slow-4G — simulated 4G per D-17)",
     "preset": "NONE (desktop preset deliberately avoided — would disable Slow-4G and hide a mobile LCP miss)"
   },
-  "runs": [
-    {
-      "run": 1,
-      "fetchTime": "2026-05-29T12:36:16.093Z",
-      "largestContentfulPaint_ms": 2779,
-      "largestContentfulPaint_display": "2.8 s",
+  "before": {
+    "label": "Initial Task 3 measurement (poster preload still in HeroAmbient.svelte child <svelte:head>)",
+    "measured_at": "2026-05-29 (Task 3 / pre-checkpoint)",
+    "runs": [
+      {
+        "run": 1,
+        "fetchTime": "2026-05-29T12:36:16.093Z",
+        "largestContentfulPaint_ms": 2779,
+        "largestContentfulPaint_display": "2.8 s",
+        "cumulativeLayoutShift": 0.0055,
+        "firstContentfulPaint_ms": 2703,
+        "speedIndex_ms": 2703,
+        "totalBlockingTime_ms": 0,
+        "performanceScore": 0.91
+      },
+      {
+        "run": 2,
+        "fetchTime": "2026-05-29T13:00:04.743Z",
+        "largestContentfulPaint_ms": 3075,
+        "largestContentfulPaint_display": "3.1 s",
+        "cumulativeLayoutShift": 0.0055,
+        "firstContentfulPaint_ms": 2850,
+        "speedIndex_ms": 2850,
+        "totalBlockingTime_ms": 0,
+        "performanceScore": 0.89
+      },
+      {
+        "run": 3,
+        "fetchTime": "2026-05-29T13:03:42.935Z",
+        "largestContentfulPaint_ms": 2859,
+        "largestContentfulPaint_display": "2.9 s",
+        "cumulativeLayoutShift": 0.0055,
+        "firstContentfulPaint_ms": 2105,
+        "speedIndex_ms": 2105,
+        "totalBlockingTime_ms": 0,
+        "performanceScore": 0.94
+      }
+    ],
+    "median": {
+      "largestContentfulPaint_ms": 2859,
+      "largestContentfulPaint_display": "2.9 s",
       "cumulativeLayoutShift": 0.0055,
-      "firstContentfulPaint_ms": 2703,
-      "speedIndex_ms": 2703,
-      "totalBlockingTime_ms": 0,
       "performanceScore": 0.91
     },
-    {
-      "run": 2,
-      "fetchTime": "2026-05-29T13:00:04.743Z",
-      "largestContentfulPaint_ms": 3075,
-      "largestContentfulPaint_display": "3.1 s",
-      "cumulativeLayoutShift": 0.0055,
-      "firstContentfulPaint_ms": 2850,
-      "speedIndex_ms": 2850,
-      "totalBlockingTime_ms": 0,
-      "performanceScore": 0.89
-    },
-    {
-      "run": 3,
-      "fetchTime": "2026-05-29T13:03:42.935Z",
-      "largestContentfulPaint_ms": 2859,
-      "largestContentfulPaint_display": "2.9 s",
-      "cumulativeLayoutShift": 0.0055,
-      "firstContentfulPaint_ms": 2105,
-      "speedIndex_ms": 2105,
-      "totalBlockingTime_ms": 0,
-      "performanceScore": 0.94
+    "verdict": {
+      "lcp_vs_budget": "MISS",
+      "lcp_over_budget_ms": 359
     }
-  ],
-  "median": {
-    "largestContentfulPaint_ms": 2859,
-    "largestContentfulPaint_display": "2.9 s",
-    "cumulativeLayoutShift": 0.0055,
-    "performanceScore": 0.91
+  },
+  "escalation": {
+    "trigger": "Task 4 human-verify checkpoint — user decision: \"Preload poster + re-measure\" (D-17 poster-first menu option a; NOT _four's AVIF <picture> route — Pitfall 3).",
+    "change": "Moved the hero-poster preload <link rel=preload as=image fetchpriority=high> OUT of HeroAmbient.svelte's child <svelte:head> and into each consuming route's PAGE-level head (src/routes/+page.svelte for `/`, src/routes/about/+page.svelte for `/about`). The href is derived from the same data helpers HeroAmbient uses (base + getPosterFor(getById(producerReelId))) so there is zero path/literal drift. Exactly one preload per route (de-duplicated).",
+    "honest_finding": "Page-level vs child-component head placement does NOT reorder the preload ahead of SvelteKit's JS modulepreloads: SvelteKit emits all `%sveltekit.head%` JS modulepreload <link>s at the top of <head>, and ALL user <svelte:head> content (page OR child) follows. Reordering ahead of the JS manifest would require editing app.html to inject before %sveltekit.head% (out of scope, risky). The effective lever remains fetchpriority=\"high\", which the browser's resource scheduler honors independent of DOM order. The measured gain is therefore modest but real, and run-to-run variance tightened markedly (all 3 after-runs within 11ms; perf score 0.94–0.95 on every run vs 0.89–0.94 before).",
+    "files_changed": [
+      "src/routes/+page.svelte",
+      "src/routes/about/+page.svelte",
+      "src/lib/components/HeroAmbient.svelte"
+    ]
+  },
+  "after": {
+    "label": "Post-escalation re-measurement (poster preload at page-level head, fetchpriority=high)",
+    "measured_at": "2026-05-29 (Task 4 / post-checkpoint)",
+    "runs": [
+      {
+        "run": 1,
+        "largestContentfulPaint_ms": 2814,
+        "largestContentfulPaint_display": "2.8 s",
+        "cumulativeLayoutShift": 0.0055,
+        "firstContentfulPaint_ms": 1817,
+        "speedIndex_ms": 1817,
+        "totalBlockingTime_ms": 0,
+        "performanceScore": 0.95
+      },
+      {
+        "run": 2,
+        "largestContentfulPaint_ms": 2806,
+        "largestContentfulPaint_display": "2.8 s",
+        "cumulativeLayoutShift": 0.0054,
+        "firstContentfulPaint_ms": 1818,
+        "speedIndex_ms": 1818,
+        "totalBlockingTime_ms": 0,
+        "performanceScore": 0.95
+      },
+      {
+        "run": 3,
+        "largestContentfulPaint_ms": 2803,
+        "largestContentfulPaint_display": "2.8 s",
+        "cumulativeLayoutShift": 0.0054,
+        "firstContentfulPaint_ms": 1966,
+        "speedIndex_ms": 1966,
+        "totalBlockingTime_ms": 0,
+        "performanceScore": 0.94
+      }
+    ],
+    "median": {
+      "largestContentfulPaint_ms": 2806,
+      "largestContentfulPaint_display": "2.8 s",
+      "cumulativeLayoutShift": 0.0054,
+      "performanceScore": 0.95
+    }
+  },
+  "delta": {
+    "lcp_ms_after_minus_before": -53,
+    "lcp_direction": "IMPROVED (2859ms -> 2806ms)",
+    "variance": "Tightened: after-runs 2803/2806/2814 (spread 11ms) vs before-runs 2779/2859/3075 (spread 296ms)",
+    "perf_score": "0.91 -> 0.95 median",
+    "cls": "0.0055 -> 0.0054 (still PASS, POL-03 zero-CLS holds)"
   },
   "verdict": {
     "lcp_vs_budget": "MISS",
-    "lcp_over_budget_ms": 359,
-    "cls": "PASS (POL-03 zero-CLS confirmed: 0.0055 << 0.1)",
-    "performance_score": "PASS (>= 0.9)",
-    "summary": "Median LCP 2.9s MISSES the 2.5s budget by 359ms. CLS excellent. Awaiting checkpoint escalate-or-accept decision (D-17 poster-first menu: preload hero poster + fetchpriority=high [already set], AVIF poster variant PERF-V2-02, tune createHeroDefer timing, OR accept looser staging number and re-measure on faster apex before the 07-04 blocking flip)."
+    "after_median_lcp_ms": 2806,
+    "lcp_over_budget_ms": 306,
+    "cls": "PASS (POL-03 zero-CLS confirmed: 0.0054 << 0.1)",
+    "performance_score": "PASS (0.95 >= 0.9)",
+    "outcome": "ACCEPTED for this run. Per the Task 4 checkpoint directive: the LCP gate is WARNING-ONLY in this plan and Plan 07-04 flips warn->error pre-cutover. The 306ms residual miss against the 2.5s simulated-Slow-4G budget remains a WARNING; do NOT loop on further escalations. Residual-reduction levers available for 07-04 if the blocking flip requires them: (a) AVIF poster variant [PERF-V2-02, deferred], (b) tune createHeroDefer timing, (c) re-measure on the faster production apex (BASE_PATH='' — no subpath; this local-root measurement is the conservative stand-in), or (d) the _four branch (defer to post-launch real-user telemetry).",
+    "summary": "After moving the poster preload to the page-level head + keeping fetchpriority=high, median / LCP improved 2859ms -> 2806ms (-53ms) with markedly tighter variance and perf 0.91 -> 0.95. LCP still MISSES the 2500ms budget by 306ms — ACCEPTABLE under the warning-only posture; the 07-04 pre-cutover flip owns the blocking decision."
   }
 }
