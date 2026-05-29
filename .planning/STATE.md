@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 07-03-PLAN.md (Task 4 escalation resolved; LCP warning-only miss carried to 07-04)
-last_updated: "2026-05-29T14:05:24.125Z"
+stopped_at: Completed 07-04-PLAN.md (4 CI mechanical gates wired; Lighthouse warn-posture; warn->error flip carried to 07-05)
+last_updated: "2026-05-29T14:37:42.315Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 24
-  completed_plans: 22
+  completed_plans: 23
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 07 (polish-cutover) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Plan: 4 of 5
 | Phase 07-polish-cutover P01 | 30 min | 3 tasks tasks | 6 files files |
 | Phase 07-polish-cutover P02 | 15min | 2 tasks | 9 files |
 | Phase 07-polish-cutover P03 | 95min | 4 tasks | 9 files |
+| Phase 07-polish-cutover P04 | 15 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -170,6 +171,9 @@ Recent decisions affecting current work:
 - [Phase 07-polish-cutover]: [Plan 07-03] axe gate hardened /-only -> 7 routes (24 assertions, 3 browsers); fixed 3 WCAG-AA: Footer h3->h2 + sr-only h1 on /work + /work/[category]
 - [Phase 07-polish-cutover]: [Plan 07-03] POL-02 D-17 measure-first: real / LCP on simulated Slow-4G. Task 4 poster-preload escalation hoisted preload to page-level head (/ + /about); median 2859->2806ms (-53ms, variance 296->11ms, perf 0.91->0.95). Still MISS by 306ms — ACCEPTED warning-only; 07-04 owns warn->error flip. Honest finding: SvelteKit emits JS modulepreloads ahead of all <svelte:head>, so fetchpriority=high (not DOM order) is the lever
 - [Phase 07-polish-cutover]: [Plan 07-03] POL-03 audit (not refactor): grep-confirmed 100svh-only in snap sections, zero 100vh/100dvh, shared aspect-video container across ReelSection/PosterImage/PreviewLoop; CLS 0.0054 empirical. POL-03 marked COMPLETE; POL-02 + POL-04 PARTIAL (CI blocking flip -> 07-04; real-device QA -> UAT)
+- [Phase 07-polish-cutover]: [Plan 07-04] Trap E uses committed-snapshot route-manifest (src/lib/data/.four-route-manifest, pinned at four_commit_sha=07667658) diffed against build/ route shapes; normalized to <shape>\t<count> with /watch/*=56 + /work/*=8 collapses — avoids building _four in CI (RESEARCH OQ3)
+- [Phase 07-polish-cutover]: [Plan 07-04] Trap B (D-02/POL-05): _four's og-image.jpg is a WebP-in-.jpg (RIFF/WEBP magic), so the CI probe parses only _three's JPEG SOF dims (must be 1200x630) and uses format-agnostic statSync byte counts for the 3x filesize-ratio band; dependency-free (drift-check job has no pnpm install/sharp). Split: meta-tag grep in build job, dim+ratio in drift-check job
+- [Phase 07-polish-cutover]: [Plan 07-04] Lighthouse / LCP gate wired at WARNING posture (lighthouserc.json ['warn',...], no preset:desktop, mobile Slow-4G preserved) as a new lighthouse job needs:deploy. 07-03 measured ~2806ms vs 2500ms budget so a blocking gate would fail CI — warn->error flip is a documented 07-05 pre-cutover step (D-12), NOT this plan
 
 ### Pending Todos
 
@@ -188,6 +192,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-29T14:04:33.082Z
-Stopped at: Completed 07-03-PLAN.md (Task 4 escalation resolved; LCP warning-only miss carried to 07-04)
+Last session: 2026-05-29T14:37:10.694Z
+Stopped at: Completed 07-04-PLAN.md (4 CI mechanical gates wired; Lighthouse warn-posture; warn->error flip carried to 07-05)
 Resume file: None
