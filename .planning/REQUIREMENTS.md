@@ -74,7 +74,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **POL-02**: Cinematic chrome budget — `/` LCP < 2.5s on simulated 4G (poster image first paint, hero iframe deferred until interaction or 1s idle); Lighthouse CI gates this in CI (warning-only initially, blocking pre-cutover)
 - [ ] **POL-03**: No layout shift on poster→iframe swap; iframes inherit each section's exact aspect-ratio container; `100svh` (not vh / not dvh) for scroll-snap section height
 - [ ] **POL-04**: axe-core CI catches WCAG AA violations; manual real-device QA matrix (iOS 16, iOS 17.0/17.1, iOS 17.2+, Chrome Android, Firefox desktop, Safari macOS) signs off before cutover
-- [ ] **POL-05**: All localStorage keys namespaced `mnp_three_*` (Trap D mitigation — both siblings share `wolfwdavid.github.io` origin); identical OG image dimensions to `_four` (Trap B mitigation)
+- [x] **POL-05**: All localStorage keys namespaced `mnp_three_*` (Trap D mitigation — both siblings share `wolfwdavid.github.io` origin); identical OG image dimensions to `_four` (Trap B mitigation)
 
 ## v2 Requirements
 
@@ -174,7 +174,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | POL-02 | Phase 7 | Pending |
 | POL-03 | Phase 7 | Pending |
 | POL-04 | Phase 7 | Pending |
-| POL-05 | Phase 7 | Pending |
+| POL-05 | Phase 7 | Complete |
 
 **Coverage:**
 - v1 requirements: 42 total

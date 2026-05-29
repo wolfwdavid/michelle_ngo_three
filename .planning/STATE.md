@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-05-28T14:43:11.472Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-05-29T11:47:13.206Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 24
-  completed_plans: 20
+  completed_plans: 21
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 07 (polish-cutover) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 
 ## Performance Metrics
 
@@ -72,6 +72,7 @@ Plan: 2 of 5
 | Phase 06-pbs-press-about-contact P03 | 21min | 6 tasks | 8 files |
 | Phase 06-pbs-press-about-contact P04 | 55 | 2 tasks | 1 files |
 | Phase 07-polish-cutover P01 | 30 min | 3 tasks tasks | 6 files files |
+| Phase 07-polish-cutover P02 | 15min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -162,6 +163,9 @@ Recent decisions affecting current work:
 - [Phase 06-pbs-press-about-contact]: [Plan 06-04] press.spec.ts Test C deferred (not fixed): clicking ▷ Watch navigates correctly (proven via waitForURL probe → /watch/<id>/) but the test's networkidle wait races the trailingSlash='always' 307 redirect; the D-16 listener activation exposed this latent fragility. Honored gap-only scope (TopNav.svelte only); one-line waitForURL fix recommended for follow-up
 - [Phase 07-polish-cutover]: [Plan 07-01] Did NOT author favicon/og-image binaries (07-02's checkpointed _three-cinematic-art deliverable); used temporary _four copies for verification only, then removed. Known-failing pnpm build accepted as Wave-1 end-state (favicon 404 under strict prerender until 07-02 lands binaries) — identical master-broken expectation as Plan 06-01.
 - [Phase 07-polish-cutover]: [Plan 07-01] Sitemap hardcodes absolute https://michellengo.net host (NOT env-aware per Pitfall 4); 70-URL count (6 static + 8 category + 56 watch) pinned by scripts/test-prerender-coverage.mjs wired as pnpm test:prerender. POL-01 JSON-LD/description audit (D-15): 56 VideoObject + 1 Person valid, 7/7 descriptions intact — zero gaps, no template edits.
+- [Phase 07-polish-cutover]: [Plan 07-02] User selected sharp-script approach: reproducible scripts/build-assets.mjs composites _three's OWN cinematic-dark art (darkened/blurred reel poster + cream Source-Serif wordmark + violet reel-accent) from existing static/posters/*.jpg; no new runtime dep (sharp via @sveltejs/enhanced-img), no image-editor
+- [Phase 07-polish-cutover]: [Plan 07-02] og-image.jpg authored at EXACTLY 1200x630, 23443 bytes (within Trap B 3x band of _four's 15386); mozjpeg q82 4:2:0 with auto quality-ladder back-off; OKLCH @theme converted to sRGB (canvas #0d0d0d, cream #fff7ea) so the social card matches live-site tones
+- [Phase 07-polish-cutover]: [Plan 07-02] Wordmark uses system-serif fallback when Source Serif 4 isn't fontconfig-registered (librsvg limitation); design intent preserved, build never fails on missing font; multi-res favicon.ico hand-assembled (16+32 PNG payloads) since sharp lacks multi-frame .ico emission
 
 ### Pending Todos
 
@@ -180,6 +184,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-28T14:43:11.467Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-05-29T11:46:49.949Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
