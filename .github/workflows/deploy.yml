@@ -136,6 +136,24 @@ jobs:
           diff <(echo "$EXPECTED") <(echo "$BUILT") || true
           exit 1
 
+      # Plan 07-04 / Trap B (D-02 / POL-05) — OG meta-tag half.
+      # The og-image binary dimension + filesize-ratio parity check runs in the
+      # drift-check job (which has the __four/ checkout). HERE we assert the
+      # rendered metadata half: the prerendered / page must advertise the social
+      # crop as exactly 1200x630 so the file dimensions and the markup agree.
+      - name: Trap B — OG meta-tag dimensions (D-02/POL-05, build/index.html)
+        run: |
+          set -e
+          if [ "$(grep -c 'og:image:width" content="1200"' build/index.html)" -lt 1 ]; then
+            echo "::error::Trap B — build/index.html is missing og:image:width content=\"1200\". The social-card markup must advertise the 1200x630 crop for A/B social-preview parity with _four."
+            exit 1
+          fi
+          if [ "$(grep -c 'og:image:height" content="630"' build/index.html)" -lt 1 ]; then
+            echo "::error::Trap B — build/index.html is missing og:image:height content=\"630\". The social-card markup must advertise the 1200x630 crop for A/B social-preview parity with _four."
+            exit 1
+          fi
+          echo "Trap B meta-tags OK — build/index.html advertises og:image 1200x630 ✓"
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -225,3 +243,85 @@ jobs:
             exit 1
           fi
           echo "Sidecar sha256 consistent ✓"
+
+      # Plan 07-04 / Trap B (D-02 / POL-05) — OG-image dimension + filesize parity.
+      # Reuses the __four/ checkout already present in this job (D-04: "reuse the
+      # existing __four/ checkout"). Asserts:
+      #   1. _three's static/og-image.jpg is EXACTLY 1200x630 (social-crop parity).
+      #   2. its filesize is within a 3x band of _four's og-image (catches a
+      #      blank/giant/placeholder image silently shipping).
+      # Dimension probe is dependency-free (this job runs no `pnpm install`, so
+      # sharp is unavailable) — it parses the JPEG SOF marker directly. _four's
+      # og-image is a WebP-in-.jpg, so only _three's dimensions are probed; the
+      # ratio guard uses format-agnostic byte counts.
+      - name: Trap B — og-image 1200x630 + filesize parity vs _four
+        run: |
+          set -e
+          node -e '
+            const fs = require("fs");
+            function jpegDims(file) {
+              const b = fs.readFileSync(file);
+              if (b[0] !== 0xff || b[1] !== 0xd8) {
+                throw new Error(file + " is not a JPEG (first bytes " + b[0].toString(16) + " " + b[1].toString(16) + ")");
+              }
+              let i = 2;
+              while (i < b.length - 8) {
+                if (b[i] !== 0xff) { i++; continue; }
+                const m = b[i + 1];
+                if ((m >= 0xc0 && m <= 0xc3) || (m >= 0xc5 && m <= 0xc7) || (m >= 0xc9 && m <= 0xcb) || (m >= 0xcd && m <= 0xcf)) {
+                  return { height: (b[i + 5] << 8) | b[i + 6], width: (b[i + 7] << 8) | b[i + 8] };
+                }
+                const len = (b[i + 2] << 8) | b[i + 3];
+                if (len < 2) break;
+                i += 2 + len;
+              }
+              throw new Error("No SOF marker found in " + file);
+            }
+            const THREE = "static/og-image.jpg";
+            const FOUR = "__four/static/og-image.jpg";
+            const d = jpegDims(THREE);
+            if (d.width !== 1200 || d.height !== 630) {
+              console.error("::error::Trap B — _three og-image.jpg is " + d.width + "x" + d.height + ", must be 1200x630 for A/B social-crop parity. Re-run scripts/build-assets.mjs to regenerate the OG image at the locked dimensions.");
+              process.exit(1);
+            }
+            console.log("Trap B dimensions OK — _three og-image.jpg = " + d.width + "x" + d.height);
+            if (!fs.existsSync(FOUR)) {
+              console.error("::error::Trap B — expected " + FOUR + " after the pinned-SHA checkout but it is missing. _four repo structure may have changed.");
+              process.exit(1);
+            }
+            const ts = fs.statSync(THREE).size, fsz = fs.statSync(FOUR).size;
+            const ratio = Math.max(ts, fsz) / Math.min(ts, fsz);
+            if (ratio > 3) {
+              console.error("::error::Trap B — og-image filesize ratio " + ratio.toFixed(2) + " exceeds the 3x parity band (_three=" + ts + "B, _four=" + fsz + "B). A blank/oversized/placeholder OG image likely shipped — regenerate via scripts/build-assets.mjs.");
+              process.exit(1);
+            }
+            console.log("Trap B filesize ratio OK — _three=" + ts + "B _four=" + fsz + "B ratio=" + ratio.toFixed(2) + " (band <= 3x) ✓");
+          '
+
+  lighthouse:
+    # Plan 07-04 / D-17 / POL-02 — Lighthouse / LCP gate at WARNING posture.
+    # Measures the deployed / route's LCP on simulated mobile Slow-4G and reports
+    # against the 2500ms budget. Posture is WARNING-ONLY (lighthouserc.json uses
+    # ["warn", ...]) — it surfaces the number in CI logs WITHOUT failing the build.
+    # This is intentional: Plan 07-03 measured the / median LCP at ~2806ms, which
+    # MISSES the 2500ms budget by ~306ms. The warn -> error (blocking) flip is a
+    # documented PRE-CUTOVER step in Plan 07-05's runbook / QA-matrix (D-12), NOT
+    # this plan. Do NOT use preset: desktop (the _four 07-04 trap — it would
+    # disable the Slow-4G throttling lighthouserc.json relies on).
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Lighthouse CI — / LCP (warning posture, mobile Slow-4G)
+        # Pinned @lhci/cli@0.15.1 (Lighthouse 12.6.1). autorun reads lighthouserc.json:
+        # url=staging /, numberOfRuns=3, mobile Slow-4G default (no preset:desktop),
+        # LCP ["warn", { maxNumericValue: 2500 }]. Warning assertions never set a
+        # non-zero exit, so this step cannot fail the workflow at the current posture.
+        run: npx @lhci/cli@0.15.1 autorun
