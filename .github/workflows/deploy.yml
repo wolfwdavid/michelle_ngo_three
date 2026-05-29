@@ -89,6 +89,53 @@ jobs:
           PUBLIC_SITE_URL: https://wolfwdavid.github.io/michelle_ngo_three
         run: pnpm build
 
+      # Plan 07-04 / D-14 — prerender-coverage assertion.
+      # adapter-static `strict: true` fails on a non-prerenderable route, but it
+      # does NOT catch an EMPTY entries() enumeration (e.g. /watch/[id] yielding
+      # zero ids → build succeeds with zero /watch HTML files). This script pins
+      # the 70-URL sitemap + the 6 static routes + 8 categories + 56 watch pages +
+      # the favicon/og-image binaries. Fails the build if any count is short.
+      - name: Prerender coverage assertion (D-14 — 70-URL sitemap + static assets)
+        run: node scripts/test-prerender-coverage.mjs
+
+      # Plan 07-04 / Trap E (D-04) — route-manifest diff.
+      # The A/B isolates DESIGN, not information architecture. This step proves
+      # _three's prerendered route SHAPES match the committed snapshot of _four's
+      # route IA (src/lib/data/.four-route-manifest, pinned at the same SHA as
+      # .videos-source-sha). Committed-snapshot approach (RESEARCH Open Question 3)
+      # — no need to build _four in CI; the drift-check job's __four/ checkout is
+      # NOT required here. Refresh the manifest deliberately if _four's IA changes.
+      - name: Trap E — route-manifest diff (D-04, _three IA must match _four)
+        run: |
+          set -e
+          MANIFEST=src/lib/data/.four-route-manifest
+          if [ ! -f "$MANIFEST" ]; then
+            echo "::error::Trap E — missing $MANIFEST. Plan 07-04 must commit the pinned _four route snapshot before this gate can run."
+            exit 1
+          fi
+          # Enumerate _three's prerendered route shapes from build/, applying the
+          # exact normalization documented in .four-route-manifest:
+          #   strip /index.html, strip leading 'build', map empty root to '/',
+          #   collapse /watch/<id> → /watch/* and /work/<slug> → /work/*,
+          #   then sort | uniq -c | "<shape>\t<count>" | sort.
+          BUILT=$(find build -name index.html \
+            | sed 's|/index.html$||' \
+            | sed 's|^build||' \
+            | sed 's|^$|/|' \
+            | sed -E 's|^/watch/.+$|/watch/*|' \
+            | sed -E 's|^/work/.+$|/work/*|' \
+            | sort | uniq -c | awk '{ printf "%s\t%d\n", $2, $1 }' | sort)
+          # Strip comment + blank lines from the committed manifest, then sort.
+          EXPECTED=$(grep -vE '^[[:space:]]*#' "$MANIFEST" | grep -vE '^[[:space:]]*$' | sort)
+          if diff <(echo "$EXPECTED") <(echo "$BUILT"); then
+            echo "Trap E passed — _three's prerendered route IA matches _four@07667658ee2fd16a3d56b66bbe832d08fc3badd5 ✓"
+            exit 0
+          fi
+          echo "::error::Trap E — route IA divergence between _three and _four@07667658ee2fd16a3d56b66bbe832d08fc3badd5. The A/B isolates DESIGN, not IA. If _four's routes legitimately changed, re-sync src/lib/data/.four-route-manifest (refresh the route shapes + the pinned-SHA comment). Otherwise _three has a stray/missing prerendered route — fix the route tree."
+          echo "::error::Diff (< expected from manifest, > actual from build/):"
+          diff <(echo "$EXPECTED") <(echo "$BUILT") || true
+          exit 1
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

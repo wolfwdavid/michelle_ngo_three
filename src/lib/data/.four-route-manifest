@@ -1,0 +1,30 @@
+# _four prerendered route manifest — Trap E (D-04) baseline.
+# Pinned at four_commit_sha=07667658ee2fd16a3d56b66bbe832d08fc3badd5 (matches src/lib/data/.videos-source-sha).
+#
+# Sync-disciplined like .videos-source-sha: this is a COMMITTED SNAPSHOT of _four's
+# prerendered route shapes (RESEARCH Open Question 3 recommendation — avoids building
+# _four in CI). The A/B isolates DESIGN, not information architecture, so _three's
+# prerendered route set MUST match this manifest. If _four's IA legitimately changes,
+# refresh this file (and bump the pinned SHA comment) deliberately.
+#
+# Normalization (deterministic — the CI Trap E step reproduces this exact form):
+#   1. find build -name index.html  -> strip trailing /index.html, strip the leading
+#      "build" prefix, map the empty root to "/".
+#   2. collapse the 56 /watch/<id> dirs to a single "/watch/*" shape, and the 8
+#      /work/<category-slug> dirs to a single "/work/*" shape.
+#   3. sort | uniq -c | emit "<shape>\t<count>", then sort.
+# Comment lines (starting with #) and blank lines are stripped before the diff.
+#
+# Route parity ground-truth: _three and _four route trees are IDENTICAL after Plan
+# 07-01 added /sitemap.xml. sitemap.xml is a FILE (not an index.html dir) so it is
+# NOT a route shape here — the prerender-coverage gate (D-14) pins the sitemap.
+#
+# Columns: <route-shape>\t<count>
+/	1
+/about	1
+/contact	1
+/pbs-american-portrait	1
+/press	1
+/watch/*	56
+/work	1
+/work/*	8
