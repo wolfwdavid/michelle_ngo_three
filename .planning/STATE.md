@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-05-29T11:47:13.206Z"
+stopped_at: Completed 07-03-PLAN.md (Task 4 escalation resolved; LCP warning-only miss carried to 07-04)
+last_updated: "2026-05-29T14:05:24.125Z"
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 24
-  completed_plans: 21
+  completed_plans: 22
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 ## Current Position
 
 Phase: 07 (polish-cutover) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@ Plan: 3 of 5
 | Phase 06-pbs-press-about-contact P04 | 55 | 2 tasks | 1 files |
 | Phase 07-polish-cutover P01 | 30 min | 3 tasks tasks | 6 files files |
 | Phase 07-polish-cutover P02 | 15min | 2 tasks | 9 files |
+| Phase 07-polish-cutover P03 | 95min | 4 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -166,6 +167,9 @@ Recent decisions affecting current work:
 - [Phase 07-polish-cutover]: [Plan 07-02] User selected sharp-script approach: reproducible scripts/build-assets.mjs composites _three's OWN cinematic-dark art (darkened/blurred reel poster + cream Source-Serif wordmark + violet reel-accent) from existing static/posters/*.jpg; no new runtime dep (sharp via @sveltejs/enhanced-img), no image-editor
 - [Phase 07-polish-cutover]: [Plan 07-02] og-image.jpg authored at EXACTLY 1200x630, 23443 bytes (within Trap B 3x band of _four's 15386); mozjpeg q82 4:2:0 with auto quality-ladder back-off; OKLCH @theme converted to sRGB (canvas #0d0d0d, cream #fff7ea) so the social card matches live-site tones
 - [Phase 07-polish-cutover]: [Plan 07-02] Wordmark uses system-serif fallback when Source Serif 4 isn't fontconfig-registered (librsvg limitation); design intent preserved, build never fails on missing font; multi-res favicon.ico hand-assembled (16+32 PNG payloads) since sharp lacks multi-frame .ico emission
+- [Phase 07-polish-cutover]: [Plan 07-03] axe gate hardened /-only -> 7 routes (24 assertions, 3 browsers); fixed 3 WCAG-AA: Footer h3->h2 + sr-only h1 on /work + /work/[category]
+- [Phase 07-polish-cutover]: [Plan 07-03] POL-02 D-17 measure-first: real / LCP on simulated Slow-4G. Task 4 poster-preload escalation hoisted preload to page-level head (/ + /about); median 2859->2806ms (-53ms, variance 296->11ms, perf 0.91->0.95). Still MISS by 306ms — ACCEPTED warning-only; 07-04 owns warn->error flip. Honest finding: SvelteKit emits JS modulepreloads ahead of all <svelte:head>, so fetchpriority=high (not DOM order) is the lever
+- [Phase 07-polish-cutover]: [Plan 07-03] POL-03 audit (not refactor): grep-confirmed 100svh-only in snap sections, zero 100vh/100dvh, shared aspect-video container across ReelSection/PosterImage/PreviewLoop; CLS 0.0054 empirical. POL-03 marked COMPLETE; POL-02 + POL-04 PARTIAL (CI blocking flip -> 07-04; real-device QA -> UAT)
 
 ### Pending Todos
 
@@ -184,6 +188,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-29T11:46:49.949Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-05-29T14:04:33.082Z
+Stopped at: Completed 07-03-PLAN.md (Task 4 escalation resolved; LCP warning-only miss carried to 07-04)
 Resume file: None
