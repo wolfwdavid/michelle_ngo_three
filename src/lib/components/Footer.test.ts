@@ -94,7 +94,7 @@ describe('Footer — D-13 column 1 ContactBlock', () => {
   it('column 1 renders header textContent "Contact"', () => {
     component = mount(Footer, { target: makeHost(), props: {} });
     const col1 = host.querySelector('[data-footer-col="contact"]');
-    const header = col1?.querySelector('h3');
+    const header = col1?.querySelector('h2');
     expect(header?.textContent?.trim()).toBe('Contact');
   });
 });
@@ -141,7 +141,7 @@ describe('Footer — D-13 column 2 categories (PBS retarget)', () => {
   it('column 2 renders header textContent "Work"', () => {
     component = mount(Footer, { target: makeHost(), props: {} });
     const col2 = host.querySelector('[data-footer-col="work"]');
-    const header = col2?.querySelector('h3');
+    const header = col2?.querySelector('h2');
     expect(header?.textContent?.trim()).toBe('Work');
   });
 });
@@ -167,7 +167,7 @@ describe('Footer — D-13 column 3 site links', () => {
   it('column 3 renders header textContent "Site"', () => {
     component = mount(Footer, { target: makeHost(), props: {} });
     const col3 = host.querySelector('[data-footer-col="site"]');
-    const header = col3?.querySelector('h3');
+    const header = col3?.querySelector('h2');
     expect(header?.textContent?.trim()).toBe('Site');
   });
 });
