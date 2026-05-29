@@ -144,7 +144,7 @@ Plans:
 - [x] 07-02-PLAN.md — Cinematic-dark binary assets: favicon set (6) + 1200×630 og-image + .nojekyll, with asset-authoring checkpoint (POL-01/POL-05 Trap B)
 - [x] 07-03-PLAN.md — axe 7-route harden + POL-03 100svh/CLS grep gate + D-17 measure-first Lighthouse (POL-02/03/04)
 - [x] 07-04-PLAN.md — CI trap gates: prerender-coverage assert + Trap E route-manifest diff + Trap B OG-dim diff + Lighthouse CI; verify Trap A/D (POL-02/04/05)
-- [ ] 07-05-PLAN.md — Cutover infra: CNAME + deploy-production.yml + staged D-12 atomic flip + consolidated 07-QA-MATRIX.md + 9-step Launch Runbook (FOUND-03/POL-04)
+- [x] 07-05-PLAN.md — Cutover infra: CNAME + deploy-production.yml + staged D-12 atomic flip + consolidated 07-QA-MATRIX.md + 9-step Launch Runbook (FOUND-03/POL-04)
 
 ## Progress
 

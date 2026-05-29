@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 07-04-PLAN.md (4 CI mechanical gates wired; Lighthouse warn-posture; warn->error flip carried to 07-05)
-last_updated: "2026-05-29T14:37:42.315Z"
+stopped_at: Completed 07-05-PLAN.md (cutover infra staged + reversible; D-12 flip NOT landed; phase ready for verification)
+last_updated: "2026-05-29T15:58:56.614Z"
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 24
-  completed_plans: 23
+  completed_plans: 24
 ---
 
 # Project State
@@ -75,6 +75,7 @@ Plan: 5 of 5
 | Phase 07-polish-cutover P02 | 15min | 2 tasks | 9 files |
 | Phase 07-polish-cutover P03 | 95min | 4 tasks | 9 files |
 | Phase 07-polish-cutover P04 | 15 | 2 tasks | 2 files |
+| Phase 07-polish-cutover P05 | 12 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -174,6 +175,7 @@ Recent decisions affecting current work:
 - [Phase 07-polish-cutover]: [Plan 07-04] Trap E uses committed-snapshot route-manifest (src/lib/data/.four-route-manifest, pinned at four_commit_sha=07667658) diffed against build/ route shapes; normalized to <shape>\t<count> with /watch/*=56 + /work/*=8 collapses — avoids building _four in CI (RESEARCH OQ3)
 - [Phase 07-polish-cutover]: [Plan 07-04] Trap B (D-02/POL-05): _four's og-image.jpg is a WebP-in-.jpg (RIFF/WEBP magic), so the CI probe parses only _three's JPEG SOF dims (must be 1200x630) and uses format-agnostic statSync byte counts for the 3x filesize-ratio band; dependency-free (drift-check job has no pnpm install/sharp). Split: meta-tag grep in build job, dim+ratio in drift-check job
 - [Phase 07-polish-cutover]: [Plan 07-04] Lighthouse / LCP gate wired at WARNING posture (lighthouserc.json ['warn',...], no preset:desktop, mobile Slow-4G preserved) as a new lighthouse job needs:deploy. 07-03 measured ~2806ms vs 2500ms budget so a blocking gate would fail CI — warn->error flip is a documented 07-05 pre-cutover step (D-12), NOT this plan
+- [Phase 07-polish-cutover]: [Plan 07-05] FOUND-03 satisfied as stop-at-infrastructure: CNAME + manual-dispatch deploy-production.yml + staged-but-unlanded D-12 flip + 9-step reversible runbook + 07-QA-MATRIX go/no-go gate. POL-04 left PARTIAL — device-QA sign-off (BrowserStack matrix + iPhone thermal) deferred to UAT in 07-QA-MATRIX.md. Four invariants re-confirmed: noindex present, deploy-production.yml workflow_dispatch-only, CNAME=michellengo.net, no cutover fired.
 
 ### Pending Todos
 
@@ -192,6 +194,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-29T14:37:10.694Z
-Stopped at: Completed 07-04-PLAN.md (4 CI mechanical gates wired; Lighthouse warn-posture; warn->error flip carried to 07-05)
+Last session: 2026-05-29T15:58:33.610Z
+Stopped at: Completed 07-05-PLAN.md (cutover infra staged + reversible; D-12 flip NOT landed; phase ready for verification)
 Resume file: None
