@@ -1,0 +1,74 @@
+{
+  "status": "measured",
+  "requirement": "POL-02",
+  "decision": "D-17",
+  "decision_date": "2026-05-29",
+  "measure_first": true,
+  "posture": "warning-only (Plan 07-04 flips warn->error pre-cutover)",
+  "lcp_budget_ms": 2500,
+  "tool": {
+    "name": "lighthouse",
+    "version": "12.6.1",
+    "invocation": "npx lighthouse@12.6.1 (lhci 0.15.1-bundled major); node 22.14 blocks lighthouse@13 which requires >=22.19"
+  },
+  "measurement_target": {
+    "url": "http://localhost:4183/",
+    "note": "Local preview of the production static artifact (BASE_PATH omitted, served at root). Staging URL https://wolfwdavid.github.io/michelle_ngo_three/ returned HTTP 404 at measurement time (deploy not live on this branch), so the local production-build preview is the conservative stand-in. The production apex (BASE_PATH=\"\") will measure marginally faster than the subpath staging build; this local-root measurement is representative of the apex artifact.",
+    "lcp_element": "hero poster <img> static/posters/vimeo-264677021.jpg (loading=eager, fetchpriority=high); hero iframe deferred via createHeroDefer per Phase 5 — Pitfall 3: NOT a static-WebP <picture>, so _four AVIF escalation does not map"
+  },
+  "config": {
+    "formFactor": "mobile",
+    "screenEmulation": "mobile",
+    "throttlingMethod": "simulate",
+    "throttlingProfile": "lighthouse mobile default (Slow-4G — simulated 4G per D-17)",
+    "preset": "NONE (desktop preset deliberately avoided — would disable Slow-4G and hide a mobile LCP miss)"
+  },
+  "runs": [
+    {
+      "run": 1,
+      "fetchTime": "2026-05-29T12:36:16.093Z",
+      "largestContentfulPaint_ms": 2779,
+      "largestContentfulPaint_display": "2.8 s",
+      "cumulativeLayoutShift": 0.0055,
+      "firstContentfulPaint_ms": 2703,
+      "speedIndex_ms": 2703,
+      "totalBlockingTime_ms": 0,
+      "performanceScore": 0.91
+    },
+    {
+      "run": 2,
+      "fetchTime": "2026-05-29T13:00:04.743Z",
+      "largestContentfulPaint_ms": 3075,
+      "largestContentfulPaint_display": "3.1 s",
+      "cumulativeLayoutShift": 0.0055,
+      "firstContentfulPaint_ms": 2850,
+      "speedIndex_ms": 2850,
+      "totalBlockingTime_ms": 0,
+      "performanceScore": 0.89
+    },
+    {
+      "run": 3,
+      "fetchTime": "2026-05-29T13:03:42.935Z",
+      "largestContentfulPaint_ms": 2859,
+      "largestContentfulPaint_display": "2.9 s",
+      "cumulativeLayoutShift": 0.0055,
+      "firstContentfulPaint_ms": 2105,
+      "speedIndex_ms": 2105,
+      "totalBlockingTime_ms": 0,
+      "performanceScore": 0.94
+    }
+  ],
+  "median": {
+    "largestContentfulPaint_ms": 2859,
+    "largestContentfulPaint_display": "2.9 s",
+    "cumulativeLayoutShift": 0.0055,
+    "performanceScore": 0.91
+  },
+  "verdict": {
+    "lcp_vs_budget": "MISS",
+    "lcp_over_budget_ms": 359,
+    "cls": "PASS (POL-03 zero-CLS confirmed: 0.0055 << 0.1)",
+    "performance_score": "PASS (>= 0.9)",
+    "summary": "Median LCP 2.9s MISSES the 2.5s budget by 359ms. CLS excellent. Awaiting checkpoint escalate-or-accept decision (D-17 poster-first menu: preload hero poster + fetchpriority=high [already set], AVIF poster variant PERF-V2-02, tune createHeroDefer timing, OR accept looser staging number and re-measure on faster apex before the 07-04 blocking flip)."
+  }
+}
