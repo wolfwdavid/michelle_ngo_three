@@ -130,10 +130,15 @@
   const posterUrl = `${base}${getPosterFor(video)}`;
 </script>
 
-<svelte:head>
-  <!-- LCP hint: preload the hero poster (POL-02 mechanism shipped here) -->
-  <link rel="preload" as="image" href={posterUrl} fetchpriority="high" />
-</svelte:head>
+<!--
+  POL-02 LCP-hint preload moved OUT of this component's <svelte:head> (Plan 07-03
+  Task 4 escalation). SvelteKit hoists CHILD-component head content AFTER the
+  page's ~25 JS modulepreload <link>s, so a preload emitted here landed below the
+  whole JS manifest and lost LCP priority. The preload now lives in each
+  consuming route's PAGE-level head (src/routes/+page.svelte and
+  src/routes/about/+page.svelte), where it precedes the modulepreloads. Keeping
+  it here as well would duplicate the <link>; intentionally not re-declared.
+-->
 
 <section bind:this={heroEl} class="relative h-svh w-full overflow-hidden bg-neutral-950">
   <!-- Layer 1: poster (LCP first paint; persists as fallback under iframe). alt=""
