@@ -20,5 +20,10 @@
   <meta name="description" content="Filmmaker reel — 56 videos in scroll-snap cinema mode." />
 </svelte:head>
 
+<!-- sr-only landmark h1 — the reel section titles are <h2>, so axe's
+     page-has-heading-one (best-practice) needs a top-level heading. Visible
+     wayfinding is the FilterPillBar; this heading names the page for SR/SEO. -->
+<h1 class="sr-only">Work — Filmography</h1>
+
 <FilterPillBar />
 <ReelStage videos={data.videos} />

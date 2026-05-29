@@ -26,5 +26,10 @@
   />
 </svelte:head>
 
+<!-- sr-only landmark h1 — reel section titles are <h2>, so axe's
+     page-has-heading-one (best-practice) needs a top-level heading. Names the
+     filtered category for SR/SEO; visible wayfinding is the FilterPillBar. -->
+<h1 class="sr-only">{data.category} — Filmography</h1>
+
 <FilterPillBar />
 <ReelStage videos={data.videos} />

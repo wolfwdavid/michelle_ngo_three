@@ -42,7 +42,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
       <!-- Column 1: ContactBlock (D-13/D-20) — same shared component as /about + /contact -->
       <div data-footer-col="contact">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500">Contact</h3>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-neutral-500">Contact</h2>
         <div class="mt-4">
           <ContactBlock />
         </div>
@@ -50,7 +50,7 @@
 
       <!-- Column 2: 8 categories mirror (D-13) — PBS retargeted to /pbs-american-portrait/ -->
       <div data-footer-col="work">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500">Work</h3>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-neutral-500">Work</h2>
         <ul class="mt-4 space-y-2 text-base">
           {#each categories as category (category)}
             {@const slug = categoryToSlug(category)}
@@ -73,7 +73,7 @@
 
       <!-- Column 3: secondary nav (D-13) — About, Press, Contact, View All Work → -->
       <div data-footer-col="site">
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-neutral-500">Site</h3>
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-neutral-500">Site</h2>
         <ul class="mt-4 space-y-2 text-base">
           <li>
             <a
