@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages (production / apex)
+
+# Production deploy fires ONLY on manual dispatch (D-11 verify-then-flip discipline).
+# It is impossible for a normal push to deploy to the apex domain — there is no
+# `push:` / `pull_request:` trigger here. The staging deploy on push-to-main lives
+# in deploy.yml — that workflow keeps building with
+# BASE_PATH=/${{ github.event.repository.name }} (=/michelle_ngo_three) for
+# wolfwdavid.github.io/michelle_ngo_three/. Both workflows share the
+# `concurrency.group: pages` below so they can never race.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.9
+          standalone: true
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build (apex — BASE_PATH unset)
+        env:
+          # Apex domain, no subpath (D-11 / CLAUDE.md CI section). svelte.config.js's
+          # `paths.base: process.env.BASE_PATH ?? ''` is the single per-env hook — no
+          # source code branches on environment.
+          BASE_PATH: ''
+          # Production cutover (FOUND-03) overrides the staging subpath value from
+          # deploy.yml so build-time sitemap + OG absolute URLs resolve on the apex.
+          PUBLIC_SITE_URL: https://michellengo.net
+        run: pnpm build
+
+      - name: Verify CNAME in build artifact
+        run: |
+          test -f build/CNAME || (echo "build/CNAME missing — D-11 assertion not in artifact" && exit 1)
+          echo "build/CNAME content: $(cat build/CNAME)"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
