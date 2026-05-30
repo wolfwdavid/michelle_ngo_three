@@ -3,29 +3,36 @@ status: partial
 phase: 05-hero-watch
 source: [05-VERIFICATION.md]
 started: 2026-05-27T19:45:00Z
-updated: 2026-05-27T19:45:00Z
+updated: 2026-05-30T00:00:00Z
 ---
 
 ## Current Test
 
-[awaiting human testing]
+[testing paused — 4 items outstanding · resume from Test 4]
+
+next_test:
+  number: 4
+  name: HERO-03 sound-on autoplay on /watch/264677021 after PLAY REEL click
+  expected: |
+    From /, click ▷ PLAY REEL. The watch page loads and the embed plays with AUDIBLE sound on
+    first paint (sticky user-gesture activation persists across the client-side nav).
 
 ## Tests
 
 ### 1. Hero iframe attaches and plays silently on / after defer trigger (rIC/timeout/interaction)
 expected: Within ~1s on first visit (or immediately on first pointer/wheel/touch/scroll), the producer reel (Vimeo 264677021) attaches as the hero background and plays muted+looped behind the wordmark/CTA/scroll-cue overlay. Phase 3 HANDSHAKE_TIMEOUT_MS = 800ms can unmount the iframe in headless e2e (documented caveat); only a real browser session reliably keeps the handshake alive.
 why_human: Cross-origin postMessage handshake between parent and player.vimeo.com is non-deterministic in headless Playwright; SUMMARY pivoted the e2e assertion away from "iframe attached within 5s" to "LCP poster attached" for this exact reason. Real Chrome/Safari session needed to confirm the iframe stays mounted and plays.
-result: [pending]
+result: pass
 
 ### 2. Hero iframe unmounts to poster when scrolled off-screen (D-02 budget)
 expected: Scroll past the hero into the reel; the hero iframe element disappears from the DOM (isOnScreen flips false via IntersectionObserver). Scroll back up; iframe re-mounts. Peak iframe count never exceeds 3 (hero +1 plus reel ±1).
 why_human: Visual + DOM-inspection check tied to live IntersectionObserver scroll thresholds. Unit-tested via runed mock; only a real scroll session confirms hysteresis at the boundary.
-result: [pending]
+result: pass
 
 ### 3. WATCH-01 chrome-fade flow on real Vimeo provider
 expected: Open /watch/264677021 with sound enabled; chrome (back-button + h1 + CategoryTag + uploader · year + ContinueReelRail heading region) is opacity-100 initially. On Vimeo 'play' event (audible playback starts), after a 600ms grace the entire chrome group fades to opacity-20 + pointer-events-none. Hover / move pointer over the canvas → chrome restores to opacity-100. Pause via Vimeo native controls → chrome restores immediately. After 3s of no pointer move while playing → fades again. Touch on mobile restores + arms idle-3s.
 why_human: Phase 3 HANDSHAKE_TIMEOUT_MS = 800ms caveat applies — cross-origin postMessage timing is non-deterministic in headless. Unit tests mock the adapter handlers and exercise all 8 transitions via fake timers + flushSync; the end-to-end real-iframe path requires a live cross-origin handshake against player.vimeo.com that the SUMMARY explicitly defers to Phase 7 POL-04 BrowserStack iOS Safari 17.x UAT.
-result: [pending]
+result: pass
 
 ### 4. HERO-03 sound-on autoplay on /watch/264677021 after PLAY REEL click
 expected: From /, click ▷ PLAY REEL. The watch page loads and the embed plays with audible sound on first paint (user-gesture sticky activation per Research Finding 2 persists across SvelteKit client-side nav).
@@ -50,9 +57,9 @@ result: [pending]
 ## Summary
 
 total: 7
-passed: 0
+passed: 3
 issues: 0
-pending: 7
+pending: 4
 skipped: 0
 blocked: 0
 
