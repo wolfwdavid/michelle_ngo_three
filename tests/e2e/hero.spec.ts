@@ -84,8 +84,9 @@ test.describe.parallel('Hero surface (HERO-01 / HERO-02 / HERO-03)', () => {
     await cta.click();
     // waitForURL instead of a load-state gate: the home ReelStage's debounced
     // hash replaceState can race the SPA nav on slow runners; this retries
-    // until the watch URL actually lands.
-    await page.waitForURL(`**/watch/${PRODUCER_REEL_ID}*`);
+    // until the watch URL actually lands. Regex, not glob — trailingSlash:
+    // 'always' yields /watch/<id>/ and glob `*` does not match `/`.
+    await page.waitForURL(new RegExp(`/watch/${PRODUCER_REEL_ID}`));
     // Watch page renders a heading + iframe. The iframe's src should be
     // 'play' mode — autoplay=1 with NO muted=1 / mute=1.
     await expect(page.locator('h1').first()).toBeVisible();

@@ -42,6 +42,28 @@ async function getReelScrollTop(page: Page): Promise<number> {
   });
 }
 
+/**
+ * Press `key` until `done()` reports the expected scroll state, settling
+ * between presses. ReelStage's onkeydown attaches at hydration with zero
+ * markup delta (tabindex="0" is already in the SSR HTML), so there is no
+ * DOM-observable "handler is live" signal — on slow CI runners a single
+ * press can land pre-hydration and no-op. Retrying the press is the user
+ * contract anyway: pressing the key scrolls the reel.
+ */
+async function pressUntil(
+  page: Page,
+  key: string,
+  done: () => Promise<boolean>,
+  settleMs = 700,
+  attempts = 8
+): Promise<void> {
+  for (let i = 0; i < attempts; i++) {
+    await page.keyboard.press(key);
+    await page.waitForTimeout(settleMs);
+    if (await done()) return;
+  }
+}
+
 test.describe('NAV-02 keyboard handler (D-09)', () => {
   test('ArrowDown scrolls forward; ArrowUp scrolls back', async ({ page }) => {
     await page.goto('/work');
@@ -50,13 +72,19 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
     const sectionH = await measureSectionHeight(page);
     const t0 = await getReelScrollTop(page);
 
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(600); // smooth scroll settle
+    await pressUntil(
+      page,
+      'ArrowDown',
+      async () => (await getReelScrollTop(page)) - t0 > sectionH * 0.4
+    );
     const t1 = await getReelScrollTop(page);
     expect(t1 - t0).toBeGreaterThan(sectionH * 0.4);
 
-    await page.keyboard.press('ArrowUp');
-    await page.waitForTimeout(600);
+    await pressUntil(
+      page,
+      'ArrowUp',
+      async () => (await getReelScrollTop(page)) - t0 < sectionH * 0.4
+    );
     const t2 = await getReelScrollTop(page);
     expect(t2 - t0).toBeLessThan(sectionH * 0.4);
   });
@@ -67,8 +95,11 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
     await focusReelContainer(page);
     const sectionH = await measureSectionHeight(page);
     const t0 = await getReelScrollTop(page);
-    await page.keyboard.press('PageDown');
-    await page.waitForTimeout(600);
+    await pressUntil(
+      page,
+      'PageDown',
+      async () => (await getReelScrollTop(page)) - t0 > sectionH * 0.4
+    );
     const t1 = await getReelScrollTop(page);
     expect(t1 - t0).toBeGreaterThan(sectionH * 0.4);
   });
@@ -79,8 +110,7 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
     await focusReelContainer(page);
     const sectionH = await measureSectionHeight(page);
 
-    await page.keyboard.press('Space');
-    await page.waitForTimeout(600);
+    await pressUntil(page, 'Space', async () => (await getReelScrollTop(page)) > sectionH * 0.4);
     const t1 = await getReelScrollTop(page);
     expect(t1).toBeGreaterThan(sectionH * 0.4);
 
@@ -96,9 +126,13 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
     await page.goto('/work');
     await page.waitForLoadState('load');
     await focusReelContainer(page);
-    await page.keyboard.press('End');
-    await page.waitForTimeout(1200); // smooth scroll over many sections
     const sectionH = await measureSectionHeight(page);
+    await pressUntil(
+      page,
+      'End',
+      async () => (await getReelScrollTop(page)) > sectionH * 30,
+      1200 // smooth scroll over many sections
+    );
     const tEnd = await getReelScrollTop(page);
     // With 56 sections, scrollTop near end is roughly (56 - 1) * sectionH.
     // Be generous — browsers may animate slowly or clip the smooth path.
