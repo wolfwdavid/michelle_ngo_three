@@ -40,23 +40,38 @@ test.describe('D-08 mobile-menu pause (mirrors reel.spec.ts Page Visibility patt
       'no iframes attached after page load (headless autoplay-blocked); D-08 bridge contract verified by ReelStage.test.ts unit suite'
     );
 
-    // Install postMessage spy on each iframe (mirror of reel.spec.ts:208-226).
-    await page.evaluate(() => {
+    // Install postMessage spy on each iframe (mirror of reel.spec.ts spy).
+    // Same cross-origin caveat as reel.spec.ts: the override only works while
+    // contentWindow is same-origin (about:blank); Firefox throws once the
+    // provider doc loads. Skip when nothing is instrumentable — the dispatch
+    // is unobservable, not broken.
+    const installed = await page.evaluate(() => {
       const captured: Array<{ data: unknown; targetOrigin: string }> = [];
       const iframes = Array.from(document.querySelectorAll('iframe'));
+      let instrumented = 0;
       iframes.forEach((iframe) => {
         const cw = iframe.contentWindow;
         if (!cw) return;
-        const orig = cw.postMessage.bind(cw);
-        // @ts-expect-error overriding for test
-        cw.postMessage = function (msg: unknown, targetOrigin: string) {
-          captured.push({ data: msg, targetOrigin });
-          return orig(msg, targetOrigin);
-        };
+        try {
+          const orig = cw.postMessage.bind(cw);
+          // @ts-expect-error overriding for test
+          cw.postMessage = function (msg: unknown, targetOrigin: string) {
+            captured.push({ data: msg, targetOrigin });
+            return orig(msg, targetOrigin);
+          };
+          instrumented++;
+        } catch {
+          // cross-origin contentWindow — cannot spy in this engine
+        }
       });
       // @ts-expect-error stash on window for retrieval
       window.__capturedPostMessages = captured;
+      return instrumented;
     });
+    test.skip(
+      installed === 0,
+      'iframe contentWindow already cross-origin (engine forbids spy install); D-08 bridge contract verified by ReelStage.test.ts unit suite'
+    );
 
     // Open the mobile menu via hamburger.
     await page.locator('button[aria-label="Open menu"]').click();
