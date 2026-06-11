@@ -191,7 +191,7 @@ None yet.
 - **EU GDPR posture** — inherit `_four`'s no-CMP "interaction-as-consent" pattern, or escalate to legal counsel. Required before Phase 7 cutover. (research/SUMMARY.md gap #2)
 - **A/B traffic-split mechanism** — Trap E mitigation; user decision required before Phase 7 cutover. (research/SUMMARY.md gap #5)
 - **REQUIREMENTS.md count drift** — file said "41 total" but actually has 42 v1 requirements (WATCH-05 + CONT-03 + REEL-06 + REEL-07 + NAV-02 + NAV-03 + DATA-04 + POL-05 added during requirements pass without recounting). Coverage summary updated to 42 during roadmap creation.
-- POL-02/D-12: hero LCP still misses 2500ms (median 2866ms, quick 260610-vu7). Preload lever exhausted (poster on-wire 18ms); residual FCP/render-bound ~2715ms (~900ms env delta vs 07-03). warn->error flip BLOCKED until a like-for-like apex/07-03-host re-measure or an FCP lever lands under budget.
+- ~~POL-02/D-12: hero LCP miss~~ RESOLVED 2026-06-11: CI run 27321489171 Lighthouse (deployed staging URL, mobile Slow-4G, 3 runs) passed the 2500ms LCP assertion clean after the vu7 preload hoist + defer ease. The 2806/2866ms readings were measurement-host inflation. Gate flipped warn->error (lighthouserc.json + deploy.yml).
 
 ### Quick Tasks Completed
 

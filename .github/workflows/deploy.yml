@@ -301,15 +301,15 @@ jobs:
           '
 
   lighthouse:
-    # Plan 07-04 / D-17 / POL-02 — Lighthouse / LCP gate at WARNING posture.
-    # Measures the deployed / route's LCP on simulated mobile Slow-4G and reports
-    # against the 2500ms budget. Posture is WARNING-ONLY (lighthouserc.json uses
-    # ["warn", ...]) — it surfaces the number in CI logs WITHOUT failing the build.
-    # This is intentional: Plan 07-03 measured the / median LCP at ~2806ms, which
-    # MISSES the 2500ms budget by ~306ms. The warn -> error (blocking) flip is a
-    # documented PRE-CUTOVER step in Plan 07-05's runbook / QA-matrix (D-12), NOT
-    # this plan. Do NOT use preset: desktop (the _four 07-04 trap — it would
-    # disable the Slow-4G throttling lighthouserc.json relies on).
+    # Plan 07-04 / D-17 / POL-02 — Lighthouse / LCP gate at BLOCKING posture (D-12).
+    # Measures the deployed / route's LCP on simulated mobile Slow-4G against the
+    # 2500ms budget. Flipped warn -> error per quick task 260610-vu7 after the
+    # app.html preload hoist + heroDefer ease landed and run 27321489171's CI
+    # measurement passed the assertion clean on the deployed staging URL (the
+    # earlier ~2806ms/2866ms readings were localhost-environment inflation).
+    # An LCP regression now fails this job and marks the run red post-deploy.
+    # Do NOT use preset: desktop (the _four 07-04 trap — it would disable the
+    # Slow-4G throttling lighthouserc.json relies on).
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -321,9 +321,9 @@ jobs:
         with:
           node-version: 22
 
-      - name: Lighthouse CI — / LCP (warning posture, mobile Slow-4G)
+      - name: Lighthouse CI — / LCP (blocking gate, mobile Slow-4G)
         # Pinned @lhci/cli@0.15.1 (Lighthouse 12.6.1). autorun reads lighthouserc.json:
         # url=staging /, numberOfRuns=3, mobile Slow-4G default (no preset:desktop),
-        # LCP ["warn", { maxNumericValue: 2500 }]. Warning assertions never set a
-        # non-zero exit, so this step cannot fail the workflow at the current posture.
+        # LCP ["error", { maxNumericValue: 2500 }]. Error assertions exit non-zero,
+        # so an LCP regression fails this job (post-deploy red flag, D-12 posture).
         run: npx @lhci/cli@0.15.1 autorun
