@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed 07-05-PLAN.md (cutover infra staged + reversible; D-12 flip NOT landed; phase ready for verification)
-last_updated: "2026-05-29T17:04:38.100Z"
+stopped_at: "Quick 260610-vu7 HALTED at Task 1: LCP median 2866ms still misses 2500ms (FCP-bound, ~900ms env delta vs 07-03); D-12 warn->error flip NOT landed"
+last_updated: "2026-06-11T03:16:14.781Z"
 progress:
   total_phases: 7
   completed_phases: 7
@@ -191,9 +191,10 @@ None yet.
 - **EU GDPR posture** — inherit `_four`'s no-CMP "interaction-as-consent" pattern, or escalate to legal counsel. Required before Phase 7 cutover. (research/SUMMARY.md gap #2)
 - **A/B traffic-split mechanism** — Trap E mitigation; user decision required before Phase 7 cutover. (research/SUMMARY.md gap #5)
 - **REQUIREMENTS.md count drift** — file said "41 total" but actually has 42 v1 requirements (WATCH-05 + CONT-03 + REEL-06 + REEL-07 + NAV-02 + NAV-03 + DATA-04 + POL-05 added during requirements pass without recounting). Coverage summary updated to 42 during roadmap creation.
+- POL-02/D-12: hero LCP still misses 2500ms (median 2866ms, quick 260610-vu7). Preload lever exhausted (poster on-wire 18ms); residual FCP/render-bound ~2715ms (~900ms env delta vs 07-03). warn->error flip BLOCKED until a like-for-like apex/07-03-host re-measure or an FCP lever lands under budget.
 
 ## Session Continuity
 
-Last session: 2026-05-29T15:58:33.610Z
-Stopped at: Completed 07-05-PLAN.md (cutover infra staged + reversible; D-12 flip NOT landed; phase ready for verification)
+Last session: 2026-06-11T03:15:52.255Z
+Stopped at: Quick 260610-vu7 HALTED at Task 1: LCP median 2866ms still misses 2500ms (FCP-bound, ~900ms env delta vs 07-03); D-12 warn->error flip NOT landed
 Resume file: None
