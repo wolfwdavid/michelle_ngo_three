@@ -193,6 +193,12 @@ None yet.
 - **REQUIREMENTS.md count drift** — file said "41 total" but actually has 42 v1 requirements (WATCH-05 + CONT-03 + REEL-06 + REEL-07 + NAV-02 + NAV-03 + DATA-04 + POL-05 added during requirements pass without recounting). Coverage summary updated to 42 during roadmap creation.
 - POL-02/D-12: hero LCP still misses 2500ms (median 2866ms, quick 260610-vu7). Preload lever exhausted (poster on-wire 18ms); residual FCP/render-bound ~2715ms (~900ms env delta vs 07-03). warn->error flip BLOCKED until a like-for-like apex/07-03-host re-measure or an FCP lever lands under budget.
 
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260610-vu7 | LCP remediation D-12: preload hoist + defer ease landed; gate flip HALTED (2866ms > 2500ms) | 2026-06-11 | 5c1fa98 | [260610-vu7-lcp-remediation-d-12-close-306ms-lcp-mis](./quick/260610-vu7-lcp-remediation-d-12-close-306ms-lcp-mis/) |
+
 ## Session Continuity
 
 Last session: 2026-06-11T03:15:52.255Z
