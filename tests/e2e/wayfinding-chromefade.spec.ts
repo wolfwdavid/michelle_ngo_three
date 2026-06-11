@@ -32,7 +32,7 @@ async function scrollReel(page: Page, delta: number): Promise<void> {
 test.describe('Chrome-fade on /work (D-05 + D-06)', () => {
   test('scrolling the reel adds opacity-0 to the header within 250ms', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await scrollReel(page, 500);
     await page.waitForTimeout(200);
     const cls = await getHeaderClass(page);
@@ -42,7 +42,7 @@ test.describe('Chrome-fade on /work (D-05 + D-06)', () => {
 
   test('after 800ms (past 600ms debounce), opacity-0 is removed', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await scrollReel(page, 500);
     await page.waitForTimeout(900);
     const cls = await getHeaderClass(page);
@@ -51,7 +51,7 @@ test.describe('Chrome-fade on /work (D-05 + D-06)', () => {
 
   test('hover near top while scrolling surfaces the chrome', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await scrollReel(page, 500);
     await page.waitForTimeout(80);
     // Move mouse near top — pointermove with clientY=40 (under the 80px zone)
@@ -67,7 +67,7 @@ test.describe('Chrome-fade scope = reel routes only (D-06)', () => {
     page,
   }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.evaluate(() => window.scrollBy({ top: 500, behavior: 'auto' }));
     await page.waitForTimeout(200);
     const cls = await getHeaderClass(page);

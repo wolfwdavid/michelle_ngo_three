@@ -32,7 +32,7 @@ async function scrollPressReel(page: Page, delta: number): Promise<void> {
 test.describe('/press — Phase 6 PRES-01 + D-16 chrome-fade regression', () => {
   test('A — 13 <article> landmarks render (PRES-01)', async ({ page }) => {
     await page.goto(PRESS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const count = await page.locator('article').count();
     expect(count).toBe(13);
   });
@@ -41,7 +41,7 @@ test.describe('/press — Phase 6 PRES-01 + D-16 chrome-fade regression', () => 
     page,
   }) => {
     await page.goto(PRESS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const articles = page.locator('article');
     const firstLabel = await articles.nth(0).getAttribute('aria-label');
     const lastLabel = await articles.nth(12).getAttribute('aria-label');
@@ -51,7 +51,7 @@ test.describe('/press — Phase 6 PRES-01 + D-16 chrome-fade regression', () => 
 
   test('C — clicking ▷ Watch on article 1 navigates to /watch/<id>', async ({ page }) => {
     await page.goto(PRESS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // Find the first article's ▷ Watch CTA href; click it; assert URL matches.
     const firstWatchLink = page.locator('article').first().locator('a', { hasText: 'Watch' });
     const href = await firstWatchLink.getAttribute('href');
@@ -66,7 +66,7 @@ test.describe('/press — Phase 6 PRES-01 + D-16 chrome-fade regression', () => 
     page,
   }) => {
     await page.goto(PRESS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // Pre-state: header is solid (not faded). Trigger scroll on the press reel
     // container — TopNav's scrollIdle.isScrolling rune flips true; chrome
     // gains opacity-0 + pointer-events-none within ~200ms.
@@ -79,7 +79,7 @@ test.describe('/press — Phase 6 PRES-01 + D-16 chrome-fade regression', () => 
 
   test('E — axe-core zero WCAG AA violations on /press', async ({ page }) => {
     await page.goto(PRESS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();

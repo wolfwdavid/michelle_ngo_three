@@ -31,7 +31,7 @@ test.describe('Hash restoration (WATCH-05)', () => {
     page,
   }) => {
     await page.goto(`/work#video=${TARGET_ID}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // ReelStage's hash-restore $effect waits for sectionRefs.length ===
     // videos.length then calls scrollIntoView({block:'start', behavior:'auto'}).
     // 500ms buffer beyond the first paint flush is generous.
@@ -41,10 +41,7 @@ test.describe('Hash restoration (WATCH-05)', () => {
       const articles = document.querySelectorAll('main article[aria-label*="Video"]');
       for (const a of articles) {
         const rect = a.getBoundingClientRect();
-        if (
-          Math.abs(rect.top) < 100 &&
-          a.getAttribute('data-video-id') === id
-        ) {
+        if (Math.abs(rect.top) < 100 && a.getAttribute('data-video-id') === id) {
           return a.getAttribute('data-video-id');
         }
       }
@@ -55,7 +52,7 @@ test.describe('Hash restoration (WATCH-05)', () => {
 
   test('foreign hash /work#video=does-not-exist lands at top, no scroll', async ({ page }) => {
     await page.goto('/work#video=does-not-exist-xyz');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(500);
 
     // D-17: hash-not-in-set → no-op; land at top. window.scrollY remains ~0.
@@ -91,7 +88,7 @@ test.describe('Hash restoration (WATCH-05)', () => {
     // 1. Load /work; programmatically scroll the inner reel container to the target
     //    article so ReelStage's snap-settle hash-write fires.
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(300);
 
     await page.evaluate((id) => {
@@ -114,11 +111,11 @@ test.describe('Hash restoration (WATCH-05)', () => {
 
     // 2. Navigate to /watch/<target>.
     await page.goto(`/watch/${TARGET_ID}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // 3. Browser back.
     await page.goBack();
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.waitForTimeout(500);
 
     // 4. After back-nav, the URL should still bear a hash (if the original
@@ -138,10 +135,7 @@ test.describe('Hash restoration (WATCH-05)', () => {
         const articles = document.querySelectorAll('main article[aria-label*="Video"]');
         for (const a of articles) {
           const rect = a.getBoundingClientRect();
-          if (
-            Math.abs(rect.top) < 100 &&
-            a.getAttribute('data-video-id') === id
-          ) {
+          if (Math.abs(rect.top) < 100 && a.getAttribute('data-video-id') === id) {
             return a.getAttribute('data-video-id');
           }
         }

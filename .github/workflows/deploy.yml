@@ -70,7 +70,9 @@ jobs:
         run: pnpm test
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        # playwright.config.ts runs chromium + webkit + firefox projects —
+        # install all three or the webkit/firefox shards fail at launch.
+        run: pnpm exec playwright install --with-deps chromium webkit firefox
 
       # E2E runs against an UNPREFIXED build so page.goto('/') resolves at root.
       # The deploy step below sets BASE_PATH for the actual GH Pages artifact;

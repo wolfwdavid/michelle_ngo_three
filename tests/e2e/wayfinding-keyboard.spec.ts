@@ -45,7 +45,7 @@ async function getReelScrollTop(page: Page): Promise<number> {
 test.describe('NAV-02 keyboard handler (D-09)', () => {
   test('ArrowDown scrolls forward; ArrowUp scrolls back', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await focusReelContainer(page);
     const sectionH = await measureSectionHeight(page);
     const t0 = await getReelScrollTop(page);
@@ -63,7 +63,7 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
 
   test('PageDown advances one section', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await focusReelContainer(page);
     const sectionH = await measureSectionHeight(page);
     const t0 = await getReelScrollTop(page);
@@ -75,7 +75,7 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
 
   test('Space advances; Shift+Space goes back', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await focusReelContainer(page);
     const sectionH = await measureSectionHeight(page);
 
@@ -94,7 +94,7 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
 
   test('End key jumps far down the reel; Home returns to top', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await focusReelContainer(page);
     await page.keyboard.press('End');
     await page.waitForTimeout(1200); // smooth scroll over many sections
@@ -112,7 +112,7 @@ test.describe('NAV-02 keyboard handler (D-09)', () => {
 
   test('Escape inside reel does NOT scroll (deferred to MobileMenu)', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await focusReelContainer(page);
     const t0 = await getReelScrollTop(page);
     await page.keyboard.press('Escape');
@@ -131,7 +131,7 @@ test.describe('NAV-02 / D-10 roving tabindex — Tab order', () => {
     // WCAG 2.4.1 contract is that the skip-link IS focusable and points to
     // #main; verify that directly instead of relying on first-Tab targeting.
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const focused = await page.evaluate(() => {
       const skipLink = document.querySelector('a[href="#main"]') as HTMLElement | null;
       skipLink?.focus();
@@ -145,7 +145,7 @@ test.describe('NAV-02 / D-10 roving tabindex — Tab order', () => {
     page,
   }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // Let IntersectionObserver settle activeIdx before measuring.
     await page.waitForTimeout(500);
     const tabbableCtaCount = await page.evaluate(() => {
@@ -175,7 +175,7 @@ test.describe('NAV-02 / D-10 roving tabindex — Tab order', () => {
     // tabindex test above (DOM-introspection) is the deterministic version of
     // the contract; this test pins DOM order.
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const linkOrder = await page.evaluate(() => {
       const links = Array.from(document.querySelectorAll('a[href]')) as HTMLAnchorElement[];
       const named = links
@@ -230,7 +230,7 @@ test.describe('NAV-02 — native scroll preserved on non-reel routes', () => {
     const errs: string[] = [];
     page.on('pageerror', (e) => errs.push(e.message));
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.evaluate(() => document.body.focus());
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(150);

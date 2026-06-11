@@ -45,7 +45,7 @@ test.describe.parallel('Pillar 1: fast-flick', () => {
     page.on('pageerror', (e) => fatalErrors.push(`pageerror: ${e.message}`));
 
     await page.goto(WORK_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Big wheel down via the inner scroll container (the role=region wrapper).
     // proximity snap should NOT trap; section index should advance.
@@ -96,7 +96,7 @@ test.describe.parallel('Pillar 2: windowed-mount', () => {
     page,
   }) => {
     await page.goto(WORK_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const sectionCount = await page.locator('article').count();
     expect(sectionCount).toBeGreaterThanOrEqual(56);
@@ -125,7 +125,7 @@ test.describe('Pillar 3: leak defense', () => {
     page,
   }) => {
     await page.goto(WORK_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const baselineIframes = await page.locator('iframe').count();
 
@@ -160,7 +160,7 @@ test.describe('Pillar 3: leak defense', () => {
 test.describe.parallel('Pillar 4: axe-core WCAG AA', () => {
   test('/work has zero axe-core violations (NAV-03 forward-ship / SC#6)', async ({ page }) => {
     await page.goto(WORK_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -179,7 +179,7 @@ test.describe.parallel('reduced-motion fallback (REEL-04 trigger 1)', () => {
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(WORK_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // All sections render PosterImage (zero iframes mounted across ALL 56 sections).
     const iframeCount = await page.locator('iframe').count();
@@ -195,7 +195,7 @@ test.describe.parallel('reduced-motion fallback (REEL-04 trigger 1)', () => {
 test.describe.parallel('Page Visibility pause (REEL-07 / SC#5)', () => {
   test('document.hidden change reaches mounted iframes within 300ms', async ({ page }) => {
     await page.goto(WORK_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // In headless mode, iframes may attach briefly then unmount via the
     // PreviewLoop 800ms HANDSHAKE_TIMEOUT_MS. We probe iframe presence in a

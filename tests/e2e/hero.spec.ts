@@ -33,9 +33,7 @@ import { AxeBuilder } from '@axe-core/playwright';
 const PRODUCER_REEL_ID = '264677021';
 
 test.describe.parallel('Hero surface (HERO-01 / HERO-02 / HERO-03)', () => {
-  test('HERO-01: wordmark + tagline + PLAY REEL CTA + scroll-cue all render', async ({
-    page,
-  }) => {
+  test('HERO-01: wordmark + tagline + PLAY REEL CTA + scroll-cue all render', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('h1')).toHaveText('MICHELLE NGO');
     await expect(page.getByText('Filmmaker & Producer')).toBeVisible();
@@ -70,7 +68,7 @@ test.describe.parallel('Hero surface (HERO-01 / HERO-02 / HERO-03)', () => {
 
   test('HERO-02: scrolling past hero reveals the first ReelSection', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const viewportHeight = await page.evaluate(() => window.innerHeight);
     await page.evaluate((h) => window.scrollBy(0, h * 1.5), viewportHeight);
     await page.waitForTimeout(500); // scroll-snap settle
@@ -84,8 +82,10 @@ test.describe.parallel('Hero surface (HERO-01 / HERO-02 / HERO-03)', () => {
     await page.goto('/');
     const cta = page.locator(`a[href$="/watch/${PRODUCER_REEL_ID}"]`).first();
     await cta.click();
-    await page.waitForLoadState('networkidle');
-    expect(page.url()).toContain(`/watch/${PRODUCER_REEL_ID}`);
+    // waitForURL instead of a load-state gate: the home ReelStage's debounced
+    // hash replaceState can race the SPA nav on slow runners; this retries
+    // until the watch URL actually lands.
+    await page.waitForURL(`**/watch/${PRODUCER_REEL_ID}*`);
     // Watch page renders a heading + iframe. The iframe's src should be
     // 'play' mode — autoplay=1 with NO muted=1 / mute=1.
     await expect(page.locator('h1').first()).toBeVisible();
@@ -131,7 +131,7 @@ test.describe.parallel('Hero surface (HERO-01 / HERO-02 / HERO-03)', () => {
 
   test('axe a11y: zero WCAG AA violations on /', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();

@@ -16,13 +16,13 @@ test.describe('Filter pill navigation (FILT-01 / FILT-02)', () => {
     page,
   }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const pbsLink = page
       .locator('nav[aria-label="Filmography filters"] a[href$="/work/pbs-american-portrait"]')
       .first();
     await pbsLink.click();
     await page.waitForURL(/\/work\/pbs-american-portrait/);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const articleCount = await page.locator('article').count();
     expect(articleCount).toBe(18);
     const ariaCurrent = await page
@@ -35,7 +35,7 @@ test.describe('Filter pill navigation (FILT-01 / FILT-02)', () => {
     page,
   }) => {
     await page.goto('/work/pbs-american-portrait');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // The "All" pill href is exactly /work (the only pill with that suffix).
     const allLink = page
       .locator('nav[aria-label="Filmography filters"] a')

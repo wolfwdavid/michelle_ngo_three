@@ -16,7 +16,7 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Layout shell — NAV-01 + NAV-03 landmark structure', () => {
   test('on /work: exactly one <main id="main" tabindex="-1">', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const mains = await page.locator('main').count();
     expect(mains).toBe(1);
     const main = page.locator('main');
@@ -26,7 +26,7 @@ test.describe('Layout shell — NAV-01 + NAV-03 landmark structure', () => {
 
   test('on /work: exactly one <header> (TopNav)', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const headers = await page.locator('header').count();
     expect(headers).toBe(1);
   });
@@ -35,7 +35,7 @@ test.describe('Layout shell — NAV-01 + NAV-03 landmark structure', () => {
     page,
   }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const navs = await page.locator('nav').all();
     const navLabels = await Promise.all(
       navs.map(async (n) => (await n.getAttribute('aria-label')) ?? '')
@@ -49,7 +49,7 @@ test.describe('Layout shell — NAV-01 + NAV-03 landmark structure', () => {
     page,
   }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // Skip-link is the first <a> in DOM order with href="#main". Locate it directly
     // (focusing via Tab is unreliable on WebKit where Tab skips anchors by default
     // unless "Press Tab to highlight each item on a webpage" is enabled).
@@ -61,15 +61,15 @@ test.describe('Layout shell — NAV-01 + NAV-03 landmark structure', () => {
     // Focusing programmatically should still apply the focus-visible utilities
     // (focus:not-sr-only) — verify the element is focusable.
     await skipLink.focus();
-    const focusedHref = await page.evaluate(
-      () => (document.activeElement as HTMLAnchorElement)?.getAttribute('href')
+    const focusedHref = await page.evaluate(() =>
+      (document.activeElement as HTMLAnchorElement)?.getAttribute('href')
     );
     expect(focusedHref).toBe('#main');
   });
 
   test('activating the skip-link moves focus or scrolls to <main>', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const skipLink = page.locator('a[href="#main"]').first();
     await skipLink.focus();
     await page.keyboard.press('Enter'); // activate
@@ -92,7 +92,7 @@ test.describe('Axe scan on filter routes (Phase 4 FILT-04 + NAV-03 carry-forward
   for (const route of ROUTES) {
     test(`${route} — zero WCAG AA violations`, async ({ page }) => {
       await page.goto(route);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
         .analyze();

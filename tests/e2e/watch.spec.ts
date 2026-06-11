@@ -30,7 +30,7 @@ test.describe('Watch route (WATCH-01..04)', () => {
     page,
   }) => {
     await page.goto(`/watch/${PRODUCER_REEL_ID}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Letterbox math: outer div has bg-black + min-h-svh classes.
     const canvas = page.locator('div.bg-black.min-h-svh').first();
@@ -54,7 +54,7 @@ test.describe('Watch route (WATCH-01..04)', () => {
     page,
   }) => {
     await page.goto(`/watch/${PRODUCER_REEL_ID}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const iframe = page.locator('iframe[title]').first();
     // Initial state — chromeFaded $state defaults false. Real Vimeo postMessage
     // 'play' may flip this asynchronously, but the INITIAL state is locked here.
@@ -66,7 +66,7 @@ test.describe('Watch route (WATCH-01..04)', () => {
     page,
   }) => {
     await page.goto(`/watch/${PRODUCER_REEL_ID}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const h1 = page.locator('h1').first();
     await expect(h1).toBeVisible();
@@ -87,7 +87,7 @@ test.describe('Watch route (WATCH-01..04)', () => {
     page,
   }) => {
     await page.goto(`/watch/${PBS_SAMPLE_ID}`);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const railSection = page.locator('section[aria-labelledby="rail-heading"]');
     await expect(railSection).toBeVisible();
@@ -125,10 +125,8 @@ test.describe('Watch route (WATCH-01..04)', () => {
 
   test('axe a11y: /watch/[id] has zero WCAG AA violations', async ({ page }) => {
     await page.goto(`/watch/${PRODUCER_REEL_ID}`);
-    await page.waitForLoadState('networkidle');
-    const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa'])
-      .analyze();
+    await page.waitForLoadState('load');
+    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
     expect(results.violations).toEqual([]);
   });
 });

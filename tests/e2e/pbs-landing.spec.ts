@@ -20,7 +20,7 @@ const WORK_PBS_URL = '/work/pbs-american-portrait/';
 test.describe('/pbs-american-portrait/ — Phase 6 PBS-01/02/03', () => {
   test('A — verbatim Candidate C blockquote text is visible (D-17)', async ({ page }) => {
     await page.goto(PBS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const blockquote = page.locator('blockquote').first();
     await expect(blockquote).toBeVisible();
     const text = (await blockquote.textContent()) ?? '';
@@ -30,7 +30,7 @@ test.describe('/pbs-american-portrait/ — Phase 6 PBS-01/02/03', () => {
 
   test('B — 18 <article> landmarks render (PBS-01)', async ({ page }) => {
     await page.goto(PBS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const articleCount = await page.locator('article').count();
     expect(articleCount).toBe(18);
   });
@@ -39,7 +39,7 @@ test.describe('/pbs-american-portrait/ — Phase 6 PBS-01/02/03', () => {
     page,
   }) => {
     await page.goto(PBS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // Locate by text — match the literal "See on PBS" substring (arrow may render
     // differently across engines, the prefix is the stable assertion).
     const badges = page.getByText('See on PBS', { exact: false });
@@ -51,11 +51,13 @@ test.describe('/pbs-american-portrait/ — Phase 6 PBS-01/02/03', () => {
     page,
   }) => {
     await page.goto(PBS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     // TopNav PBS link uses href="${base}/work/pbs-american-portrait" and isActive()
     // sets aria-current="page" when the URL ends with /pbs-american-portrait (with
     // trailing slash normalized). Match by aria-current="page" in TopNav scope.
-    const navLinks = page.locator('header nav[aria-label="Main navigation"] a[aria-current="page"]');
+    const navLinks = page.locator(
+      'header nav[aria-label="Main navigation"] a[aria-current="page"]'
+    );
     const text = (await navLinks.allTextContents()).join('|').toLowerCase();
     expect(text).toContain('pbs american portrait');
   });
@@ -64,21 +66,26 @@ test.describe('/pbs-american-portrait/ — Phase 6 PBS-01/02/03', () => {
     page,
   }) => {
     await page.goto(WORK_PBS_URL);
-    await page.waitForLoadState('networkidle');
-    const navLinks = page.locator('header nav[aria-label="Main navigation"] a[aria-current="page"]');
+    await page.waitForLoadState('load');
+    const navLinks = page.locator(
+      'header nav[aria-label="Main navigation"] a[aria-current="page"]'
+    );
     const text = (await navLinks.allTextContents()).join('|').toLowerCase();
     expect(text).toContain('pbs american portrait');
   });
 
   test('E — axe-core zero WCAG AA violations on /pbs-american-portrait/', async ({ page }) => {
     await page.goto(PBS_URL);
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze();
     if (results.violations.length > 0) {
       // Log violations to assist debugging without aborting the suite layout.
-      console.log('Axe violations on /pbs-american-portrait/:', JSON.stringify(results.violations, null, 2));
+      console.log(
+        'Axe violations on /pbs-american-portrait/:',
+        JSON.stringify(results.violations, null, 2)
+      );
     }
     expect(results.violations).toEqual([]);
   });

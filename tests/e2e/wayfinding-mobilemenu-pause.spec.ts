@@ -25,14 +25,14 @@ test.describe('D-08 mobile-menu pause (mirrors reel.spec.ts Page Visibility patt
 
   test('hamburger click opens MobileMenu (role="dialog")', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.locator('button[aria-label="Open menu"]').click();
     await expect(page.locator('[role="dialog"]')).toBeVisible();
   });
 
   test('opening menu dispatches postMessage "pause" within 350ms (D-08)', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const attached = await page.locator('iframe').count();
     test.skip(
@@ -77,7 +77,7 @@ test.describe('D-08 mobile-menu pause (mirrors reel.spec.ts Page Visibility patt
 
   test('Escape closes MobileMenu (D-12)', async ({ page }) => {
     await page.goto('/work');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     await page.locator('button[aria-label="Open menu"]').click();
     await expect(page.locator('[role="dialog"]')).toBeVisible();
     await page.keyboard.press('Escape');
