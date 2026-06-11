@@ -200,9 +200,9 @@ describe('HeroAmbient — D-03 deferred-load + poster (HERO-01)', () => {
     expect(stub).toBeNull();
   });
 
-  test('PreviewLoop mounts after 1000ms timeout (D-03 trigger 2)', async () => {
+  test('PreviewLoop mounts after 2500ms timeout (D-03 trigger 2)', async () => {
     const { container } = render(HeroAmbient);
-    vi.advanceTimersByTime(1001);
+    vi.advanceTimersByTime(2501);
     await tick();
     const stub = container.querySelector('[data-stub="preview-loop"]');
     expect(stub).not.toBeNull();
@@ -222,7 +222,7 @@ describe('HeroAmbient — D-04 unified REEL-04 fallback (HERO-01)', () => {
   test('does NOT mount PreviewLoop under prefers-reduced-motion (trigger 1)', async () => {
     __setPrefersReducedMotionForTests(true);
     const { container } = render(HeroAmbient);
-    vi.advanceTimersByTime(2000); // exceed the 1000ms timer to confirm no mount
+    vi.advanceTimersByTime(3000); // exceed the 2500ms timer to confirm no mount
     await tick();
     const stub = container.querySelector('[data-stub="preview-loop"]');
     expect(stub).toBeNull();
@@ -239,7 +239,7 @@ describe('HeroAmbient — D-04 unified REEL-04 fallback (HERO-01)', () => {
 
   test('PreviewLoop unmounts after autoplayFailed callback fires (REEL-04 trigger 3)', async () => {
     const { container } = render(HeroAmbient);
-    vi.advanceTimersByTime(1001);
+    vi.advanceTimersByTime(2501);
     await tick();
     expect(container.querySelector('[data-stub="preview-loop"]')).not.toBeNull();
     // Stub registered its onautoplayfailed via the global registry.
@@ -260,7 +260,7 @@ describe('HeroAmbient — D-02 own IO (Pitfall F threshold [0,0.1])', () => {
 
   test('PreviewLoop unmounts when IO callback flips isOnScreen false', async () => {
     const { container } = render(HeroAmbient);
-    vi.advanceTimersByTime(1001);
+    vi.advanceTimersByTime(2501);
     await tick();
     expect(container.querySelector('[data-stub="preview-loop"]')).not.toBeNull();
     // Drive the IO callback with isIntersecting:false entries.
@@ -275,7 +275,7 @@ describe('HeroAmbient — D-02 own IO (Pitfall F threshold [0,0.1])', () => {
 describe('HeroAmbient — Plan 05-01 pageVisibility subscription', () => {
   test('PreviewLoop unmounts when menu opens (pageVisibility.documentHidden true)', async () => {
     const { container } = render(HeroAmbient);
-    vi.advanceTimersByTime(1001);
+    vi.advanceTimersByTime(2501);
     await tick();
     expect(container.querySelector('[data-stub="preview-loop"]')).not.toBeNull();
     openMenu();

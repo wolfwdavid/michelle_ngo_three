@@ -139,5 +139,51 @@
     "performance_score": "PASS (0.95 >= 0.9)",
     "outcome": "ACCEPTED for this run. Per the Task 4 checkpoint directive: the LCP gate is WARNING-ONLY in this plan and Plan 07-04 flips warn->error pre-cutover. The 306ms residual miss against the 2.5s simulated-Slow-4G budget remains a WARNING; do NOT loop on further escalations. Residual-reduction levers available for 07-04 if the blocking flip requires them: (a) AVIF poster variant [PERF-V2-02, deferred], (b) tune createHeroDefer timing, (c) re-measure on the faster production apex (BASE_PATH='' — no subpath; this local-root measurement is the conservative stand-in), or (d) the _four branch (defer to post-launch real-user telemetry).",
     "summary": "After moving the poster preload to the page-level head + keeping fetchpriority=high, median / LCP improved 2859ms -> 2806ms (-53ms) with markedly tighter variance and perf 0.91 -> 0.95. LCP still MISSES the 2500ms budget by 306ms — ACCEPTABLE under the warning-only posture; the 07-04 pre-cutover flip owns the blocking decision."
+  },
+  "vu7_remediation": {
+    "label": "260610-vu7 remediation (app.html preload hoist ahead of JS manifest + 2.5s iframe defer)",
+    "measured_at": "2026-06-11",
+    "task": "quick 260610-vu7 Task 1",
+    "tool": {
+      "name": "lighthouse",
+      "version": "12.6.1",
+      "invocation": "npx lighthouse@12.6.1 http://localhost:4183/ --only-categories=performance --output=json --chrome-flags=\"--headless=new --no-sandbox\" (default mobile preset, simulated Slow-4G)"
+    },
+    "measurement_target": {
+      "url": "http://localhost:4183/",
+      "note": "Local preview of the production static artifact (BASE_PATH omitted, root). Same conservative stand-in methodology as the 07-03 measurement; staging URL 404s on this branch.",
+      "lcp_element": "hero poster <img src=./posters/vimeo-264677021.jpg loading=eager fetchpriority=high> (confirmed via largest-contentful-paint-element audit)"
+    },
+    "change": "(1) Hoisted the hero-poster <link rel=preload as=image fetchpriority=high> into src/app.html BEFORE the SvelteKit head token so it precedes ALL JS modulepreloads in DOM order (build/index.html structurally verified by scripts/check-preload-order.mjs). (2) Removed the now-redundant page-level preloads from src/routes/+page.svelte and src/routes/about/+page.svelte. (3) Eased createHeroDefer idle/timeout window 1000ms -> 2500ms to keep the hero iframe fetch out of the LCP paint window (interaction trigger unchanged).",
+    "runs": [
+      { "run": 1, "largestContentfulPaint_ms": 2866, "firstContentfulPaint_ms": 2716, "speedIndex_ms": 2716, "cumulativeLayoutShift": 0.0055, "totalBlockingTime_ms": 0, "performanceScore": 0.91 },
+      { "run": 2, "largestContentfulPaint_ms": 2864, "firstContentfulPaint_ms": 2714, "speedIndex_ms": 2714, "cumulativeLayoutShift": 0.0055, "totalBlockingTime_ms": 0, "performanceScore": 0.91 },
+      { "run": 3, "largestContentfulPaint_ms": 2870, "firstContentfulPaint_ms": 2720, "speedIndex_ms": 2720, "cumulativeLayoutShift": 0.0055, "totalBlockingTime_ms": 0, "performanceScore": 0.91 }
+    ],
+    "median": {
+      "largestContentfulPaint_ms": 2866,
+      "firstContentfulPaint_ms": 2716,
+      "cumulativeLayoutShift": 0.0055,
+      "performanceScore": 0.91
+    },
+    "network_diagnostic": {
+      "poster_request": "vimeo-264677021.jpg fetched FIRST at networkRequestTime=13ms, networkEndTime=18ms, priority=High — the preload hoist works perfectly at the network layer (poster is on the wire and complete in the first ~18ms, ahead of all JS modulepreloads).",
+      "interpretation": "LCP is NOT image-download bound. The poster is available at ~18ms but cannot PAINT until first paint, and FCP sits at ~2715ms on this measurement environment. LCP (~2866ms) tracks FCP plus the poster decode. The preload-ordering lever is now fully exhausted: it eliminated the download bottleneck the plan targeted, but the dominant cost is render/main-thread time pushing FCP to ~2715ms, which preload ordering cannot touch."
+    },
+    "verdict": {
+      "lcp_vs_budget": "MISS",
+      "median_lcp_ms": 2866,
+      "lcp_over_budget_ms": 366,
+      "cls": "PASS (0.0055 << 0.1)",
+      "performance_score": "0.91 (>= 0.9, PASS)",
+      "gate_decision": "HALT-AT-TASK-1. Per the plan's load-bearing GATING CONDITION, the Lighthouse LCP gate must NOT be flipped warn->error because the measured median LCP (2866ms) did not land under 2500ms. Task 2 (the gate flip) was NOT executed. The hoist + defer landed cleanly (all tests green, structural preload-order proof passes) but did not close the budget miss on this environment.",
+      "environment_note": "FCP measured ~2715ms here vs the 07-03 record of ~1817ms — a ~900ms environment delta (different host/Chrome/headless flags than the 07-03 run). The poster-network timing (18ms) confirms the code change is sound; the residual is FCP/render-bound and partly measurement-environment-dependent. A like-for-like re-measure on the 07-03 host, OR on the faster production apex (BASE_PATH=''), may read lower — but on THIS conservative local-root measurement the budget is missed.",
+      "next_levers": [
+        "(a) Re-measure on the faster production apex (BASE_PATH='' — no subpath) and/or on the 07-03 reference host to get a like-for-like FCP baseline before deciding the flip — the ~900ms FCP delta vs 07-03 suggests the 2866ms here is environment-inflated.",
+        "(b) Attack FCP directly (the real bottleneck, not the poster download): reduce render-blocking/main-thread work in the critical path — e.g. inline critical CSS, trim the initial JS the first paint waits on, or audit why first paint sits at ~2.7s.",
+        "(c) A genuine AVIF poster <picture> variant in HeroAmbient (PERF-V2-02) would shave decode but NOT the dominant FCP cost — lower priority given the network diagnostic.",
+        "(d) The _four branch: accept warning-only and defer the blocking flip to post-launch real-user telemetry."
+      ]
+    }
   }
 }

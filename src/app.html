@@ -4,6 +4,14 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%sveltekit.assets%/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- LCP hint: the / and /about hero poster (static WebP-in-.jpg, 640x360).
+         Placed AHEAD of the SvelteKit head token below so it precedes the JS
+         modulepreloads in DOM order — the lever Plan 07-03 named but deferred.
+         fetchpriority=high keeps it ahead under the resource scheduler. Filename =
+         producerReelId's poster (vimeo-264677021); update both if producerReelId
+         ever changes. NOTE: this comment must NOT contain the head-token literal —
+         SvelteKit substitutes that token textually, even inside HTML comments. -->
+    <link rel="preload" as="image" href="%sveltekit.assets%/posters/vimeo-264677021.jpg" fetchpriority="high" />
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

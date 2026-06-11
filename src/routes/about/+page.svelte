@@ -18,11 +18,8 @@
   wordmark prop); semantic landmark h1 is sr-only "About Michelle Ngo".
 -->
 <script lang="ts">
-  import { base } from '$app/paths';
   import HeroAmbient from '$lib/components/HeroAmbient.svelte';
   import ContactBlock from '$lib/components/ContactBlock.svelte';
-  import { producerReelId, getById } from '$lib/data';
-  import { getPosterFor } from '$lib/data/posters';
 
   // Phase 6 D-21 / RESEARCH §"Footer Integration > Single-source-of-truth pattern":
   // Person JSON-LD sameAs values. MUST match the literals in
@@ -50,13 +47,11 @@
     sameAs: [IMDB_URL, LINKEDIN_URL, VIMEO_URL],
   };
 
-  // POL-02 (Plan 07-03 Task 4 escalation): /about's Act-1 hero is the same
-  // HeroAmbient producer-reel poster as `/`, so it is the LCP element here too.
-  // The preload is emitted from THIS page-level head (rather than HeroAmbient's
-  // child head) so it precedes the JS modulepreloads — same rationale and same
-  // derived href as src/routes/+page.svelte. Without this, /about would lose the
-  // LCP hint entirely when the preload moved off the component.
-  const heroPosterUrl = `${base}${getPosterFor(getById(producerReelId)!)}`;
+  // POL-02 (quick 260610-vu7): /about's Act-1 hero is the same HeroAmbient
+  // producer-reel poster as `/`, so it is the LCP element here too. The preload
+  // <link> now lives in src/app.html BEFORE %sveltekit.head% (shared across both
+  // routes), where it precedes SvelteKit's JS modulepreloads in DOM order — a
+  // page-level <svelte:head> preload could not. See src/app.html for the hint.
 </script>
 
 <svelte:head>
@@ -65,7 +60,6 @@
     name="description"
     content="Michelle Ngo — filmmaker and producer based in New York City."
   />
-  <link rel="preload" as="image" href={heroPosterUrl} fetchpriority="high" />
   <!-- D-15 (from _four; carried forward to /three as the same posture per RESEARCH
        §"Footer Integration") Person JSON-LD for SEO knowledge-panel candidacy.
        {@html} is safe here: personJsonLd is JSON.stringify of a hardcoded static

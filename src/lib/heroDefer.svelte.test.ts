@@ -3,8 +3,10 @@ import { createHeroDefer } from './heroDefer.svelte';
 
 /**
  * heroDefer.svelte.ts — factory rune for the Phase 5 D-03 deferred-load
- * mechanism that races requestIdleCallback({ timeout: 1000 }), setTimeout(1000),
- * and the first window pointerdown/wheel/touchstart/scroll event.
+ * mechanism that races requestIdleCallback({ timeout: 2500 }), setTimeout(2500),
+ * and the first window pointerdown/wheel/touchstart/scroll event. The idle/timeout
+ * window was eased 1000ms -> 2500ms in quick 260610-vu7 (POL-02) to keep the hero
+ * iframe fetch out of the LCP paint window; the interaction triggers are unchanged.
  *
  * Tests wrap rune mutations in $effect.root (Svelte 5.55+ scoping rule) and
  * use vi.useFakeTimers to drive the timer race. Each `createHeroDefer()` call
@@ -29,13 +31,16 @@ describe('createHeroDefer (Phase 5 D-03)', () => {
     defer.dispose();
   });
 
-  test('shouldMount flips true after 1000ms timeout', () => {
+  test('shouldMount flips true after 2500ms timeout', () => {
     vi.useFakeTimers();
     const cleanup = $effect.root(() => {
       const defer = createHeroDefer();
       expect(defer.shouldMount).toBe(false);
       defer.start();
-      vi.advanceTimersByTime(1001);
+      // Still false just before the 2500ms window elapses.
+      vi.advanceTimersByTime(1000);
+      expect(defer.shouldMount).toBe(false);
+      vi.advanceTimersByTime(1501);
       expect(defer.shouldMount).toBe(true);
       defer.dispose();
     });
@@ -47,7 +52,7 @@ describe('createHeroDefer (Phase 5 D-03)', () => {
     const cleanup = $effect.root(() => {
       const defer = createHeroDefer();
       defer.start();
-      vi.advanceTimersByTime(500); // half of the 1000ms timer
+      vi.advanceTimersByTime(500); // well before the 2500ms timer fires
       expect(defer.shouldMount).toBe(false);
       window.dispatchEvent(new Event('pointerdown'));
       expect(defer.shouldMount).toBe(true);
@@ -111,8 +116,8 @@ describe('createHeroDefer (Phase 5 D-03)', () => {
       expect(eventTypes.has('wheel')).toBe(true);
       expect(eventTypes.has('touchstart')).toBe(true);
       expect(eventTypes.has('scroll')).toBe(true);
-      // Timer should have been cleared — advance past the 1000ms window.
-      vi.advanceTimersByTime(1500);
+      // Timer should have been cleared — advance past the 2500ms window.
+      vi.advanceTimersByTime(3000);
       expect(defer.shouldMount).toBe(false);
     });
     cleanup();
@@ -130,7 +135,8 @@ describe('createHeroDefer (Phase 5 D-03)', () => {
       // call log (modulo unrelated calls jsdom may emit internally — filter
       // to our 4 events).
       const ourEvents = addSpy.mock.calls.filter(
-        (c) => c[0] === 'pointerdown' || c[0] === 'wheel' || c[0] === 'touchstart' || c[0] === 'scroll'
+        (c) =>
+          c[0] === 'pointerdown' || c[0] === 'wheel' || c[0] === 'touchstart' || c[0] === 'scroll'
       );
       expect(ourEvents.length).toBe(4);
       defer.dispose();
@@ -167,7 +173,7 @@ describe('createHeroDefer (Phase 5 D-03)', () => {
     const cleanup = $effect.root(() => {
       const defer = createHeroDefer();
       defer.start();
-      vi.advanceTimersByTime(1001); // fire via timeout
+      vi.advanceTimersByTime(2501); // fire via timeout
       expect(defer.shouldMount).toBe(true);
       // Subsequent pointer events should NOT throw / re-fire / regress.
       window.dispatchEvent(new Event('pointerdown'));

@@ -2,11 +2,18 @@
  * Deferred-mount factory for hero ambient iframes (Phase 5 D-03).
  *
  * On `start()`, the factory races three triggers:
- *   1. requestIdleCallback({ timeout: 1000 }) — fires when the browser is idle
+ *   1. requestIdleCallback({ timeout: 2500 }) — fires when the browser is idle
  *      (Chromium/Firefox). Safari lacks rIC, so it's skipped via the typeof
  *      guard; setTimeout below is the load-bearing fallback for that engine.
- *   2. setTimeout(1000) — GUARANTEES the iframe mounts even if the browser
+ *   2. setTimeout(2500) — GUARANTEES the iframe mounts even if the browser
  *      never goes idle. Safari fallback + idle-starved-tab insurance.
+ *
+ * The idle/timeout window is 2500ms (was 1000ms; quick 260610-vu7 / POL-02):
+ * the hero iframe (player.vimeo.com) only needs to be ready for ambient motion
+ * AFTER the LCP poster has painted. Pushing the idle/timeout trigger past the
+ * ~2.8s LCP window stops the iframe stealing Slow-4G bandwidth during the paint.
+ * The first-interaction trigger is UNCHANGED — a producer who scrolls still gets
+ * motion immediately, so the deferral only affects the passive/idle path.
  *   3. First user interaction on window: pointerdown | wheel | touchstart |
  *      scroll. Whichever fires first via `{ once: true, passive: true }`
  *      listeners (passive so the listener cannot block scroll on touchstart/
@@ -83,11 +90,12 @@ export function createHeroDefer(): HeroDefer {
 
       // Trigger 1: requestIdleCallback (Chromium/Firefox; absent on Safari).
       if (typeof requestIdleCallback === 'function') {
-        ricId = requestIdleCallback(() => fire(), { timeout: 1000 });
+        ricId = requestIdleCallback(() => fire(), { timeout: 2500 });
       }
 
-      // Trigger 2: setTimeout(1000) — Safari fallback + idle-starved-tab insurance.
-      timeoutId = setTimeout(() => fire(), 1000);
+      // Trigger 2: setTimeout(2500) — Safari fallback + idle-starved-tab insurance.
+      // 2500ms (was 1000ms) keeps the iframe fetch out of the LCP window (260610-vu7).
+      timeoutId = setTimeout(() => fire(), 2500);
 
       // Trigger 3: first user interaction. Named handler so removeEventListener
       // can take it back (anonymous closures would leak per Phase 3 Layer 4).
