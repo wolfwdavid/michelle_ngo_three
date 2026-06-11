@@ -28,6 +28,13 @@ export default tseslint.config(
   {
     ignores: ['build/', '.svelte-kit/', 'dist/', 'node_modules/'],
   },
+  // CommonJS config files (.cjs) — require() is the module system, not a style choice.
+  {
+    files: ['**/*.cjs'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
   // ReelSection + PosterImage both ship the `▷ PLAY WITH SOUND` deep-link to
   // /watch/[id] (REEL-05) before Phase 5 (WATCH-01) creates that route. Until
   // the route exists, `resolve('/watch/[id]', { id })` rejects the typed route

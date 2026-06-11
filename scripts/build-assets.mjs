@@ -78,7 +78,7 @@ const CANVAS = { r: 13, g: 13, b: 13 }; // neutral-950  oklch(0.16 0 0)
 const CANVAS_HEX = '#0d0d0d';
 const CREAM = '#fff7ea'; // oklch(0.98 0.02 80)
 const NEUTRAL_300 = '#c4c4c4'; // oklch(0.82 0 0)
-const NEUTRAL_500 = '#868686'; // oklch(0.62 0 0)
+// neutral-500 = '#868686' oklch(0.62 0 0) — in the app.css palette but unused here
 const CAT_REEL = '#9f8cff'; // ~oklch(0.78 0.18 280) — the violet "reel" accent hairline
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
