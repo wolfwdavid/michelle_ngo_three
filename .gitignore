@@ -21,3 +21,8 @@ Thumbs.db
 
 # oEmbed health-check report (Phase 2 D-20 — written only on failure, never committed)
 .embed-check-report.json
+
+# Local editor/agent settings (machine-specific)
+.claude/settings.local.json
+__pycache__/
+*.pyc
