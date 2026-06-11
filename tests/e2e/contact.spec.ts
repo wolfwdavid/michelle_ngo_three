@@ -31,9 +31,9 @@ test.describe('/contact — CONT-01 + CONT-02 + CONT-03 cross-surface', () => {
     await footer.scrollIntoViewIfNeeded();
     await expect(footer).toBeVisible();
     // Footer has 3 column headers at lg breakpoint — check presence.
-    await expect(footer.locator('h3:has-text("Contact")')).toBeVisible();
-    await expect(footer.locator('h3:has-text("Work")')).toBeVisible();
-    await expect(footer.locator('h3:has-text("Site")')).toBeVisible();
+    await expect(footer.locator('h2:has-text("Contact")')).toBeVisible();
+    await expect(footer.locator('h2:has-text("Work")')).toBeVisible();
+    await expect(footer.locator('h2:has-text("Site")')).toBeVisible();
   });
 
   test('ContactBlock cross-surface presence (CONT-01)', async ({ page }) => {
